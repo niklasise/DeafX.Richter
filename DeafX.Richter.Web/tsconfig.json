@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "target": "es6",
+    "jsx": "react",
+    "strictNullChecks": false
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot",
+    "bin"
+  ]
+}
