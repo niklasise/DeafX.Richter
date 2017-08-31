@@ -1,6 +1,7 @@
 ﻿const path = require('path');
 const webpack = require('webpack');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -9,9 +10,10 @@ module.exports = (env) => {
     // Configuration in common to both client-side and server-side bundles
     return {
         entry: {
-            app: "./ClientApp/App.tsx"
+            app: "./ClientApp/App.tsx",
+            css: "./ClientApp/Styles/Main.scss"
         },
-        resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+        resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss', '.css'] },
         output: {
             path: path.join(__dirname, clientBundleOutputDir),
             filename: '[name].js',
@@ -19,11 +21,17 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.tsx?$/, include: /ClientApp/, use: ['babel-loader', 'awesome-typescript-loader?silent=true'] }
+                { test: /\.tsx?$/, include: /ClientApp/, use: ['babel-loader', 'awesome-typescript-loader?silent=true'] },
+                { test: /\.css$/, include: /ClientApp/, use: ExtractTextPlugin.extract(['css-loader?importLoaders=1']) },
+                { test: /\.(sass|scss)$/, use: ExtractTextPlugin.extract(['css-loader', 'sass-loader']) }
             ]
         },
         plugins: [
             new CheckerPlugin(),
+            new ExtractTextPlugin({ // define where to save the file
+                filename: '../css/app.css',
+                allChunks: true,
+            }),
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./wwwroot/dist/vendor-manifest.json')

@@ -1,0 +1,74 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif; }
+
+html {
+  height: 100%; }
+
+body {
+  background-image: url(/dist/img/bg5.jpg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: #464646; }
+
+.tileContainer {
+  max-width: 900px;
+  padding: 20px 0 0 20px;
+  overflow: hidden;
+  margin: 0 auto; }
+
+.tile {
+  position: relative;
+  float: left;
+  width: 50%; }
+  .tile:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%; }
+  .tile > div {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding: 0 20px 20px 0; }
+    .tile > div > div {
+      background-color: #19a2de;
+      color: #FFFFFF;
+      text-align: center;
+      height: 100%;
+      width: 100%;
+      display: table;
+      position: relative;
+      border-radius: 5px;
+      opacity: 0.85; }
+  .tile.large {
+    width: 100%; }
+    .tile.large:after {
+      padding-bottom: 50%; }
+
+.tileCenter {
+  display: table-cell;
+  vertical-align: middle; }
+
+.tileCenter > div {
+  font-size: 120px; }
+
+.tileLabel {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: 60px;
+  left: 0;
+  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: 600; }
+
+.tileTopRight {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 40px;
+  line-height: 0; }
+
+/*# sourceMappingURL=app.css.map*/
