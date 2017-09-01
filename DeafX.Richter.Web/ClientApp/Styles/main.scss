@@ -1,4 +1,8 @@
-﻿* {
+﻿$break-large: 700px;
+$break-medium: 500px;
+$break-small: 400px;
+
+* {
     box-sizing: border-box;
     font-family: 'Open Sans', sans-serif;
 }
@@ -16,12 +20,19 @@ body {
     background-color: #464646;
 }
 
-
 .tileContainer {
     max-width: 900px;
     padding: 20px 0 0 20px;
     overflow: hidden;
     margin: 0 auto;
+
+    @media screen and (max-width: $break-large) {
+        padding: 15px 0 0 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        padding: 10px 0 0 10px;
+    }
 }
 
 .tile {
@@ -40,6 +51,14 @@ body {
         height: 100%;
         width: 100%;
         padding: 0 20px 20px 0;
+
+        @media screen and (max-width: $break-large) {
+            padding: 0 15px 15px 0;
+        }
+
+        @media screen and (max-width: $break-medium) {
+            padding: 0 10px 10px 0;
+        }
 
         > div {
             background-color: #19a2de;
@@ -63,6 +82,10 @@ body {
     }
 }
 
+.off  {
+    color: #CECECE;
+}
+
 .tileCenter {
     display: table-cell;
     vertical-align: middle;
@@ -70,6 +93,18 @@ body {
 
 .tileCenter > div {
     font-size: 120px;
+
+    @media screen and (max-width: $break-large) {
+        font-size: 90px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        font-size: 60px;
+    }
+
+    @media screen and (max-width: $break-small) {
+        font-size: 40px;
+    }
 }
 
 .tileLabel {
@@ -81,14 +116,65 @@ body {
     text-transform: uppercase;
     font-size: 18px;
     font-weight: 600;
+
+    @media screen and (max-width: $break-large) {
+        font-size: 16px;
+        bottom: 40px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        font-size: 14px;
+        bottom: 30px;
+    }
+
+    @media screen and (max-width: $break-small) {
+        font-size: 12px;
+        bottom: 25px;
+    }
+}
+
+
+.tileRight {
+    position: absolute;
+    right: 20px;
+    font-size: 30px;
+    line-height: 0;
+
+    @media screen and (max-width: $break-large) {
+        font-size: 25px;
+        right: 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        font-size: 15px;
+        right: 10px;
+    }
 }
 
 .tileTopRight {
-    position: absolute;
+    @extend .tileRight;
     top: 20px;
-    right: 20px;
-    font-size: 40px;
-    line-height: 0;
+
+    @media screen and (max-width: $break-large) {
+        top: 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        top: 10px;
+    }
+}
+
+.tileBottomRight {
+    @extend .tileRight;
+    bottom: 20px;
+
+    @media screen and (max-width: $break-large) {
+        bottom: 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        bottom: 10px;
+    }
 }
 
 

@@ -18,6 +18,12 @@ body {
   padding: 20px 0 0 20px;
   overflow: hidden;
   margin: 0 auto; }
+  @media screen and (max-width: 700px) {
+    .tileContainer {
+      padding: 15px 0 0 15px; } }
+  @media screen and (max-width: 500px) {
+    .tileContainer {
+      padding: 10px 0 0 10px; } }
 
 .tile {
   position: relative;
@@ -32,6 +38,12 @@ body {
     height: 100%;
     width: 100%;
     padding: 0 20px 20px 0; }
+    @media screen and (max-width: 700px) {
+      .tile > div {
+        padding: 0 15px 15px 0; } }
+    @media screen and (max-width: 500px) {
+      .tile > div {
+        padding: 0 10px 10px 0; } }
     .tile > div > div {
       background-color: #19a2de;
       color: #FFFFFF;
@@ -47,12 +59,24 @@ body {
     .tile.large:after {
       padding-bottom: 50%; }
 
+.off {
+  color: #CECECE; }
+
 .tileCenter {
   display: table-cell;
   vertical-align: middle; }
 
 .tileCenter > div {
   font-size: 120px; }
+  @media screen and (max-width: 700px) {
+    .tileCenter > div {
+      font-size: 90px; } }
+  @media screen and (max-width: 500px) {
+    .tileCenter > div {
+      font-size: 60px; } }
+  @media screen and (max-width: 400px) {
+    .tileCenter > div {
+      font-size: 40px; } }
 
 .tileLabel {
   position: absolute;
@@ -63,12 +87,49 @@ body {
   text-transform: uppercase;
   font-size: 18px;
   font-weight: 600; }
+  @media screen and (max-width: 700px) {
+    .tileLabel {
+      font-size: 16px;
+      bottom: 40px; } }
+  @media screen and (max-width: 500px) {
+    .tileLabel {
+      font-size: 14px;
+      bottom: 30px; } }
+  @media screen and (max-width: 400px) {
+    .tileLabel {
+      font-size: 12px;
+      bottom: 25px; } }
+
+.tileRight, .tileTopRight, .tileBottomRight {
+  position: absolute;
+  right: 20px;
+  font-size: 30px;
+  line-height: 0; }
+  @media screen and (max-width: 700px) {
+    .tileRight, .tileTopRight, .tileBottomRight {
+      font-size: 25px;
+      right: 15px; } }
+  @media screen and (max-width: 500px) {
+    .tileRight, .tileTopRight, .tileBottomRight {
+      font-size: 15px;
+      right: 10px; } }
 
 .tileTopRight {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 40px;
-  line-height: 0; }
+  top: 20px; }
+  @media screen and (max-width: 700px) {
+    .tileTopRight {
+      top: 15px; } }
+  @media screen and (max-width: 500px) {
+    .tileTopRight {
+      top: 10px; } }
+
+.tileBottomRight {
+  bottom: 20px; }
+  @media screen and (max-width: 700px) {
+    .tileBottomRight {
+      bottom: 15px; } }
+  @media screen and (max-width: 500px) {
+    .tileBottomRight {
+      bottom: 10px; } }
 
 /*# sourceMappingURL=app.css.map*/
