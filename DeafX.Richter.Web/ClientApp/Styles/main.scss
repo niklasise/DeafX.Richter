@@ -83,7 +83,7 @@ body {
 }
 
 .off  {
-    color: #CECECE;
+    opacity: 0.3;
 }
 
 .tileCenter {
@@ -93,6 +93,8 @@ body {
 
 .tileCenter > div {
     font-size: 120px;
+
+
 
     @media screen and (max-width: $break-large) {
         font-size: 90px;

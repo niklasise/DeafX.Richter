@@ -60,7 +60,7 @@ body {
       padding-bottom: 50%; }
 
 .off {
-  color: #CECECE; }
+  opacity: 0.3; }
 
 .tileCenter {
   display: table-cell;
