@@ -4,23 +4,14 @@ import { AppContainer } from 'react-hot-loader';
 import DeviceContainer from "./Components/DeviceContainer";
 import configureStore from "./Store/ConfigureStore";
 import { Provider } from "react-redux";
+import { loadDevices } from "./Actions/DeviceActions";
 
 const store = configureStore({
     devices: {
-        deviceList: [
-            {
-                id: "1",
-                title: "Vardagsrum",
-                toggled: true
-            },
-            {
-                id: "2",
-                title: "Gästrum",
-                toggled: false
-            }
-        ]
+        deviceList: []
     }
 })
+store.dispatch(loadDevices());
 
 function renderApp() {
     ReactDOM.render(

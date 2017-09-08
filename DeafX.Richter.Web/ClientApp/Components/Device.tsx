@@ -3,11 +3,11 @@ import { Device as DeviceModel } from "../Models/Device"
 
 export interface DeviceProps {
     device: DeviceModel;
-    onClick(source:DeviceModel): any;
+    onClick(source:DeviceModel) : void;
 }
 
 export const Device: React.SFC<DeviceProps> = (props) => {
-    return <div className="tile" onClick={props.onClick(props.device)}>
+    return <div className="tile" onClick={(e) => { props.onClick(props.device) }}>
         <div>
             <div>
                 <div className="tileTopRight">

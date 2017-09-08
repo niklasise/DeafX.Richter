@@ -1,6 +1,7 @@
-﻿import { createStore, combineReducers } from "redux";
+﻿import { createStore, combineReducers, applyMiddleware } from "redux";
 import { DeviceState } from "../Reducers/DeviceReducer";
 import devices from "../Reducers/DeviceReducer";
+import thunk from "redux-thunk";
 
 export interface ApplicationState {
     devices: DeviceState
@@ -14,6 +15,7 @@ export default function configureStore(initialState: ApplicationState)
 {
     return createStore<ApplicationState>(
         rootReducer,
-        initialState
+        initialState,
+        applyMiddleware(thunk)
     );
 }

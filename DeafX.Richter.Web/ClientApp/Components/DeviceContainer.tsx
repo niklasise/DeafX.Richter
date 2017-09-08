@@ -21,8 +21,14 @@ type DeviceContainerProps =
 
 class DeviceContainer extends React.Component<DeviceContainerProps, any> {
 
-    onClick(device: DeviceModel): any {
-        toggleDevice(device);
+    constructor()
+    {
+        super();
+        this.onClick = this.onClick.bind(this);
+    }
+
+    onClick(device: DeviceModel): void {
+        this.props.toggleDevice(device);
     }
 
     public render() {
@@ -49,4 +55,4 @@ function mapDispatchToProps(dispatch): DeviceContainerActions {
     }
 }
 
-export default connect(mapStateToProps, )(DeviceContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceContainer);
