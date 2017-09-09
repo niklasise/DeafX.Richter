@@ -1,10 +1,11 @@
 ﻿import * as React from "react";
 import * as ReactDOM from "react-dom"
 import { AppContainer } from 'react-hot-loader';
-import DeviceContainer from "./Components/DeviceContainer";
 import configureStore from "./Store/ConfigureStore";
 import { Provider } from "react-redux";
 import { loadDevices } from "./Actions/DeviceActions";
+import { BrowserRouter } from 'react-router-dom'
+import { routes } from "./Routes";
 
 const store = configureStore({
     devices: {
@@ -13,11 +14,12 @@ const store = configureStore({
 })
 store.dispatch(loadDevices());
 
+
 function renderApp() {
     ReactDOM.render(
         <AppContainer>
             <Provider store={store}>
-                <DeviceContainer />
+                <BrowserRouter children={routes} />
             </Provider>
         </AppContainer>
         ,
@@ -29,7 +31,7 @@ renderApp();
 
 // Allow Hot Module Replacement
 if (module.hot) {
-    module.hot.accept('./Components/DeviceContainer', () => {
+    module.hot.accept('./Routes', () => {
         renderApp();
     });
 }

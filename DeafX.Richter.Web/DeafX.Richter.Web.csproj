@@ -10,6 +10,7 @@
     <None Remove="ClientApp\Api\delay.ts" />
     <None Remove="ClientApp\Api\mockDeviceApi.ts" />
     <None Remove="ClientApp\Models\Device.ts" />
+    <None Remove="ClientApp\Routes.tsx" />
     <None Remove="ClientApp\Store\ConfigureStore.ts" />
   </ItemGroup>
   <ItemGroup>
@@ -26,11 +27,13 @@
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
     <TypeScriptCompile Include="ClientApp\Api\delay.ts" />
     <TypeScriptCompile Include="ClientApp\Api\mockDeviceApi.ts" />
-    <TypeScriptCompile Include="ClientApp\App.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\Device.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\DeviceContainer.tsx" />
+    <TypeScriptCompile Include="ClientApp\Index.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Configuration\ConfigurationPage.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Home\Device.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Home\HomePage.tsx" />
     <TypeScriptCompile Include="ClientApp\Models\Device.ts" />
     <TypeScriptCompile Include="ClientApp\Reducers\DeviceReducer.ts" />
+    <TypeScriptCompile Include="ClientApp\Routes.tsx" />
     <TypeScriptCompile Include="ClientApp\Store\ConfigureStore.ts" />
   </ItemGroup>
 

@@ -1,10 +1,10 @@
 ﻿import * as React from 'react';
 import { Device, DeviceProps } from "./Device";
-import { Device as DeviceModel } from "../Models/Device";
+import { Device as DeviceModel } from "../../Models/Device";
 import { connect, Dispatch } from "react-redux";
-import { ApplicationState } from "../Store/ConfigureStore";
-import { DeviceState } from "../Reducers/DeviceReducer";
-import { toggleDevice, ToggleDeviceAction } from "../Actions/DeviceActions"
+import { ApplicationState } from "../../Store/ConfigureStore";
+import { DeviceState } from "../../Reducers/DeviceReducer";
+import { toggleDevice, ToggleDeviceAction } from "../../Actions/DeviceActions"
 
 interface DeviceContainerStateProps
 {
@@ -19,7 +19,7 @@ type DeviceContainerProps =
     DeviceContainerStateProps &
     DeviceContainerActions;
 
-class DeviceContainer extends React.Component<DeviceContainerProps, any> {
+class HomePage extends React.Component<DeviceContainerProps, any> {
 
     constructor()
     {
@@ -55,4 +55,4 @@ function mapDispatchToProps(dispatch): DeviceContainerActions {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DeviceContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

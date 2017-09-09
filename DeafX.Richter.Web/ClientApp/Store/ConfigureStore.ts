@@ -8,7 +8,7 @@ export interface ApplicationState {
 }
 
 const rootReducer = combineReducers<ApplicationState>({
-    devices: devices
+    devices: devices,
 })
 
 export default function configureStore(initialState: ApplicationState)

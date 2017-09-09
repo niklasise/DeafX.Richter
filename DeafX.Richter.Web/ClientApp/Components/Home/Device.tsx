@@ -1,5 +1,5 @@
 ﻿import * as React from "react"
-import { Device as DeviceModel } from "../Models/Device"
+import { Device as DeviceModel } from "../../Models/Device"
 
 export interface DeviceProps {
     device: DeviceModel;
