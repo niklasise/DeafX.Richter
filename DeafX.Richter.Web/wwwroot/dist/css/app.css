@@ -65,17 +65,19 @@ body {
 .tileCenter {
   display: table-cell;
   vertical-align: middle; }
+  .tileCenter .smallIcon {
+    font-size: 40px; }
 
-.tileCenter > div {
+.tileCenter > i, div {
   font-size: 120px; }
   @media screen and (max-width: 700px) {
-    .tileCenter > div {
+    .tileCenter > i, div {
       font-size: 90px; } }
   @media screen and (max-width: 500px) {
-    .tileCenter > div {
+    .tileCenter > i, div {
       font-size: 60px; } }
   @media screen and (max-width: 400px) {
-    .tileCenter > div {
+    .tileCenter > i, div {
       font-size: 40px; } }
 
 .tileLabel {
@@ -130,6 +132,39 @@ body {
       bottom: 15px; } }
   @media screen and (max-width: 500px) {
     .tileBottomRight {
+      bottom: 10px; } }
+
+.tileLeft, .tileTopLeft, .tileBottomLeft {
+  position: absolute;
+  left: 20px;
+  font-size: 30px;
+  line-height: 0; }
+  @media screen and (max-width: 700px) {
+    .tileLeft, .tileTopLeft, .tileBottomLeft {
+      font-size: 25px;
+      left: 15px; } }
+  @media screen and (max-width: 500px) {
+    .tileLeft, .tileTopLeft, .tileBottomLeft {
+      font-size: 15px;
+      left: 10px; } }
+
+.tileTopLeft {
+  top: 20px;
+  opacity: 0.5; }
+  @media screen and (max-width: 700px) {
+    .tileTopLeft {
+      top: 15px; } }
+  @media screen and (max-width: 500px) {
+    .tileTopLeft {
+      top: 10px; } }
+
+.tileBottomLeft {
+  bottom: 20px; }
+  @media screen and (max-width: 700px) {
+    .tileBottomLeft {
+      bottom: 15px; } }
+  @media screen and (max-width: 500px) {
+    .tileBottomLeft {
       bottom: 10px; } }
 
 /*# sourceMappingURL=app.css.map*/

@@ -1,5 +1,5 @@
 ﻿import delay from './delay';
-import { Device as DeviceModel } from "../Models/Device"
+import { Device as DeviceModel, ToggleDevice, ValueDevice } from "../Models/Device"
 
 // This file mocks a web API by working with the hard-coded data below.
 // It uses setTimeout to simulate the delay of an AJAX call.
@@ -8,13 +8,27 @@ const devices : DeviceModel[] = [
     {
         id: "1",
         title: "Vardagsrum",
-        toggled: true
-    },
+        toggled: true,
+        deviceType: "TOGGLE_DEVICE"
+    } as ToggleDevice,
     {
         id: "2",
         title: "Gästrum",
-        toggled: false
-    }
+        toggled: false,
+        deviceType: "TOGGLE_DEVICE"
+    } as ToggleDevice,
+    {
+        id: "3",
+        title: "Hall Nedervåning",
+        value: "21",
+        deviceType: "VALUE_DEVICE"
+    } as ValueDevice,
+    {
+        id: "4",
+        title: "Hall övervåning",
+        value: "23",
+        deviceType: "VALUE_DEVICE"
+    } as ValueDevice,
 ];
 
 function replaceAll(str, find, replace) {

@@ -1,5 +1,5 @@
 ﻿import { Reducer, Action } from "redux";
-import { Device as DeviceModel } from "../Models/Device";
+import { Device as DeviceModel, ToggleDevice } from "../Models/Device";
 import { ToggleDeviceAction, LoadDevicesSuccessAction } from "../Actions/DeviceActions";
 
 export interface DeviceState {
@@ -10,7 +10,7 @@ const deviceReducer: Reducer<DeviceState> = (state = { deviceList: [] }, action:
 {
     switch (action.type) {
         case "TOGGLE_DEVICE":
-            return toggleDevice((action as ToggleDeviceAction).device, state);
+            return toggleDevice((action as ToggleDeviceAction).device as ToggleDevice, state);
         case "LOAD_DEVICES_SUCCESS":
             return { ...state, deviceList: (action as LoadDevicesSuccessAction).devices };
         default:
@@ -19,7 +19,7 @@ const deviceReducer: Reducer<DeviceState> = (state = { deviceList: [] }, action:
 }
 
 
-function toggleDevice(device: DeviceModel, state: DeviceState) : DeviceState
+function toggleDevice(device: ToggleDevice, state: DeviceState) : DeviceState
 {
     debugger;
     const deviceIndex = state.deviceList.findIndex(i => i.id === device.id);
@@ -32,7 +32,7 @@ function toggleDevice(device: DeviceModel, state: DeviceState) : DeviceState
 
     const devices: DeviceModel[] = [
             ...state.deviceList.slice(0, deviceIndex),
-            {...device, toggled: !device.toggled },
+            { ...device, toggled: !device.toggled } as ToggleDevice,
             ...state.deviceList.slice(deviceIndex + 1)
         ]
 

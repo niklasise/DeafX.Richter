@@ -2,6 +2,7 @@
 import { Device, DeviceProps } from "./Device";
 import { Device as DeviceModel } from "../../Models/Device";
 import { connect, Dispatch } from "react-redux";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "../../Store/ConfigureStore";
 import { DeviceState } from "../../Reducers/DeviceReducer";
 import { toggleDevice, ToggleDeviceAction } from "../../Actions/DeviceActions"
@@ -11,31 +12,43 @@ interface DeviceContainerStateProps
     devices: DeviceState
 }
 
+interface DeviceContainerBlah {
+    history
+}
+
+
 interface DeviceContainerActions {
     toggleDevice
 }
 
 type DeviceContainerProps =
     DeviceContainerStateProps &
-    DeviceContainerActions;
+    DeviceContainerActions &
+    RouteComponentProps<any>;
 
 class HomePage extends React.Component<DeviceContainerProps, any> {
 
     constructor()
     {
         super();
-        this.onClick = this.onClick.bind(this);
+        this.onIconClick = this.onIconClick.bind(this);
+        this.onConfigClick = this.onConfigClick.bind(this);
     }
 
-    onClick(device: DeviceModel): void {
+    onIconClick(device: DeviceModel): void {
         this.props.toggleDevice(device);
     }
+
+    onConfigClick(device: DeviceModel): void {
+        this.props.history.push("/config/" + device.id);
+    }
+
 
     public render() {
         return <div className="tileContainer">
 
             {this.props.devices.deviceList.map(function (device, index) {
-                return <Device key={device.id} device={device as DeviceModel} onClick={this.onClick} />
+                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} />
             }, this)}
 
         </div>;
@@ -55,4 +68,4 @@ function mapDispatchToProps(dispatch): DeviceContainerActions {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(HomePage));

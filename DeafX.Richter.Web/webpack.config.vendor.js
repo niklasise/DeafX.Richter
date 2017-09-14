@@ -11,6 +11,10 @@ module.exports = (env) => {
             vendor: [
                 'react',
                 'react-dom',
+                'react-redux',
+                'react-router-dom',
+                'redux',
+                'redux-thunk'
             ],
         },
         output: {

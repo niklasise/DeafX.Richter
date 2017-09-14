@@ -89,13 +89,15 @@ body {
 .tileCenter {
     display: table-cell;
     vertical-align: middle;
+
+    .smallIcon {
+        font-size: 40px;
+    }
 }
 
-.tileCenter > div {
+.tileCenter > i, div {
     font-size: 120px;
-
-
-
+    
     @media screen and (max-width: $break-large) {
         font-size: 90px;
     }
@@ -168,6 +170,50 @@ body {
 
 .tileBottomRight {
     @extend .tileRight;
+    bottom: 20px;
+
+    @media screen and (max-width: $break-large) {
+        bottom: 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        bottom: 10px;
+    }
+}
+
+.tileLeft {
+    position: absolute;
+    left: 20px;
+    font-size: 30px;
+    line-height: 0;
+
+    @media screen and (max-width: $break-large) {
+        font-size: 25px;
+        left: 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        font-size: 15px;
+        left: 10px;
+    }
+}
+
+.tileTopLeft {
+    @extend .tileLeft;
+    top: 20px;
+    opacity: 0.5;
+
+    @media screen and (max-width: $break-large) {
+        top: 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        top: 10px;
+    }
+}
+
+.tileBottomLeft {
+    @extend .tileLeft;
     bottom: 20px;
 
     @media screen and (max-width: $break-large) {

@@ -2,18 +2,18 @@
 
     id: string;
     title: string;
-    toggled: boolean;
 
+    deviceType: string;
 }
 
 export class ToggleDevice extends Device {
 
     toggled: boolean;
-
 }
 
 export class ValueDevice extends Device {
 
     value: string;
+    valueType: string;
 
 }
