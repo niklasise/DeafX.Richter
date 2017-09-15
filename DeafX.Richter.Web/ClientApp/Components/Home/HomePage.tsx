@@ -1,11 +1,11 @@
 ﻿import * as React from 'react';
 import { Device, DeviceProps } from "./Device";
-import { Device as DeviceModel } from "../../Models/Device";
+import { Device as DeviceModel, ToggleDevice } from "../../Models/Device";
 import { connect, Dispatch } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "../../Store/ConfigureStore";
 import { DeviceState } from "../../Reducers/DeviceReducer";
-import { toggleDevice, ToggleDeviceAction } from "../../Actions/DeviceActions"
+import { toggleDevice, ToggleDeviceAction, loadDevicesAndListenForUpdates, stopListeningForDeviceUpdates } from "../../Actions/DeviceActions"
 
 interface DeviceContainerStateProps
 {
@@ -18,7 +18,9 @@ interface DeviceContainerBlah {
 
 
 interface DeviceContainerActions {
-    toggleDevice
+    toggleDevice,
+    loadDevices,
+    stopDeviceUpdates
 }
 
 type DeviceContainerProps =
@@ -42,8 +44,7 @@ class HomePage extends React.Component<DeviceContainerProps, any> {
     onConfigClick(device: DeviceModel): void {
         this.props.history.push("/config/" + device.id);
     }
-
-
+    
     public render() {
         return <div className="tileContainer">
 
@@ -54,17 +55,27 @@ class HomePage extends React.Component<DeviceContainerProps, any> {
         </div>;
     }
 
+    public componentWillMount() {
+        this.props.loadDevices();
+    }
+
+    public componentWillUnmount() {
+        this.props.stopDeviceUpdates();
+    }
+
 }
 
 function mapStateToProps(state: ApplicationState, ownProps): DeviceContainerStateProps {
     return {
-        devices: state.devices
+        devices: state.devices,
     }
 }
 
 function mapDispatchToProps(dispatch): DeviceContainerActions {
     return {
-        toggleDevice: (device: DeviceModel) => dispatch(toggleDevice(device))
+        toggleDevice: (device: ToggleDevice) => dispatch(toggleDevice(device)),
+        loadDevices: () => dispatch(loadDevicesAndListenForUpdates()),
+        stopDeviceUpdates: () => dispatch(stopListeningForDeviceUpdates())
     }
 }
 

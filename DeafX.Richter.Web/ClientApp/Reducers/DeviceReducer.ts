@@ -1,6 +1,6 @@
 ﻿import { Reducer, Action } from "redux";
 import { Device as DeviceModel, ToggleDevice } from "../Models/Device";
-import { ToggleDeviceAction, LoadDevicesSuccessAction } from "../Actions/DeviceActions";
+import { ToggleDeviceAction, LoadDevicesSuccessAction, DevicesUpdatedAction } from "../Actions/DeviceActions";
 
 export interface DeviceState {
     deviceList: DeviceModel[];
@@ -9,19 +9,46 @@ export interface DeviceState {
 const deviceReducer: Reducer<DeviceState> = (state = { deviceList: [] }, action: Action) =>
 {
     switch (action.type) {
-        case "TOGGLE_DEVICE":
-            return toggleDevice((action as ToggleDeviceAction).device as ToggleDevice, state);
+        case "TOGGLE_DEVICE_STARTED":
+            return setDeviceIsUpdating((action as ToggleDeviceAction).device as ToggleDevice, state);
         case "LOAD_DEVICES_SUCCESS":
-            return { ...state, deviceList: (action as LoadDevicesSuccessAction).devices };
+            return updateDevices((action as LoadDevicesSuccessAction).devices, state);
+        case "DEVICES_UPDATED":
+            return updateDevices((action as DevicesUpdatedAction).devices, state);
         default:
             return state;
     }
 }
 
-
-function toggleDevice(device: ToggleDevice, state: DeviceState) : DeviceState
+function updateDevices(updatedDevices: DeviceModel[], state: DeviceState) : DeviceState
 {
-    debugger;
+    console.log("Updated devices fetched - " + updatedDevices.length);
+    if (!updatedDevices.length)
+    {
+        return state;
+    }
+
+    let newDeviceList: DeviceModel[] = [ ...state.deviceList ];
+    
+    updatedDevices.forEach((device) => {
+        let index = state.deviceList.findIndex(val => val.id === device.id);
+
+        if (index >= 0)
+        {
+            newDeviceList[index] = Object.assign({}, device, { isUpdating: false });
+        }
+        else {
+            newDeviceList.push(device);
+        }
+    });
+
+    return {
+        ...state, deviceList: newDeviceList
+    };
+}
+
+function setDeviceIsUpdating(device: DeviceModel, state: DeviceState) : DeviceState
+{
     const deviceIndex = state.deviceList.findIndex(i => i.id === device.id);
 
     // Device can't be found, return untouched state
@@ -32,7 +59,7 @@ function toggleDevice(device: ToggleDevice, state: DeviceState) : DeviceState
 
     const devices: DeviceModel[] = [
             ...state.deviceList.slice(0, deviceIndex),
-            { ...device, toggled: !device.toggled } as ToggleDevice,
+            { ...device, isUpdating: true },
             ...state.deviceList.slice(deviceIndex + 1)
         ]
 

@@ -60,7 +60,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "802a9ba610db469ece3a"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "ea449338a463703de814"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -8035,8 +8035,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_router_dom__ = __webpack_require__(175);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Components_App__ = __webpack_require__(204);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Components_Home_HomePage__ = __webpack_require__(205);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Components_App__ = __webpack_require__(202);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Components_Home_HomePage__ = __webpack_require__(203);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Components_Configuration_ConfigurationPage__ = __webpack_require__(207);
 
 
@@ -8083,28 +8083,101 @@ module.exports = (__webpack_require__(3))(216);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process, module) {/* harmony export (immutable) */ __webpack_exports__["b"] = toggleDevice;
-/* unused harmony export loadDevicesSuccess */
-/* harmony export (immutable) */ __webpack_exports__["a"] = loadDevices;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__ = __webpack_require__(202);
+/* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__delay__ = __webpack_require__(206);
 
-function toggleDevice(device) {
-    return { type: "TOGGLE_DEVICE", device: device };
+// This file mocks a web API by working with the hard-coded data below.
+// It uses setTimeout to simulate the delay of an AJAX call.
+// All calls return promises.
+let devices = [{
+    id: "1",
+    title: "Vardagsrum",
+    toggled: true,
+    deviceType: "TOGGLE_DEVICE"
+}, {
+    id: "2",
+    title: "Gästrum",
+    toggled: false,
+    deviceType: "TOGGLE_DEVICE"
+}, {
+    id: "3",
+    title: "Hall Nedervåning",
+    value: "21",
+    deviceType: "VALUE_DEVICE"
+}, {
+    id: "4",
+    title: "Hall övervåning",
+    value: "23",
+    deviceType: "VALUE_DEVICE"
+}];
+let deviceListeners = [];
+let lastUpdateSent = 0;
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
 }
-function loadDevicesSuccess(devices) {
-    return { type: "LOAD_DEVICES_SUCCESS", devices: devices };
-}
-function loadDevices() {
-    return function (dispatch) {
-        return __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].getAlldevices().then(devices => {
-            dispatch(loadDevicesSuccess(devices));
-        }).catch(error => {
-            throw error;
+//This would be performed on the server in a real app. Just stubbing in.
+const generateId = device => {
+    return replaceAll(device.title, ' ', '-');
+};
+class deviceApi {
+    static getAlldevices() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(Object.assign([], devices));
+            }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
         });
-    };
+    }
+    static toggleDevice(device) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const deviceIndex = devices.findIndex(i => i.id === device.id);
+                let toggleDevice = devices[deviceIndex];
+                toggleDevice.toggled = !toggleDevice.toggled;
+                toggleDevice.lastUpdated = new Date().getTime();
+                deviceApi.alertDeviceListeners();
+                resolve();
+            }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
+        });
+    }
+    static getUpdatedDevices(since) {
+        console.log("Updating devices");
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve({ devices: devices.filter(device => device.lastUpdated > since), timestamp: new Date().getTime() });
+            }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
+        });
+    }
+    static listenForDeviceUpdates(listener) {
+        deviceListeners.push(listener);
+    }
+    static stopListeningForDeviceUpdates() {
+        deviceListeners = [];
+    }
+    static alertDeviceListeners() {
+        deviceListeners.forEach(val => {
+            val({ data: devices.filter(device => device.lastUpdated > lastUpdateSent) });
+        });
+        lastUpdateSent = new Date().getTime();
+    }
+    static startRandomizingValueDevices() {
+        deviceApi.randomizeValueDevices();
+    }
+    static randomizeValueDevices() {
+        setTimeout(function () {
+            devices.forEach((val, index, arr) => {
+                if (val.deviceType !== "VALUE_DEVICE") {
+                    return;
+                }
+                val.value = "" + Math.round(20 + Math.random() * 5);
+                val.lastUpdated = new Date().getTime();
+            });
+            deviceApi.alertDeviceListeners();
+            deviceApi.randomizeValueDevices();
+        }, 5000);
+    }
 }
+/* harmony default export */ __webpack_exports__["a"] = (deviceApi);
 
- ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Actions\\DeviceActions.ts"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Actions\\DeviceActions.ts"); } } })();
+ ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\mockDeviceApi.ts"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\mockDeviceApi.ts"); } } })();
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
 
 /***/ }),
@@ -8130,9 +8203,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_hot_loader___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react_hot_loader__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Store_ConfigureStore__ = __webpack_require__(198);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_redux__ = __webpack_require__(179);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Actions_DeviceActions__ = __webpack_require__(180);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react_router_dom__ = __webpack_require__(175);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Routes__ = __webpack_require__(176);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react_router_dom__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Routes__ = __webpack_require__(176);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Api_mockDeviceApi__ = __webpack_require__(180);
 
 
 
@@ -8146,14 +8219,14 @@ const store = Object(__WEBPACK_IMPORTED_MODULE_3__Store_ConfigureStore__["a" /* 
         deviceList: []
     }
 });
-store.dispatch(Object(__WEBPACK_IMPORTED_MODULE_5__Actions_DeviceActions__["a" /* loadDevices */])());
+__WEBPACK_IMPORTED_MODULE_7__Api_mockDeviceApi__["a" /* default */].startRandomizingValueDevices();
 function renderApp() {
-    __WEBPACK_IMPORTED_MODULE_1_react_dom__["render"](__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2_react_hot_loader__["AppContainer"], null, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4_react_redux__["Provider"], { store: store }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6_react_router_dom__["BrowserRouter"], { children: __WEBPACK_IMPORTED_MODULE_7__Routes__["routes"] }))), document.getElementById('react-app'));
+    __WEBPACK_IMPORTED_MODULE_1_react_dom__["render"](__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2_react_hot_loader__["AppContainer"], null, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4_react_redux__["Provider"], { store: store }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5_react_router_dom__["BrowserRouter"], { children: __WEBPACK_IMPORTED_MODULE_6__Routes__["routes"] }))), document.getElementById('react-app'));
 }
 renderApp();
 // Allow Hot Module Replacement
 if (true) {
-    module.hot.accept(176, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_7__Routes__ = __webpack_require__(176); (() => {
+    module.hot.accept(176, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_6__Routes__ = __webpack_require__(176); (() => {
         renderApp();
     })(__WEBPACK_OUTDATED_DEPENDENCIES__); });
 }
@@ -12020,22 +12093,39 @@ module.exports = (__webpack_require__(3))(100);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, module) {const deviceReducer = (state = { deviceList: [] }, action) => {
     switch (action.type) {
-        case "TOGGLE_DEVICE":
-            return toggleDevice(action.device, state);
+        case "TOGGLE_DEVICE_STARTED":
+            return setDeviceIsUpdating(action.device, state);
         case "LOAD_DEVICES_SUCCESS":
-            return Object.assign({}, state, { deviceList: action.devices });
+            return updateDevices(action.devices, state);
+        case "DEVICES_UPDATED":
+            return updateDevices(action.devices, state);
         default:
             return state;
     }
 };
-function toggleDevice(device, state) {
-    debugger;
+function updateDevices(updatedDevices, state) {
+    console.log("Updated devices fetched - " + updatedDevices.length);
+    if (!updatedDevices.length) {
+        return state;
+    }
+    let newDeviceList = [...state.deviceList];
+    updatedDevices.forEach(device => {
+        let index = state.deviceList.findIndex(val => val.id === device.id);
+        if (index >= 0) {
+            newDeviceList[index] = Object.assign({}, device, { isUpdating: false });
+        } else {
+            newDeviceList.push(device);
+        }
+    });
+    return Object.assign({}, state, { deviceList: newDeviceList });
+}
+function setDeviceIsUpdating(device, state) {
     const deviceIndex = state.deviceList.findIndex(i => i.id === device.id);
     // Device can't be found, return untouched state
     if (deviceIndex < 0) {
         return state;
     }
-    const devices = [...state.deviceList.slice(0, deviceIndex), Object.assign({}, device, { toggled: !device.toggled }), ...state.deviceList.slice(deviceIndex + 1)];
+    const devices = [...state.deviceList.slice(0, deviceIndex), Object.assign({}, device, { isUpdating: true }), ...state.deviceList.slice(deviceIndex + 1)];
     return Object.assign({}, state, { deviceList: devices });
 }
 /* harmony default export */ __webpack_exports__["a"] = (deviceReducer);
@@ -12054,92 +12144,6 @@ module.exports = (__webpack_require__(3))(267);
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__delay__ = __webpack_require__(203);
-
-// This file mocks a web API by working with the hard-coded data below.
-// It uses setTimeout to simulate the delay of an AJAX call.
-// All calls return promises.
-const devices = [{
-    id: "1",
-    title: "Vardagsrum",
-    toggled: true,
-    deviceType: "TOGGLE_DEVICE"
-}, {
-    id: "2",
-    title: "Gästrum",
-    toggled: false,
-    deviceType: "TOGGLE_DEVICE"
-}, {
-    id: "3",
-    title: "Hall Nedervåning",
-    value: "21",
-    deviceType: "VALUE_DEVICE"
-}, {
-    id: "4",
-    title: "Hall övervåning",
-    value: "23",
-    deviceType: "VALUE_DEVICE"
-}];
-function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(find, 'g'), replace);
-}
-//This would be performed on the server in a real app. Just stubbing in.
-const generateId = device => {
-    return replaceAll(device.title, ' ', '-');
-};
-class deviceApi {
-    static getAlldevices() {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve(Object.assign([], devices));
-            }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
-        });
-    }
-    static savedevice(device) {
-        device = Object.assign({}, device); // to avoid manipulating object passed in.
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Simulate server-side validation
-                const mindeviceTitleLength = 1;
-                if (device.title.length < mindeviceTitleLength) {
-                    reject(`Title must be at least ${mindeviceTitleLength} characters.`);
-                }
-                if (device.id) {
-                    const existingdeviceIndex = devices.findIndex(a => a.id == device.id);
-                    devices.splice(existingdeviceIndex, 1, device);
-                } else {
-                    //Just simulating creation here.
-                    //The server would generate ids and watchHref's for new devices in a real app.
-                    //Cloning so copy returned is passed by value rather than by reference.
-                    device.id = generateId(device);
-                    device.watchHref = `http://www.pluralsight.com/devices/${device.id}`;
-                    devices.push(device);
-                }
-                resolve(device);
-            }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
-        });
-    }
-}
-/* harmony default export */ __webpack_exports__["a"] = (deviceApi);
-
- ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\mockDeviceApi.ts"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\mockDeviceApi.ts"); } } })();
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
-
-/***/ }),
-/* 203 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process, module) {/* harmony default export */ __webpack_exports__["a"] = (1000);
-
- ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\delay.ts"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\delay.ts"); } } })();
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
-
-/***/ }),
-/* 204 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 
@@ -12155,16 +12159,16 @@ class App extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
 
 /***/ }),
-/* 205 */
+/* 203 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Device__ = __webpack_require__(206);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Device__ = __webpack_require__(204);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(179);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_router_dom__ = __webpack_require__(175);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__ = __webpack_require__(180);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__ = __webpack_require__(205);
 
 
 
@@ -12187,6 +12191,12 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
             return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Device__["a" /* Device */], { key: device.id, device: device, onIconClick: this.onIconClick, onConfigClick: this.onConfigClick });
         }, this));
     }
+    componentWillMount() {
+        this.props.loadDevices();
+    }
+    componentWillUnmount() {
+        this.props.stopDeviceUpdates();
+    }
 }
 function mapStateToProps(state, ownProps) {
     return {
@@ -12195,7 +12205,9 @@ function mapStateToProps(state, ownProps) {
 }
 function mapDispatchToProps(dispatch) {
     return {
-        toggleDevice: device => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* toggleDevice */])(device))
+        toggleDevice: device => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* toggleDevice */])(device)),
+        loadDevices: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["a" /* loadDevicesAndListenForUpdates */])()),
+        stopDeviceUpdates: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* stopListeningForDeviceUpdates */])())
     };
 }
 /* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(mapStateToProps, mapDispatchToProps)(Object(__WEBPACK_IMPORTED_MODULE_3_react_router_dom__["withRouter"])(HomePage)));
@@ -12204,7 +12216,7 @@ function mapDispatchToProps(dispatch) {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
 
 /***/ }),
-/* 206 */
+/* 204 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12222,6 +12234,64 @@ const Device = props => {
 
 
  ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Home\\Device.tsx"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Home\\Device.tsx"); } } })();
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
+
+/***/ }),
+/* 205 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process, module) {/* unused harmony export toggleDeviceStarted */
+/* unused harmony export devicesUpdated */
+/* unused harmony export loadDevicesSuccess */
+/* harmony export (immutable) */ __webpack_exports__["c"] = toggleDevice;
+/* harmony export (immutable) */ __webpack_exports__["a"] = loadDevicesAndListenForUpdates;
+/* harmony export (immutable) */ __webpack_exports__["b"] = stopListeningForDeviceUpdates;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__ = __webpack_require__(180);
+
+function toggleDeviceStarted(device) {
+    return { type: "TOGGLE_DEVICE_STARTED", device: device };
+}
+function devicesUpdated(devices) {
+    return { type: "DEVICES_UPDATED", devices: devices };
+}
+function loadDevicesSuccess(devices) {
+    return { type: "LOAD_DEVICES_SUCCESS", devices: devices };
+}
+function toggleDevice(device) {
+    return function (dispatch) {
+        return Promise.all([dispatch(toggleDeviceStarted(device)), __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].toggleDevice(device).catch(error => {
+            throw error;
+        })]);
+    };
+}
+function loadDevicesAndListenForUpdates() {
+    return function (dispatch) {
+        return __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].getAlldevices().then(devices => {
+            dispatch(loadDevicesSuccess(devices));
+            __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].listenForDeviceUpdates(event => dispatch(devicesUpdated(event.data)));
+        }).catch(error => {
+            throw error;
+        });
+    };
+}
+function stopListeningForDeviceUpdates() {
+    return function (dispatch) {
+        __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].stopListeningForDeviceUpdates();
+    };
+}
+
+ ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Actions\\DeviceActions.ts"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Actions\\DeviceActions.ts"); } } })();
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
+
+/***/ }),
+/* 206 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process, module) {/* harmony default export */ __webpack_exports__["a"] = (100);
+
+ ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\delay.ts"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Api\\delay.ts"); } } })();
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(11)(module)))
 
 /***/ }),

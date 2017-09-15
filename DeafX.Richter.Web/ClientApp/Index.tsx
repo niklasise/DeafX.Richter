@@ -3,17 +3,16 @@ import * as ReactDOM from "react-dom"
 import { AppContainer } from 'react-hot-loader';
 import configureStore from "./Store/ConfigureStore";
 import { Provider } from "react-redux";
-import { loadDevices } from "./Actions/DeviceActions";
 import { BrowserRouter } from 'react-router-dom'
 import { routes } from "./Routes";
+import mockApi from "./Api/mockDeviceApi";
 
 const store = configureStore({
     devices: {
         deviceList: []
     }
 })
-store.dispatch(loadDevices());
-
+mockApi.startRandomizingValueDevices();
 
 function renderApp() {
     ReactDOM.render(
