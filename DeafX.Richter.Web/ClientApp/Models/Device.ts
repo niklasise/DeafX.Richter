@@ -11,6 +11,9 @@
 export class ToggleDevice extends Device {
 
     toggled: boolean;
+    setTimerActive: boolean;
+    timerValue: number;
+
 }
 
 export class ValueDevice extends Device {

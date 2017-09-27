@@ -54,6 +54,15 @@ body {
       position: relative;
       border-radius: 5px;
       opacity: 0.85; }
+      .tile > div > div .loadingPanel {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #000000;
+        opacity: 0.2;
+        border-radius: 5px; }
   .tile.large {
     width: 100%; }
     .tile.large:after {
@@ -68,16 +77,16 @@ body {
   .tileCenter .smallIcon {
     font-size: 40px; }
 
-.tileCenter > i, div {
+.tileCenter > i, .tileCenter > span {
   font-size: 120px; }
   @media screen and (max-width: 700px) {
-    .tileCenter > i, div {
+    .tileCenter > i, .tileCenter > span {
       font-size: 90px; } }
   @media screen and (max-width: 500px) {
-    .tileCenter > i, div {
+    .tileCenter > i, .tileCenter > span {
       font-size: 60px; } }
   @media screen and (max-width: 400px) {
-    .tileCenter > i, div {
+    .tileCenter > i, .tileCenter > span {
       font-size: 40px; } }
 
 .tileLabel {
@@ -106,7 +115,7 @@ body {
   position: absolute;
   right: 20px;
   font-size: 30px;
-  line-height: 0; }
+  line-height: 30px; }
   @media screen and (max-width: 700px) {
     .tileRight, .tileTopRight, .tileBottomRight {
       font-size: 25px;
@@ -138,7 +147,7 @@ body {
   position: absolute;
   left: 20px;
   font-size: 30px;
-  line-height: 0; }
+  line-height: 30px; }
   @media screen and (max-width: 700px) {
     .tileLeft, .tileTopLeft, .tileBottomLeft {
       font-size: 25px;
@@ -151,12 +160,21 @@ body {
 .tileTopLeft {
   top: 20px;
   opacity: 0.5; }
+  .tileTopLeft img {
+    width: 30px;
+    height: 30px; }
   @media screen and (max-width: 700px) {
     .tileTopLeft {
-      top: 15px; } }
+      top: 15px; }
+      .tileTopLeft img {
+        width: 25px;
+        height: 25px; } }
   @media screen and (max-width: 500px) {
     .tileTopLeft {
-      top: 10px; } }
+      top: 10px; }
+      .tileTopLeft img {
+        width: 15px;
+        height: 15px; } }
 
 .tileBottomLeft {
   bottom: 20px; }
@@ -166,5 +184,18 @@ body {
   @media screen and (max-width: 500px) {
     .tileBottomLeft {
       bottom: 10px; } }
+
+.timerInput {
+  position: relative; }
+  .timerInput i:nth-of-type(1) {
+    position: absolute;
+    top: -5px;
+    right: -20px;
+    font-size: 25px; }
+  .timerInput i:nth-of-type(2) {
+    position: absolute;
+    bottom: -5px;
+    right: -20px;
+    font-size: 25px; }
 
 /*# sourceMappingURL=app.css.map*/

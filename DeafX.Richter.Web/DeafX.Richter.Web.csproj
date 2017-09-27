@@ -27,6 +27,7 @@
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
     <TypeScriptCompile Include="ClientApp\Api\delay.ts" />
     <TypeScriptCompile Include="ClientApp\Api\mockDeviceApi.ts" />
+    <TypeScriptCompile Include="ClientApp\Components\Home\DeviceClock.tsx" />
     <TypeScriptCompile Include="ClientApp\Index.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Configuration\ConfigurationPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Home\Device.tsx" />
