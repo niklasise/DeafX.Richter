@@ -1,16 +1,17 @@
 ﻿import * as React from "react";
 import { Link, } from "react-router-dom";
 import { Device as DeviceModel, ToggleDevice, ValueDevice } from "../../Models/Device";
-import DeviceTimer from "./DeviceClock"
+import DeviceTimer from "./DeviceTimer";
 
 export interface DeviceProps {
     device: DeviceModel;
     onIconClick(source: DeviceModel): void;
     onConfigClick(source: DeviceModel): void;
+    onTimerClick(source: DeviceModel): void;
 }
 
 export interface DeviceState {
-    setTimerActive: boolean;
+    //setTimerActive: boolean;
 }
 
 //export const Device: React.SFC<DeviceProps> = (props) => {
@@ -52,16 +53,16 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
 
     constructor() {
         super();
-        this.onTimerClick = this.onTimerClick.bind(this);
+        //this.onTimerClick = this.onTimerClick.bind(this);
 
-        this.state = {
-            setTimerActive: false
-        };
+        //this.state = {
+        //    setTimerActive: false
+        //};
     }
 
-    onTimerClick(): void {
-        this.setState({ ...this.state, setTimerActive: true })
-    }
+    //onTimerClick(): void {
+    //    this.setState({ ...this.state, setTimerActive: true })
+    //}
     
     public render() {
         return <div className="tile">
@@ -77,7 +78,7 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
                             </div>
                             <div className="tileCenter">
 
-                        {this.props.device.deviceType === "TOGGLE_DEVICE" && <i className={"fa fa-lightbulb-o" + ((this.props.device as ToggleDevice).toggled ? "" : " off")} onClick={(e) => { this.props.onIconClick(this.props.device) }}/>}
+                                {this.props.device.deviceType === "TOGGLE_DEVICE" && <i className={"fa fa-lightbulb-o" + ((this.props.device as ToggleDevice).toggled ? "" : " off")} onClick={(e) => { this.props.onIconClick(this.props.device) }}/>}
                                 {this.props.device.deviceType === "VALUE_DEVICE" &&
                                     <span style={{ position: "relative" }}>
                                     {(this.props.device as ValueDevice).value}
@@ -85,7 +86,7 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
                                     </span>}
                             </div>
                             <div className="tileBottomLeft">
-                                {this.props.device.deviceType === "TOGGLE_DEVICE" && <DeviceTimer setTimerActive={this.state.setTimerActive} onTimerClick={this.onTimerClick} />}
+                                {this.props.device.deviceType === "TOGGLE_DEVICE" && <DeviceTimer device={this.props.device} onTimerClick={this.props.onTimerClick} timerValue={(this.props.device as ToggleDevice).timerValue} />}
                             </div>
                             <div className="tileBottomRight">
                                 {this.props.device.deviceType === "TOGGLE_DEVICE" && <i className="fa fa-refresh" />}

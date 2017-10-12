@@ -1,3 +1,86 @@
+.m15 {
+  margin: 15px; }
+
+.mb15 {
+  margin-bottom: 15px; }
+
+.mr15 {
+  margin-right: 15px; }
+
+.ml15 {
+  margin-left: 15px; }
+
+.fr {
+  float: right; }
+
+.fl {
+  float: left; }
+
+.clr:after {
+  content: ".";
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both; }
+
+.clickable {
+  cursor: pointer; }
+
+.modalOverlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background: rgba(255, 255, 255, 0.8);
+  text-align: center; }
+  .modalOverlay:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -0.25em;
+    /* Adjusts for spacing */ }
+  .modalOverlay .modal {
+    display: inline-block;
+    vertical-align: middle;
+    background-color: white;
+    border-radius: 4px;
+    width: 350px;
+    box-shadow: 0 0 0 1px rgba(14, 41, 57, 0.12), 0 2px 5px rgba(14, 41, 57, 0.44), inset 0 -1px 2px rgba(14, 41, 57, 0.15); }
+    .modalOverlay .modal .modalHeader {
+      position: relative;
+      text-align: center;
+      color: #FFFFFF;
+      background: #6BC2E8;
+      border-radius: 4px 4px 0 0; }
+      .modalOverlay .modal .modalHeader span {
+        font-size: 13px;
+        line-height: 35px; }
+      .modalOverlay .modal .modalHeader i {
+        position: absolute;
+        font-size: 15px;
+        right: 9px;
+        top: 9px; }
+
+.timerContainer {
+  margin: 50px 0; }
+  .timerContainer .timerSelector {
+    position: relative;
+    display: inline;
+    margin: 0 auto; }
+    .timerContainer .timerSelector i:nth-of-type(1) {
+      position: absolute;
+      top: -20px;
+      left: 1px; }
+    .timerContainer .timerSelector i:nth-of-type(2) {
+      position: absolute;
+      bottom: -20px;
+      left: 1px; }
+  .timerContainer > span {
+    margin-left: 20px;
+    margin-right: 20px; }
+
 * {
   box-sizing: border-box;
   font-family: 'Open Sans', sans-serif; }
@@ -185,17 +268,20 @@ body {
     .tileBottomLeft {
       bottom: 10px; } }
 
-.timerInput {
-  position: relative; }
-  .timerInput i:nth-of-type(1) {
-    position: absolute;
-    top: -5px;
-    right: -20px;
-    font-size: 25px; }
-  .timerInput i:nth-of-type(2) {
-    position: absolute;
-    bottom: -5px;
-    right: -20px;
-    font-size: 25px; }
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #6BC2E8;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px; }
+  .btn.red {
+    background: #d43f3a; }
 
 /*# sourceMappingURL=app.css.map*/

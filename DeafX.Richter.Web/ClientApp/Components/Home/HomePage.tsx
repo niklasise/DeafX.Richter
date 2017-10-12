@@ -6,6 +6,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "../../Store/ConfigureStore";
 import { DeviceState } from "../../Reducers/DeviceReducer";
 import { toggleDevice, ToggleDeviceAction, loadDevicesAndListenForUpdates, stopListeningForDeviceUpdates } from "../../Actions/DeviceActions"
+import TimerModal from "../Shared/TimerModalComponent";
 
 interface DeviceContainerStateProps
 {
@@ -16,11 +17,14 @@ interface DeviceContainerBlah {
     history
 }
 
-
 interface DeviceContainerActions {
     toggleDevice,
     loadDevices,
     stopDeviceUpdates
+}
+
+interface DeviceContainerState {
+    timerModalObject: DeviceModel
 }
 
 type DeviceContainerProps =
@@ -28,13 +32,21 @@ type DeviceContainerProps =
     DeviceContainerActions &
     RouteComponentProps<any>;
 
-class HomePage extends React.Component<DeviceContainerProps, any> {
+class HomePage extends React.Component<DeviceContainerProps, DeviceContainerState> {
 
     constructor()
     {
         super();
         this.onIconClick = this.onIconClick.bind(this);
         this.onConfigClick = this.onConfigClick.bind(this);
+        this.onTimerClick = this.onTimerClick.bind(this);
+        this.onTimerOk = this.onTimerOk.bind(this);
+        this.onTimerReset = this.onTimerReset.bind(this);
+        this.onTimerCancel = this.onTimerCancel.bind(this);
+
+        this.state = {
+            timerModalObject: null
+        };
     }
 
     onIconClick(device: DeviceModel): void {
@@ -44,13 +56,31 @@ class HomePage extends React.Component<DeviceContainerProps, any> {
     onConfigClick(device: DeviceModel): void {
         this.props.history.push("/config/" + device.id);
     }
-    
+
+    onTimerClick(device: DeviceModel): void {
+        this.setState({ ...this.state, timerModalObject: device })
+    }
+
+    onTimerOk(selectedTime: number): void {
+        this.setState({ ...this.state, timerModalObject: null })
+    }
+
+    onTimerCancel(): void {
+        this.setState({ ...this.state, timerModalObject: null })
+    }
+
+    onTimerReset(): void {
+        this.setState({ ...this.state, timerModalObject: null })
+    }
+
     public render() {
         return <div className="tileContainer">
 
             {this.props.devices.deviceList.map(function (device, index) {
-                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} />
+                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} onTimerClick={this.onTimerClick} />
             }, this)}
+
+            {!!this.state.timerModalObject && <TimerModal initialTime={0} onOkClick={this.onTimerOk} onCancelClick={this.onTimerCancel} onResetClick={this.onTimerReset} />}
 
         </div>;
     }

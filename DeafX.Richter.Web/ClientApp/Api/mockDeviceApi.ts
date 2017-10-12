@@ -10,6 +10,7 @@ let devices : DeviceModel[] = [
         title: "Vardagsrum",
         toggled: true,
         deviceType: "TOGGLE_DEVICE",
+        timerValue: 3672
     } as ToggleDevice,
     {
         id: "2",

@@ -1,6 +1,7 @@
-﻿$break-large: 700px;
-$break-medium: 500px;
-$break-small: 400px;
+﻿
+@import 'constants.scss';
+@import 'atomic.scss';
+@import 'modal.scss';
 
 * {
     box-sizing: border-box;
@@ -251,21 +252,25 @@ body {
     }
 }
 
-.timerInput {
-    position: relative;
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    background: $color-light;
+    color: $color-text;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
 
-    i:nth-of-type(1) {
-        position: absolute;
-        top: -5px;
-        right: -20px;
-        font-size: 25px;
-    }
-
-    i:nth-of-type(2) {
-        position: absolute;
-        bottom: -5px;
-        right: -20px;
-        font-size: 25px;
+    &.red {
+        background: $color-red;
     }
 }
+
+
+
 
