@@ -242,6 +242,7 @@ body {
 .tileBottomLeft {
     @extend .tileLeft;
     bottom: 20px;
+    line-height: 15px;
 
     @media screen and (max-width: $break-large) {
         bottom: 15px;
@@ -250,6 +251,14 @@ body {
     @media screen and (max-width: $break-medium) {
         bottom: 10px;
     }
+
+    span {
+        font-size: 15px;
+        font-weight: bold;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+
 }
 
 .btn {

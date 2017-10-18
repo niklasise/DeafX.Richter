@@ -74,6 +74,23 @@ class deviceApi {
         });
     }
 
+    static setDeviceTimer(device: ToggleDevice, time: number) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const deviceIndex = devices.findIndex(i => i.id === device.id);
+
+                let toggleDevice = (devices[deviceIndex] as ToggleDevice);
+
+                toggleDevice.timerValue = time;
+                toggleDevice.lastUpdated = new Date().getTime();
+
+                deviceApi.alertDeviceListeners();
+
+                resolve();
+            }, delay);
+        });
+    }
+
     static getUpdatedDevices(since: number): Promise<UpdatedDevices> {
         console.log("Updating devices");
         return new Promise<UpdatedDevices>((resolve, reject) => {

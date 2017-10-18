@@ -9,6 +9,7 @@ export interface DeviceState {
 const deviceReducer: Reducer<DeviceState> = (state = { deviceList: [] }, action: Action) =>
 {
     switch (action.type) {
+        case "SET_TIMER_DEVICE_STARTED":
         case "TOGGLE_DEVICE_STARTED":
             return setDeviceIsUpdating((action as ToggleDeviceAction).device as ToggleDevice, state);
         case "LOAD_DEVICES_SUCCESS":

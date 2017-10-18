@@ -60,7 +60,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "0283577dbb4bcd123798"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "ffb8d65efb121bbe6e90"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -8139,6 +8139,18 @@ class deviceApi {
             }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
         });
     }
+    static setDeviceTimer(device, time) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const deviceIndex = devices.findIndex(i => i.id === device.id);
+                let toggleDevice = devices[deviceIndex];
+                toggleDevice.timerValue = time;
+                toggleDevice.lastUpdated = new Date().getTime();
+                deviceApi.alertDeviceListeners();
+                resolve();
+            }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
+        });
+    }
     static getUpdatedDevices(since) {
         console.log("Updating devices");
         return new Promise((resolve, reject) => {
@@ -12094,6 +12106,7 @@ module.exports = (__webpack_require__(3))(100);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, module) {const deviceReducer = (state = { deviceList: [] }, action) => {
     switch (action.type) {
+        case "SET_TIMER_DEVICE_STARTED":
         case "TOGGLE_DEVICE_STARTED":
             return setDeviceIsUpdating(action.device, state);
         case "LOAD_DEVICES_SUCCESS":
@@ -12170,7 +12183,7 @@ class App extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(179);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_router_dom__ = __webpack_require__(175);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__ = __webpack_require__(206);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Shared_TimerModalComponent__ = __webpack_require__(212);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Shared_TimerModalComponent__ = __webpack_require__(208);
 
 
 
@@ -12187,7 +12200,8 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         this.onTimerReset = this.onTimerReset.bind(this);
         this.onTimerCancel = this.onTimerCancel.bind(this);
         this.state = {
-            timerModalObject: null
+            timerModalObject: null,
+            timerModalTimeLeft: 0
         };
     }
     onIconClick(device) {
@@ -12196,22 +12210,24 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     onConfigClick(device) {
         this.props.history.push("/config/" + device.id);
     }
-    onTimerClick(device) {
-        this.setState(Object.assign({}, this.state, { timerModalObject: device }));
+    onTimerClick(device, timeLeft) {
+        this.setState(Object.assign({}, this.state, { timerModalObject: device, timerModalTimeLeft: timeLeft }));
     }
     onTimerOk(selectedTime) {
-        this.setState(Object.assign({}, this.state, { timerModalObject: null }));
+        this.props.setTimerDevice(this.state.timerModalObject, selectedTime);
+        this.setState(Object.assign({}, this.state, { timerModalObject: null, timerModalTimeLeft: 0 }));
     }
     onTimerCancel() {
-        this.setState(Object.assign({}, this.state, { timerModalObject: null }));
+        this.setState(Object.assign({}, this.state, { timerModalObject: null, timerModalTimeLeft: 0 }));
     }
     onTimerReset() {
-        this.setState(Object.assign({}, this.state, { timerModalObject: null }));
+        this.props.setTimerDevice(this.state.timerModalObject, 0);
+        this.setState(Object.assign({}, this.state, { timerModalObject: null, timerModalTimeLeft: 0 }));
     }
     render() {
         return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileContainer" }, this.props.devices.deviceList.map(function (device, index) {
             return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Device__["a" /* Device */], { key: device.id, device: device, onIconClick: this.onIconClick, onConfigClick: this.onConfigClick, onTimerClick: this.onTimerClick });
-        }, this), !!this.state.timerModalObject && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__Shared_TimerModalComponent__["a" /* default */], { initialTime: 0, onOkClick: this.onTimerOk, onCancelClick: this.onTimerCancel, onResetClick: this.onTimerReset }));
+        }, this), !!this.state.timerModalObject && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__Shared_TimerModalComponent__["a" /* default */], { initialTime: this.state.timerModalTimeLeft, onOkClick: this.onTimerOk, onCancelClick: this.onTimerCancel, onResetClick: this.onTimerReset }));
     }
     componentWillMount() {
         this.props.loadDevices();
@@ -12227,9 +12243,10 @@ function mapStateToProps(state, ownProps) {
 }
 function mapDispatchToProps(dispatch) {
     return {
-        toggleDevice: device => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* toggleDevice */])(device)),
+        setTimerDevice: (device, time) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* setTimerDevice */])(device, time)),
+        toggleDevice: device => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["d" /* toggleDevice */])(device)),
         loadDevices: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["a" /* loadDevicesAndListenForUpdates */])()),
-        stopDeviceUpdates: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* stopListeningForDeviceUpdates */])())
+        stopDeviceUpdates: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* stopListeningForDeviceUpdates */])())
     };
 }
 /* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(mapStateToProps, mapDispatchToProps)(Object(__WEBPACK_IMPORTED_MODULE_3_react_router_dom__["withRouter"])(HomePage)));
@@ -12247,53 +12264,14 @@ function mapDispatchToProps(dispatch) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__DeviceTimer__ = __webpack_require__(205);
 
 
-//export const Device: React.SFC<DeviceProps> = (props) => {
-//    return <div className="tile" onClick={(e) => { props.onIconClick(props.device) }}>
-//        <div>
-//            <div>
-//                <div className="tileTopLeft">
-//                    {props.device.isUpdating && <img src="dist/img/loader.svg" />}
-//                    {!props.device.isUpdating && props.device.deviceType === "VALUE_DEVICE" && <i className="fa fa-thermometer-empty" />}
-//                    {!props.device.isUpdating && props.device.deviceType === "TOGGLE_DEVICE" && <i className="fa fa-plug" />}
-//                </div>
-//                <div className="tileTopRight" onClick={(e) => { e.stopPropagation(); props.onConfigClick(props.device) }}>
-//                    <div className="fa fa-gear"></div>
-//                </div>
-//                <div className="tileCenter">
-//                    {props.device.deviceType === "TOGGLE_DEVICE" && <i className={"fa fa-lightbulb-o" + ((props.device as ToggleDevice).toggled ? "" : " off")} />}
-//                    {props.device.deviceType === "VALUE_DEVICE" &&
-//                        <span style={{ position: "relative" }}>
-//                        {(props.device as ValueDevice).value}
-//                        <span style={{ position: "absolute", top: 13, right: -30, fontSize: 80 }}>&deg;</span>
-//                        </span>}
-//                </div>
-//                <div className="tileBottomLeft">
-//                    {props.device.deviceType === "TOGGLE_DEVICE" && <i className="fa fa-clock-o" />}
-//                </div>
-//                <div className="tileBottomRight">
-//                    {props.device.deviceType === "TOGGLE_DEVICE" && <i className="fa fa-refresh" />}
-//                </div>
-//                <div className="tileLabel">{props.device.title}</div>
-//                {props.device.isUpdating && <div className="loadingPanel"></div>}
-//            </div>
-//        </div>
-//    </div>;
-//}
 class Device extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     constructor() {
         super();
-        //this.onTimerClick = this.onTimerClick.bind(this);
-        //this.state = {
-        //    setTimerActive: false
-        //};
     }
-    //onTimerClick(): void {
-    //    this.setState({ ...this.state, setTimerActive: true })
-    //}
     render() {
-        return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tile" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileTopLeft" }, this.props.device.isUpdating && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("img", { src: "dist/img/loader.svg" }), !this.props.device.isUpdating && this.props.device.deviceType === "VALUE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-thermometer-empty" }), !this.props.device.isUpdating && this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-plug" })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileTopRight", onClick: e => {
+        return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tile" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileTopLeft" }, this.props.device.isUpdating && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("img", { src: "dist/img/loader.svg" }), !this.props.device.isUpdating && this.props.device.deviceType === "VALUE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-thermometer-empty" }), !this.props.device.isUpdating && this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-plug" })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileTopRight clickable", onClick: e => {
                 e.stopPropagation();this.props.onConfigClick(this.props.device);
-            } }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fa fa-gear" })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileCenter" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-lightbulb-o" + (this.props.device.toggled ? "" : " off"), onClick: e => {
+            } }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fa fa-gear" })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileCenter" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-lightbulb-o clickable" + (this.props.device.toggled ? "" : " off"), onClick: e => {
                 this.props.onIconClick(this.props.device);
             } }), this.props.device.deviceType === "VALUE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", { style: { position: "relative" } }, this.props.device.value, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", { style: { position: "absolute", top: 13, right: -30, fontSize: 80 } }, "\u00B0"))), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileBottomLeft" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__DeviceTimer__["a" /* default */], { device: this.props.device, onTimerClick: this.props.onTimerClick, timerValue: this.props.device.timerValue })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileBottomRight" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-refresh" })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileLabel" }, this.props.device.title), this.props.device.isUpdating && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "loadingPanel" }))));
     }
@@ -12312,26 +12290,87 @@ class Device extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 
-const DeviceTimer = props => {
-    function formatTimerValue(s) {
-        return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s;
-    }
-    return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null, !!props.timerValue && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null, formatTimerValue(props.timerValue)), !props.timerValue && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-clock-o", onClick: e => {
-            e.stopPropagation();props.onTimerClick(props.device);
-        } }));
-};
-/* harmony default export */ __webpack_exports__["a"] = (DeviceTimer);
-//{props.setTimerActive && !props.timerValue &&
-//    <div className="timerInput">
-//        01:33
-//        <div className="carets">
-//            <i className="fa fa-caret-up" />
-//            <i className="fa fa-caret-down" />
-//        </div>
-//        <i className="fa fa-check" />
-//        <i className="fa fa-times" />
-//    </div>
+//const DeviceTimer: React.SFC<DeviceClockProps> = (props) => {
+//    function formatTimerValue(seconds: number): string
+//    {
+//        let h: any = Math.floor(seconds / 3600);
+//        let m: any = Math.floor(seconds % 3600 / 60);
+//        let s: any = Math.floor(seconds % 3600 % 60);
+//        h = h >= 10 ? h : '0' + h;
+//        m = m >= 10 ? m : '0' + m;
+//        s = s >= 10 ? s : '0' + s;
+//        return h + ':' + m + ':' + s;
+//    }
+//    return <div className="clickable" onClick={(e) => { e.stopPropagation(); props.onTimerClick(props.device); }}>
+//        {!!props.timerValue &&
+//            <div>
+//                <i className="fa fa-clock-o" onClick={(e) => { e.stopPropagation(); props.onTimerClick(props.device); }} />
+//                <span>{formatTimerValue(props.timerValue)}</span>
+//            </div>
+//        }
+//        {!props.timerValue && <i className="fa fa-clock-o" onClick={(e) => { e.stopPropagation(); props.onTimerClick(props.device); }} />}
+//    </div>;
 //}
+//export default DeviceTimer;
+class DeviceTimer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
+    constructor(props) {
+        super();
+        this.tick = this.tick.bind(this);
+        this.state = {
+            timeLeft: props.timerValue
+        };
+    }
+    componentDidMount() {
+        this.timeMounted = this.getTime();
+        this.timeoutId = setTimeout(this.tick, 1000);
+    }
+    componentWillUnmount() {
+        clearTimeout(this.timeoutId);
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.timerValue === this.props.timerValue) {
+            return;
+        }
+        this.timeMounted = this.getTime();
+        this.setState(Object.assign({}, this.state, { timeLeft: this.getTimeLeft(nextProps.timerValue) }));
+        if (this.timeoutId === 0) {
+            this.timeoutId = setTimeout(this.tick, 1000);
+        }
+    }
+    tick() {
+        this.setState(Object.assign({}, this.state, { timeLeft: this.getTimeLeft(this.props.timerValue) }));
+        if (this.state.timeLeft > 0) {
+            this.timeoutId = setTimeout(this.tick, 1000);
+        } else {
+            this.timeoutId = 0;
+        }
+    }
+    getTimeLeft(timerValue) {
+        let timeLeft = this.timeMounted + timerValue - this.getTime();
+        return timeLeft > 0 ? timeLeft : 0;
+    }
+    getTime() {
+        return Math.floor(Date.now() / 1000);
+    }
+    formatTimerValue(seconds) {
+        let h = Math.floor(seconds / 3600);
+        let m = Math.floor(seconds % 3600 / 60);
+        let s = Math.floor(seconds % 3600 % 60);
+        h = h >= 10 ? h : '0' + h;
+        m = m >= 10 ? m : '0' + m;
+        s = s >= 10 ? s : '0' + s;
+        return h + ':' + m + ':' + s;
+    }
+    render() {
+        return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "clickable", onClick: e => {
+                e.stopPropagation();this.props.onTimerClick(this.props.device, this.state.timeLeft);
+            } }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-clock-o", onClick: e => {
+                e.stopPropagation();this.props.onTimerClick(this.props.device, this.state.timeLeft);
+            } }), !!this.state.timeLeft && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, this.formatTimerValue(this.state.timeLeft)));
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DeviceTimer;
+
 
  ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Home\\DeviceTimer.tsx"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Home\\DeviceTimer.tsx"); } } })();
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(7)(module)))
@@ -12342,21 +12381,33 @@ const DeviceTimer = props => {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, module) {/* unused harmony export toggleDeviceStarted */
+/* unused harmony export setTimerDeviceStarted */
 /* unused harmony export devicesUpdated */
 /* unused harmony export loadDevicesSuccess */
-/* harmony export (immutable) */ __webpack_exports__["c"] = toggleDevice;
+/* harmony export (immutable) */ __webpack_exports__["b"] = setTimerDevice;
+/* harmony export (immutable) */ __webpack_exports__["d"] = toggleDevice;
 /* harmony export (immutable) */ __webpack_exports__["a"] = loadDevicesAndListenForUpdates;
-/* harmony export (immutable) */ __webpack_exports__["b"] = stopListeningForDeviceUpdates;
+/* harmony export (immutable) */ __webpack_exports__["c"] = stopListeningForDeviceUpdates;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__ = __webpack_require__(180);
 
 function toggleDeviceStarted(device) {
     return { type: "TOGGLE_DEVICE_STARTED", device: device };
+}
+function setTimerDeviceStarted(device) {
+    return { type: "SET_TIMER_DEVICE_STARTED", device: device };
 }
 function devicesUpdated(devices) {
     return { type: "DEVICES_UPDATED", devices: devices };
 }
 function loadDevicesSuccess(devices) {
     return { type: "LOAD_DEVICES_SUCCESS", devices: devices };
+}
+function setTimerDevice(device, time) {
+    return function (dispatch) {
+        return Promise.all([dispatch(setTimerDeviceStarted(device)), __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].setDeviceTimer(device, time).catch(error => {
+            throw error;
+        })]);
+    };
 }
 function toggleDevice(device) {
     return function (dispatch) {
@@ -12395,7 +12446,80 @@ function stopListeningForDeviceUpdates() {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(7)(module)))
 
 /***/ }),
-/* 208 */,
+/* 208 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+
+class TimerModal extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
+    constructor(props) {
+        super();
+        this.state = {
+            selectedTime: !props.initialTime ? 0 : props.initialTime
+        };
+        this.startClick = this.startClick.bind(this);
+        this.stopClick = this.stopClick.bind(this);
+    }
+    startClick(unit, decrement) {
+        this.editSelectedTime(unit, decrement);
+        this.timeoutId = setTimeout(this.clickTick.bind(this), 500, unit, decrement);
+    }
+    stopClick() {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = 0;
+    }
+    clickTick(unit, decrement) {
+        this.editSelectedTime(unit, decrement);
+        this.timeoutId = setTimeout(this.clickTick.bind(this), 100, unit, decrement);
+    }
+    editSelectedTime(unit, decrement) {
+        let modifier;
+        if (unit === 'h') {
+            modifier = 3600;
+        } else if (unit === 'm') {
+            modifier = 60;
+        } else {
+            modifier = 1;
+        }
+        if (decrement) {
+            modifier *= -1;
+        }
+        let newTime = this.state.selectedTime + modifier;
+        this.setState(Object.assign({}, this.state, { selectedTime: newTime > 0 ? newTime : 0 }));
+    }
+    render() {
+        let h = Math.floor(this.state.selectedTime / 3600);
+        let m = Math.floor(this.state.selectedTime % 3600 / 60);
+        let s = Math.floor(this.state.selectedTime % 3600 % 60);
+        h = h >= 10 ? h : '0' + h;
+        m = m >= 10 ? m : '0' + m;
+        s = s >= 10 ? s : '0' + s;
+        return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modalOverlay" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modal" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modalHeader" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, "V\u00E4lj tid"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-times clickable", onClick: this.props.onCancelClick })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modalBody" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerContainer" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerSelector" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-up clickable", onMouseDown: () => {
+                this.startClick('h', false);
+            }, onMouseUp: this.stopClick }), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, h), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-down clickable", onMouseDown: () => {
+                this.startClick('h', true);
+            }, onMouseUp: this.stopClick })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, ":"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerSelector" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-up clickable", onMouseDown: () => {
+                this.startClick('m', false);
+            }, onMouseUp: this.stopClick }), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, m), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-down clickable", onMouseDown: () => {
+                this.startClick('m', true);
+            }, onMouseUp: this.stopClick })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, ":"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerSelector" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-up clickable", onMouseDown: () => {
+                this.startClick('s', false);
+            }, onMouseUp: this.stopClick }), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, s), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-down clickable", onMouseDown: () => {
+                this.startClick('s', true);
+            }, onMouseUp: this.stopClick }))), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fl ml15 mb15" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("button", { className: "btn red", onClick: this.props.onResetClick }, "Nollst\u00E4ll")), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fr mr15 mb15" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("button", { className: "btn mr15", onClick: () => {
+                this.props.onOkClick(this.state.selectedTime);
+            } }, "Ok"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("button", { className: "btn", onClick: this.props.onCancelClick }, "Avbryt")))));
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = TimerModal;
+
+
+ ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Shared\\TimerModalComponent.tsx"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Shared\\TimerModalComponent.tsx"); } } })();
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(7)(module)))
+
+/***/ }),
 /* 209 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -12412,65 +12536,6 @@ class ConfigurationPage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"]
 
 
  ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Configuration\\ConfigurationPage.tsx"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Configuration\\ConfigurationPage.tsx"); } } })();
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(7)(module)))
-
-/***/ }),
-/* 210 */,
-/* 211 */,
-/* 212 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process, module) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-
-class TimerModal extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
-    constructor(props) {
-        super();
-        this.state = {
-            selectedTime: props.initialTime
-        };
-        this.incrementSeconds = this.incrementSeconds.bind(this);
-        this.decrementSeconds = this.decrementSeconds.bind(this);
-        this.incrementMinutes = this.incrementMinutes.bind(this);
-        this.decrementMinutes = this.decrementMinutes.bind(this);
-        this.incrementHours = this.incrementHours.bind(this);
-        this.decrementHours = this.decrementHours.bind(this);
-    }
-    incrementSeconds() {
-        this.setState(Object.assign({}, this.state, { selectedTime: this.state.selectedTime + 1 }));
-    }
-    decrementSeconds() {
-        this.setState(Object.assign({}, this.state, { selectedTime: this.state.selectedTime - 1 }));
-    }
-    incrementMinutes() {
-        this.setState(Object.assign({}, this.state, { selectedTime: this.state.selectedTime + 60 }));
-    }
-    decrementMinutes() {
-        this.setState(Object.assign({}, this.state, { selectedTime: this.state.selectedTime - 60 }));
-    }
-    incrementHours() {
-        this.setState(Object.assign({}, this.state, { selectedTime: this.state.selectedTime + 3600 }));
-    }
-    decrementHours() {
-        this.setState(Object.assign({}, this.state, { selectedTime: this.state.selectedTime - 3600 }));
-    }
-    render() {
-        let h = Math.floor(this.state.selectedTime / 3600);
-        let m = Math.floor(this.state.selectedTime % 3600 / 60);
-        let s = Math.floor(this.state.selectedTime % 3600 % 60);
-        h = h >= 10 ? h : '0' + h;
-        m = m >= 10 ? m : '0' + m;
-        s = s >= 10 ? s : '0' + s;
-        return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modalOverlay" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modal" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modalHeader" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, "V\u00E4lj tid"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-times clickable", onClick: this.props.onCancelClick })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "modalBody" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerContainer" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerSelector" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-up clickable", onClick: this.incrementHours }), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, h), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-down clickable", onClick: this.decrementHours })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, ":"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerSelector" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-up clickable", onClick: this.incrementMinutes }), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, m), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-down clickable", onClick: this.decrementMinutes })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, ":"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "timerSelector" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-up clickable", onClick: this.incrementSeconds }), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", null, s), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-chevron-down clickable", onClick: this.decrementSeconds }))), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fl ml15 mb15" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("button", { className: "btn red", onClick: this.props.onResetClick }, "Nollst\u00E4ll")), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fr mr15 mb15" }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("button", { className: "btn mr15", onClick: () => {
-                this.props.onOkClick(this.state.selectedTime);
-            } }, "Ok"), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("button", { className: "btn", onClick: this.props.onCancelClick }, "Avbryt")))));
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = TimerModal;
-
-
- ;(function register() { /* react-hot-loader/webpack */ if (process.env.NODE_ENV !== 'production') { if (typeof __REACT_HOT_LOADER__ === 'undefined') { return; } if (typeof module.exports === 'function') { __REACT_HOT_LOADER__.register(module.exports, 'module.exports', "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Shared\\TimerModalComponent.tsx"); return; } for (var key in module.exports) { if (!Object.prototype.hasOwnProperty.call(module.exports, key)) { continue; } var namedExport = void 0; try { namedExport = module.exports[key]; } catch (err) { continue; } __REACT_HOT_LOADER__.register(namedExport, key, "C:\\GIT\\DeafX.Richter\\DeafX.Richter.Web\\ClientApp\\Components\\Shared\\TimerModalComponent.tsx"); } } })();
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2), __webpack_require__(7)(module)))
 
 /***/ })

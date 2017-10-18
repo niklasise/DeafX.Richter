@@ -14,61 +14,65 @@ interface TimerModalProps {
 
 export default class TimerModal extends React.Component<TimerModalProps, TimerModalState> {
 
+    private timeoutId: number;
+
     constructor(props: TimerModalProps) {
         super();
 
         this.state = {
-            selectedTime: props.initialTime
+            selectedTime: !props.initialTime ? 0 : props.initialTime
         };
 
-        this.incrementSeconds = this.incrementSeconds.bind(this);
-        this.decrementSeconds = this.decrementSeconds.bind(this);
-        this.incrementMinutes = this.incrementMinutes.bind(this);
-        this.decrementMinutes = this.decrementMinutes.bind(this);
-        this.incrementHours = this.incrementHours.bind(this);
-        this.decrementHours = this.decrementHours.bind(this);
+        this.startClick = this.startClick.bind(this);
+        this.stopClick = this.stopClick.bind(this);
     }
 
-    private incrementSeconds() {
-        this.setState({
-            ...this.state,
-            selectedTime: this.state.selectedTime + 1
-        })
+    private startClick(unit: string, decrement: boolean) {
+
+        this.editSelectedTime(unit, decrement);
+
+        this.timeoutId = setTimeout(this.clickTick.bind(this), 500, unit, decrement);
     }
 
-    private decrementSeconds() {
-        this.setState({
-            ...this.state,
-            selectedTime: this.state.selectedTime - 1
-        })
+    private stopClick() {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = 0;
     }
 
-    private incrementMinutes() {
-        this.setState({
-            ...this.state,
-            selectedTime: this.state.selectedTime + 60
-        })
+    private clickTick(unit: string, decrement: boolean) {
+
+        this.editSelectedTime(unit, decrement);
+
+        this.timeoutId = setTimeout(this.clickTick.bind(this), 100, unit, decrement);
     }
 
-    private decrementMinutes() {
-        this.setState({
-            ...this.state,
-            selectedTime: this.state.selectedTime - 60
-        })
-    }
 
-    private incrementHours() {
-        this.setState({
-            ...this.state,
-            selectedTime: this.state.selectedTime + 3600
-        })
-    }
+    private editSelectedTime(unit: string, decrement: boolean) {
 
-    private decrementHours() {
+        let modifier: number;
+
+        if (unit === 'h')
+        {
+            modifier = 3600;
+        }
+        else if (unit === 'm')
+        {
+            modifier = 60;
+        }
+        else {
+            modifier = 1;
+        }
+
+        if (decrement) {
+            modifier *= -1;
+        }
+
+        let newTime = this.state.selectedTime + modifier;
+
         this.setState({
             ...this.state,
-            selectedTime: this.state.selectedTime - 3600
-        })
+            selectedTime: newTime > 0 ? newTime : 0
+        });
     }
 
     public render() {
@@ -92,25 +96,25 @@ export default class TimerModal extends React.Component<TimerModalProps, TimerMo
                     <div className="timerContainer">
 
                         <div className="timerSelector">
-                            <i className="fa fa-chevron-up clickable" onClick={this.incrementHours}/>
+                            <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('h', false); }} onMouseUp={this.stopClick} />
                             <span>{h}</span>
-                            <i className="fa fa-chevron-down clickable" onClick={this.decrementHours}/>
+                            <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('h', true); }} onMouseUp={this.stopClick}/>
                         </div>
 
                         <span>:</span>
 
                         <div className="timerSelector">
-                            <i className="fa fa-chevron-up clickable" onClick={this.incrementMinutes} />
+                            <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('m', false); }} onMouseUp={this.stopClick}/>
                             <span>{m}</span>
-                            <i className="fa fa-chevron-down clickable" onClick={this.decrementMinutes}/>
+                            <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('m', true); }} onMouseUp={this.stopClick}/>
                         </div>
 
                         <span>:</span>
 
                         <div className="timerSelector">
-                            <i className="fa fa-chevron-up clickable" onClick={this.incrementSeconds} />
+                            <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('s', false); }} onMouseUp={this.stopClick}/>
                             <span>{s}</span>
-                            <i className="fa fa-chevron-down clickable" onClick={this.decrementSeconds} />
+                            <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('s', true); }} onMouseUp={this.stopClick}/>
                         </div>
 
 

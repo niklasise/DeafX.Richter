@@ -18,12 +18,25 @@ export function toggleDeviceStarted(device: DeviceModel): ToggleDeviceAction {
     return { type: "TOGGLE_DEVICE_STARTED", device: device };
 }
 
+export function setTimerDeviceStarted(device: DeviceModel): ToggleDeviceAction {
+    return { type: "SET_TIMER_DEVICE_STARTED", device: device };
+}
+
 export function devicesUpdated(devices: DeviceModel[]): DevicesUpdatedAction {
     return { type: "DEVICES_UPDATED", devices: devices };
 }
 
 export function loadDevicesSuccess(devices: DeviceModel[]): LoadDevicesSuccessAction {
     return { type: "LOAD_DEVICES_SUCCESS", devices: devices };
+}
+
+export function setTimerDevice(device: ToggleDevice, time: number) {
+    return function (dispatch) {
+        return Promise.all([
+            dispatch(setTimerDeviceStarted(device)),
+            deviceApi.setDeviceTimer(device, time).catch(error => { throw error })
+        ]);
+    }
 }
 
 export function toggleDevice(device: ToggleDevice) {
