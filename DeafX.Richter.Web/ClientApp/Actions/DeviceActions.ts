@@ -43,11 +43,11 @@ export function setTimerDevice(device: ToggleDevice, time: number) {
     }
 }
 
-export function toggleDevice(device: ToggleDevice) {
+export function toggleDevice(device: ToggleDevice, toggled: boolean) {
     return function (dispatch) {
         return Promise.all([
             dispatch(toggleDeviceStarted(device)),
-            deviceApi.toggleDevice(device).catch(error => { throw error })
+            deviceApi.toggleDevice(device, toggled).catch(error => { throw error })
         ]);
     }
 }

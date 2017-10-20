@@ -60,7 +60,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "2b7919101b13d35ef19f"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "4cc43350761a3f2f6c42"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -8129,12 +8129,12 @@ class deviceApi {
             }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
         });
     }
-    static toggleDevice(device) {
+    static toggleDevice(device, toggled) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
                 let toggleDevice = devices[deviceIndex];
-                toggleDevice.toggled = !toggleDevice.toggled;
+                toggleDevice.toggled = toggled;
                 toggleDevice.lastUpdated = new Date().getTime();
                 deviceApi.alertDeviceListeners();
                 resolve();
@@ -12221,13 +12221,13 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         };
     }
     onIconClick(device) {
-        this.props.toggleDevice(device);
+        this.props.toggleDevice(device, !device.toggled);
     }
     onConfigClick(device) {
         this.props.history.push("/config/" + device.id);
     }
     onAutomatedClick(device) {
-        this.props.setDeviceAutomated(device, !device.toggled);
+        this.props.setDeviceAutomated(device, !device.automated);
     }
     onTimerClick(device, timeLeft) {
         this.setState(Object.assign({}, this.state, { timerModalObject: device, timerModalTimeLeft: timeLeft }));
@@ -12263,7 +12263,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
     return {
         setTimerDevice: (device, time) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* setTimerDevice */])(device, time)),
-        toggleDevice: device => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["e" /* toggleDevice */])(device)),
+        toggleDevice: (device, toggled) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["e" /* toggleDevice */])(device, toggled)),
         loadDevices: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["a" /* loadDevicesAndListenForUpdates */])()),
         stopDeviceUpdates: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["d" /* stopListeningForDeviceUpdates */])()),
         setDeviceAutomated: (device, automated) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* setDeviceAutomated */])(device, automated))
@@ -12436,9 +12436,9 @@ function setTimerDevice(device, time) {
         })]);
     };
 }
-function toggleDevice(device) {
+function toggleDevice(device, toggled) {
     return function (dispatch) {
-        return Promise.all([dispatch(toggleDeviceStarted(device)), __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].toggleDevice(device).catch(error => {
+        return Promise.all([dispatch(toggleDeviceStarted(device)), __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].toggleDevice(device, toggled).catch(error => {
             throw error;
         })]);
     };

@@ -54,8 +54,8 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         };
     }
 
-    onIconClick(device: DeviceModel): void {
-        this.props.toggleDevice(device);
+    onIconClick(device: ToggleDevice): void {
+        this.props.toggleDevice(device, !device.toggled);
     }
 
     onConfigClick(device: DeviceModel): void {
@@ -63,7 +63,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
     }
 
     onAutomatedClick(device: ToggleDevice): void {
-        this.props.setDeviceAutomated(device, !device.toggled);
+        this.props.setDeviceAutomated(device, !device.automated);
     }
 
     onTimerClick(device: ToggleDevice, timeLeft: number): void {
@@ -115,7 +115,7 @@ function mapStateToProps(state: ApplicationState, ownProps): DeviceContainerStat
 function mapDispatchToProps(dispatch): DeviceContainerActions {
     return {
         setTimerDevice: (device: ToggleDevice, time: number) => dispatch(setTimerDevice(device, time)),
-        toggleDevice: (device: ToggleDevice) => dispatch(toggleDevice(device)),
+        toggleDevice: (device: ToggleDevice, toggled: boolean) => dispatch(toggleDevice(device, toggled)),
         loadDevices: () => dispatch(loadDevicesAndListenForUpdates()),
         stopDeviceUpdates: () => dispatch(stopListeningForDeviceUpdates()),
         setDeviceAutomated: (device: ToggleDevice, automated: boolean) => dispatch(setDeviceAutomated(device, automated))

@@ -59,14 +59,14 @@ class deviceApi {
         });
     }
 
-    static toggleDevice(device: ToggleDevice) {
+    static toggleDevice(device: ToggleDevice, toggled: boolean) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
 
                 let toggleDevice = (devices[deviceIndex] as ToggleDevice);
 
-                toggleDevice.toggled = !toggleDevice.toggled;
+                toggleDevice.toggled = toggled;
                 toggleDevice.lastUpdated = new Date().getTime();
 
                 deviceApi.alertDeviceListeners();
