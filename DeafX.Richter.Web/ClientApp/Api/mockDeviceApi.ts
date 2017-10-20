@@ -10,13 +10,15 @@ let devices : DeviceModel[] = [
         title: "Vardagsrum",
         toggled: true,
         deviceType: "TOGGLE_DEVICE",
-        timerValue: 3672
+        timerValue: 3672,
+        automated: true
     } as ToggleDevice,
     {
         id: "2",
         title: "Gästrum",
         toggled: false,
         deviceType: "TOGGLE_DEVICE",
+        automated: false
     } as ToggleDevice,
     {
         id: "3",
@@ -65,6 +67,23 @@ class deviceApi {
                 let toggleDevice = (devices[deviceIndex] as ToggleDevice);
 
                 toggleDevice.toggled = !toggleDevice.toggled;
+                toggleDevice.lastUpdated = new Date().getTime();
+
+                deviceApi.alertDeviceListeners();
+
+                resolve();
+            }, delay);
+        });
+    }
+
+    static setDeviceAutomated(device: ToggleDevice, automated: boolean) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const deviceIndex = devices.findIndex(i => i.id === device.id);
+
+                let toggleDevice = (devices[deviceIndex] as ToggleDevice);
+
+                toggleDevice.automated = !toggleDevice.automated;
                 toggleDevice.lastUpdated = new Date().getTime();
 
                 deviceApi.alertDeviceListeners();

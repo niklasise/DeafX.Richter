@@ -60,7 +60,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "ffb8d65efb121bbe6e90"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "2b7919101b13d35ef19f"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -8093,12 +8093,14 @@ let devices = [{
     title: "Vardagsrum",
     toggled: true,
     deviceType: "TOGGLE_DEVICE",
-    timerValue: 3672
+    timerValue: 3672,
+    automated: true
 }, {
     id: "2",
     title: "Gästrum",
     toggled: false,
-    deviceType: "TOGGLE_DEVICE"
+    deviceType: "TOGGLE_DEVICE",
+    automated: false
 }, {
     id: "3",
     title: "Hall Nedervåning",
@@ -8133,6 +8135,18 @@ class deviceApi {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
                 let toggleDevice = devices[deviceIndex];
                 toggleDevice.toggled = !toggleDevice.toggled;
+                toggleDevice.lastUpdated = new Date().getTime();
+                deviceApi.alertDeviceListeners();
+                resolve();
+            }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
+        });
+    }
+    static setDeviceAutomated(device, automated) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const deviceIndex = devices.findIndex(i => i.id === device.id);
+                let toggleDevice = devices[deviceIndex];
+                toggleDevice.automated = !toggleDevice.automated;
                 toggleDevice.lastUpdated = new Date().getTime();
                 deviceApi.alertDeviceListeners();
                 resolve();
@@ -12107,6 +12121,7 @@ module.exports = (__webpack_require__(3))(100);
 /* WEBPACK VAR INJECTION */(function(process, module) {const deviceReducer = (state = { deviceList: [] }, action) => {
     switch (action.type) {
         case "SET_TIMER_DEVICE_STARTED":
+        case "SET_DEVICE_AUTOMATED_STARTED":
         case "TOGGLE_DEVICE_STARTED":
             return setDeviceIsUpdating(action.device, state);
         case "LOAD_DEVICES_SUCCESS":
@@ -12199,6 +12214,7 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         this.onTimerOk = this.onTimerOk.bind(this);
         this.onTimerReset = this.onTimerReset.bind(this);
         this.onTimerCancel = this.onTimerCancel.bind(this);
+        this.onAutomatedClick = this.onAutomatedClick.bind(this);
         this.state = {
             timerModalObject: null,
             timerModalTimeLeft: 0
@@ -12209,6 +12225,9 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     }
     onConfigClick(device) {
         this.props.history.push("/config/" + device.id);
+    }
+    onAutomatedClick(device) {
+        this.props.setDeviceAutomated(device, !device.toggled);
     }
     onTimerClick(device, timeLeft) {
         this.setState(Object.assign({}, this.state, { timerModalObject: device, timerModalTimeLeft: timeLeft }));
@@ -12226,7 +12245,7 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     }
     render() {
         return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileContainer" }, this.props.devices.deviceList.map(function (device, index) {
-            return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Device__["a" /* Device */], { key: device.id, device: device, onIconClick: this.onIconClick, onConfigClick: this.onConfigClick, onTimerClick: this.onTimerClick });
+            return __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Device__["a" /* Device */], { key: device.id, device: device, onIconClick: this.onIconClick, onConfigClick: this.onConfigClick, onTimerClick: this.onTimerClick, onAutomatedClick: this.onAutomatedClick });
         }, this), !!this.state.timerModalObject && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__Shared_TimerModalComponent__["a" /* default */], { initialTime: this.state.timerModalTimeLeft, onOkClick: this.onTimerOk, onCancelClick: this.onTimerCancel, onResetClick: this.onTimerReset }));
     }
     componentWillMount() {
@@ -12243,10 +12262,11 @@ function mapStateToProps(state, ownProps) {
 }
 function mapDispatchToProps(dispatch) {
     return {
-        setTimerDevice: (device, time) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* setTimerDevice */])(device, time)),
-        toggleDevice: device => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["d" /* toggleDevice */])(device)),
+        setTimerDevice: (device, time) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* setTimerDevice */])(device, time)),
+        toggleDevice: device => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["e" /* toggleDevice */])(device)),
         loadDevices: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["a" /* loadDevicesAndListenForUpdates */])()),
-        stopDeviceUpdates: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* stopListeningForDeviceUpdates */])())
+        stopDeviceUpdates: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["d" /* stopListeningForDeviceUpdates */])()),
+        setDeviceAutomated: (device, automated) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* setDeviceAutomated */])(device, automated))
     };
 }
 /* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(mapStateToProps, mapDispatchToProps)(Object(__WEBPACK_IMPORTED_MODULE_3_react_router_dom__["withRouter"])(HomePage)));
@@ -12273,7 +12293,9 @@ class Device extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 e.stopPropagation();this.props.onConfigClick(this.props.device);
             } }, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fa fa-gear" })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileCenter" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-lightbulb-o clickable" + (this.props.device.toggled ? "" : " off"), onClick: e => {
                 this.props.onIconClick(this.props.device);
-            } }), this.props.device.deviceType === "VALUE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", { style: { position: "relative" } }, this.props.device.value, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", { style: { position: "absolute", top: 13, right: -30, fontSize: 80 } }, "\u00B0"))), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileBottomLeft" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__DeviceTimer__["a" /* default */], { device: this.props.device, onTimerClick: this.props.onTimerClick, timerValue: this.props.device.timerValue })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileBottomRight" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: "fa fa-refresh" })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileLabel" }, this.props.device.title), this.props.device.isUpdating && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "loadingPanel" }))));
+            } }), this.props.device.deviceType === "VALUE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", { style: { position: "relative" } }, this.props.device.value, __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("span", { style: { position: "absolute", top: 13, right: -30, fontSize: 80 } }, "\u00B0"))), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileBottomLeft" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__DeviceTimer__["a" /* default */], { device: this.props.device, onTimerClick: this.props.onTimerClick, timerValue: this.props.device.timerValue })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileBottomRight" }, this.props.device.deviceType === "TOGGLE_DEVICE" && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("i", { className: this.props.device.automated ? "fa fa-refresh clickable" : "fa fa-refresh clickable off", onClick: e => {
+                e.stopPropagation();this.props.onAutomatedClick(this.props.device);
+            } })), __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "tileLabel" }, this.props.device.title), this.props.device.isUpdating && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "loadingPanel" }))));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Device;
@@ -12381,17 +12403,22 @@ class DeviceTimer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, module) {/* unused harmony export toggleDeviceStarted */
+/* unused harmony export setDeviceAutomatedStarted */
 /* unused harmony export setTimerDeviceStarted */
 /* unused harmony export devicesUpdated */
 /* unused harmony export loadDevicesSuccess */
-/* harmony export (immutable) */ __webpack_exports__["b"] = setTimerDevice;
-/* harmony export (immutable) */ __webpack_exports__["d"] = toggleDevice;
+/* harmony export (immutable) */ __webpack_exports__["c"] = setTimerDevice;
+/* harmony export (immutable) */ __webpack_exports__["e"] = toggleDevice;
+/* harmony export (immutable) */ __webpack_exports__["b"] = setDeviceAutomated;
 /* harmony export (immutable) */ __webpack_exports__["a"] = loadDevicesAndListenForUpdates;
-/* harmony export (immutable) */ __webpack_exports__["c"] = stopListeningForDeviceUpdates;
+/* harmony export (immutable) */ __webpack_exports__["d"] = stopListeningForDeviceUpdates;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__ = __webpack_require__(180);
 
 function toggleDeviceStarted(device) {
     return { type: "TOGGLE_DEVICE_STARTED", device: device };
+}
+function setDeviceAutomatedStarted(device) {
+    return { type: "SET_DEVICE_AUTOMATED_STARTED", device: device };
 }
 function setTimerDeviceStarted(device) {
     return { type: "SET_TIMER_DEVICE_STARTED", device: device };
@@ -12412,6 +12439,13 @@ function setTimerDevice(device, time) {
 function toggleDevice(device) {
     return function (dispatch) {
         return Promise.all([dispatch(toggleDeviceStarted(device)), __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].toggleDevice(device).catch(error => {
+            throw error;
+        })]);
+    };
+}
+function setDeviceAutomated(device, automated) {
+    return function (dispatch) {
+        return Promise.all([dispatch(setDeviceAutomatedStarted(device)), __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].setDeviceAutomated(device, automated).catch(error => {
             throw error;
         })]);
     };

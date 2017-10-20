@@ -10,6 +10,7 @@ const deviceReducer: Reducer<DeviceState> = (state = { deviceList: [] }, action:
 {
     switch (action.type) {
         case "SET_TIMER_DEVICE_STARTED":
+        case "SET_DEVICE_AUTOMATED_STARTED":
         case "TOGGLE_DEVICE_STARTED":
             return setDeviceIsUpdating((action as ToggleDeviceAction).device as ToggleDevice, state);
         case "LOAD_DEVICES_SUCCESS":
