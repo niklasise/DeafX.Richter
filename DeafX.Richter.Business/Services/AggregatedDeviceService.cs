@@ -2,20 +2,16 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace DeafX.Richter.Business.Services
 {
     public class AggregatedDeviceService : IDeviceService
     {
-        private class DeviceServiceMap
-        {
-            public IDevice Device { get; set; }
-            public IDeviceService Service { get; set; }
-        }
-
         private IDeviceService[] _services;
         private Dictionary<string, IDevice> _allDevices;
+
+        public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
         public AggregatedDeviceService()
         {
@@ -25,6 +21,13 @@ namespace DeafX.Richter.Business.Services
         public AggregatedDeviceService(params IDeviceService[] services)
         {
             _services = services;
+
+            // Set child serivce OnDeviceUpdated to just forward to our own
+            foreach(var service in _services)
+            {
+                service.OnDevicesUpdated += (sender, args) => { if (OnDevicesUpdated != null) { OnDevicesUpdated.Invoke(this, args); } };
+            }
+            
         }
 
         public IDevice[] GetAllDevices()
@@ -37,12 +40,7 @@ namespace DeafX.Richter.Business.Services
             return _allDevices.Values.ToArray();
         }
 
-        public IDevice[] GetUpdatedDevices(int since)
-        {
-            return _allDevices.Values.Where(d => d.LastChanged > since).ToArray();
-        }
-
-        public void ToggleDevice(string deviceId, bool toggled)
+        public async Task ToggleDeviceAsync(string deviceId, bool toggled)
         {
             if (!_allDevices.ContainsKey(deviceId))
             {
@@ -51,7 +49,7 @@ namespace DeafX.Richter.Business.Services
 
             var device = _allDevices[deviceId];
 
-            device.ParentService.ToggleDevice(deviceId, toggled);
+            await device.ParentService.ToggleDeviceAsync(deviceId, toggled);
         }
 
         private void PopulateDevices()
@@ -67,5 +65,6 @@ namespace DeafX.Richter.Business.Services
             }
 
         }
+
     }
 }

@@ -1,54 +1,59 @@
 ﻿using DeafX.Richter.Business.Exceptions;
 using DeafX.Richter.Business.Interfaces;
+using DeafX.Richter.Business.Models;
 using DeafX.Richter.Business.Models.ZWay;
+using DeafX.Richter.Common.Http;
+using DeafX.Richter.Common.Http.Extensions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using DeafX.Richter.Business.Models;
 using System.Net.Http;
-using DeafX.Richter.Common.Http;
-using DeafX.Richter.Common.Http.Extensions;
+using System.Threading.Tasks;
 
 namespace DeafX.Richter.Business.Services
 {
     public class ZWayService : IDeviceService
     {
-        #region Constants
 
-        private const string ZAutomationUrl = "http://192.168.1.181:8083/ZAutomation/api/v1/";
-        private const string Login = "*";
-        private const string Password = "*";
-
-        #endregion
+        #region Fields
 
         private HttpClient _httpClient;
         private CookieContainer _authenticationCookies;
-        private Dictionary<string, IDevice> _deviceDictonary;
+        private Dictionary<string, IDevice> _zWaveDeviceDictonary;
+        private Dictionary<string, ZWayDevice> _zWayDeviceDictonary;
         private int _lastDeviceUpdate;
         private ILogger<ZWayService> _logger;
         private bool _successfullyInitated;
-        private Task _updateDevicesTask;
+        private string _baseAdress;
+
+        public event OnDevicesUpdatedHandler OnDevicesUpdated;
+
+        #endregion
+
+        #region Constructor
 
         public ZWayService(HttpClient httpClient, ILogger<ZWayService> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
-
-            _httpClient.BaseAddress = new Uri("http://192.168.1.181:8083/ZAutomation/api/v1/");
         }
 
-        public async Task InitAsync()
+        #endregion
+
+        #region Public Methods
+
+        public async Task InitAsync(ZWayConfiguration configuration)
         {
             try
             {
-                _logger.LogWarning("Initiating ZWayService");
-                _successfullyInitated = await AuthenticateServiceAsync();
-                //_deviceDictonary = (await GetDeviceDataAsync(0)).devices.ToDictionary(d => d.id);
-                //_updateDevicesTask = new Task(UpdateDevicesAsync);
-                //_updateDevicesTask.Start();
+                _logger.LogInformation("Initiating ZWayService");
+
+                _baseAdress = configuration.Adress;
+
+                _successfullyInitated = await AuthenticateServiceAsync(configuration);
+                await PopulateDevices(configuration.Devices);
                 UpdateDevicesAsync();
             }
             catch (Exception e)
@@ -58,9 +63,21 @@ namespace DeafX.Richter.Business.Services
             }
         }
 
-        public async Task ToggleDeviceAsync(ZWayDevice device, bool toggleState)
+        public async Task ToggleDeviceAsync(string deviceId, bool toggleState)
         {
-            var request = GenerateRequest(string.Format("devices/{0}/command/{1}", device.id, toggleState ? "on" : "off"));
+            if(_zWaveDeviceDictonary.ContainsKey(deviceId))
+            {
+                throw new ArgumentException($"No device with id '{deviceId}' found");
+            }
+
+            var device = _zWaveDeviceDictonary[deviceId] as ZWavePowerPlugDevice;
+
+            if(device == null)
+            {
+                throw new ArgumentException($"Device id '{deviceId}' is not a valid toggle device");
+            }
+
+            var request = GenerateRequest(string.Format("devices/{0}/command/{1}", device.InternalSwitchDevice.id, toggleState ? "on" : "off"));
 
             var result = await _httpClient.SendAsync(request);
 
@@ -72,16 +89,73 @@ namespace DeafX.Richter.Business.Services
             }
         }
 
+        public async Task PopulateDevices(ZWayDeviceConfiguration[] deviceConfigurations)
+        {
+            _zWaveDeviceDictonary = new Dictionary<string, IDevice>();
+            _zWayDeviceDictonary = (await GetDeviceDataAsync(0)).devices.ToDictionary(d => d.id);
+
+            foreach (var configuration in deviceConfigurations)
+            {
+                if (!_zWayDeviceDictonary.ContainsKey(configuration.ZWayId))
+                {
+                    throw new ZWayDeviceConfigurationException($"No ZWayDevice found with id '{configuration.ZWayId}'");
+                }
+
+                if (configuration.ZWayPowerId != null && !_zWayDeviceDictonary.ContainsKey(configuration.ZWayPowerId))
+                {
+                    throw new ZWayDeviceConfigurationException($"No ZWayDevice found with id '{configuration.ZWayPowerId}'");
+                }
+
+                switch (configuration.Type)
+                {
+                    case "sensor":
+                        _zWaveDeviceDictonary.Add(configuration.Id, new ZWaveSensorDevice(id: configuration.Id, zWayDevice: _zWayDeviceDictonary[configuration.ZWayId], parentService: this));
+                        continue;
+                    case "powerplug":
+                        _zWaveDeviceDictonary.Add(configuration.Id, new ZWavePowerPlugDevice(id: configuration.Id, switchDevice: _zWayDeviceDictonary[configuration.ZWayId], powerDevice: _zWayDeviceDictonary[configuration.ZWayPowerId], parentService: this));
+                        continue;
+                    default:
+                        throw new ZWayDeviceConfigurationException($"Unable to create device with type '{configuration.Type}'");
+                }
+            }
+
+        }
+
+        public IDevice[] GetAllDevices()
+        {
+            return _zWaveDeviceDictonary.Values.ToArray();
+        }
+
+        #endregion
+
+        #region Private Methods
+
         private async void UpdateDevicesAsync()
         {
             for (; ; )
             {
-                var updatedDevicesData = await GetDeviceDataAsync(_lastDeviceUpdate);
+                var updatedZWayDevices = await GetDeviceDataAsync(_lastDeviceUpdate);
+                var updatedZWaveDevices = new List<IDevice>();
 
-                foreach (var device in updatedDevicesData.devices)
+                foreach (var device in updatedZWayDevices.devices)
                 {
-                    var storedDevice = _deviceDictonary[device.id];
-                    storedDevice.UpdateMetrics(device.metrics, updatedDevicesData.updateTime);
+                    if(!_zWayDeviceDictonary.ContainsKey(device.id))
+                    {
+                        _logger.LogWarning($"Cannot update ZWayDevice with id '{device.id}' since it is not found in device dictionary");
+                    }
+
+                    var storedDevice = _zWayDeviceDictonary[device.id];
+
+                    // Only trigger update if device has a parent device
+                    if(storedDevice.ParentDevice != null && storedDevice.UpdateMetrics(device.metrics) && !updatedZWaveDevices.Contains(storedDevice.ParentDevice))
+                    {
+                        updatedZWaveDevices.Add(storedDevice.ParentDevice);
+                    }
+                }
+
+                if(updatedZWaveDevices.Count > 0 && OnDevicesUpdated != null)
+                {
+                    OnDevicesUpdated.Invoke(this, new DevicesUpdatedEventArgs(updatedZWaveDevices.ToArray()));
                 }
 
                 await Task.Delay(1000);
@@ -117,19 +191,19 @@ namespace DeafX.Richter.Business.Services
             return deviceResponse.data;
         }
 
-        private async Task<bool> AuthenticateServiceAsync()
+        private async Task<bool> AuthenticateServiceAsync(ZWayConfiguration configuration)
         {
             var authParameters = new AuthenticationParameters()
             {
-                login = Login,
-                password = Password,
+                login = configuration.Username,
+                password = configuration.Password,
                 remeberme = false
             };
 
             var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(ZAutomationUrl + "login"),
+                RequestUri = new Uri(_baseAdress + "login"),
                 Content = new JsonContent(authParameters)
             };
 
@@ -137,7 +211,7 @@ namespace DeafX.Richter.Business.Services
 
             if(result.IsSuccessStatusCode)
             {
-                _authenticationCookies = result.Headers.GetCookies(ZAutomationUrl);
+                _authenticationCookies = result.Headers.GetCookies((_baseAdress));
                 return true;
             }
 
@@ -149,34 +223,15 @@ namespace DeafX.Richter.Business.Services
             var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri(ZAutomationUrl + path),
+                RequestUri = new Uri(_baseAdress + path),
             };
 
-            request.Headers.Add("Cookie ", _authenticationCookies.GetCookieHeader(new Uri(ZAutomationUrl)));
+            request.Headers.Add("Cookie ", _authenticationCookies.GetCookieHeader(new Uri(_baseAdress)));
             
             return request;
         }
 
-        public async void PopulateDevice()
-        {
-            var zWayDevices = (await GetDeviceDataAsync(0)).devices;
+        #endregion
 
-            _deviceDictonary = zWayDevices.ToDictionary(d => d.id, d => new ZWaveToggleDevice(d))
-        }
-
-        public IDevice[] GetAllDevices()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDevice[] GetUpdatedDevices(int since)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ToggleDeviceAsync(string deviceId, bool toggled)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

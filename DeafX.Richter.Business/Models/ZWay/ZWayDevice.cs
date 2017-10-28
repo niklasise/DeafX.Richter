@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DeafX.Richter.Business.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
 namespace DeafX.Richter.Business.Models.ZWay
 {
-    public delegate void ZWayDeviceUpdated(object sender, ZWayDeviceUpdatedEventArgs args);
+    //public delegate void ZWayDeviceUpdated(object sender, ZWayDeviceUpdatedEventArgs args);
 
     public class ZWayDevice
     { 
@@ -22,50 +23,25 @@ namespace DeafX.Richter.Business.Models.ZWay
         public int? creatorId { get; set; }
         public ZWayMetrics metrics { get; set; }
 
-        public event ZWayDeviceUpdated DeviceUpdated;
+        internal IDevice ParentDevice { get; set; } 
 
-        private ILogger<ZWayDevice> _logger;
-
-        public ILogger<ZWayDevice> Logger
+        public bool UpdateMetrics(ZWayMetrics metrics)
         {
-            get
-            {
-                if(_logger == null)
-                {
-                    _logger = LoggerFactoryWrapper.CreateLogger<ZWayDevice>();
-                }
-
-                return _logger;
-            }
-        }
-
-        public ZWayDevice()
-        {
-            
-        }
-
-        public void UpdateMetrics(ZWayMetrics metrics, int updateTime)
-        {
-            this.updateTime = updateTime;          
-
             // If metrics are equal, just return
             if (this.metrics.Equals(metrics))
             {
-                return;
+                return false;
             }
 
             this.metrics = metrics;
-            DeviceUpdated?.Invoke(this, new ZWayDeviceUpdatedEventArgs()
-            {
-                NewMetrics = metrics,
-                UpdateTime = updateTime
-            });
+
+            return true;
         }
     }
 
-    public class ZWayDeviceUpdatedEventArgs : EventArgs
-    {
-        public int UpdateTime { get; set; }
-        public ZWayMetrics NewMetrics { get; set; }
-    }
+    //public class ZWayDeviceUpdatedEventArgs : EventArgs
+    //{
+    //    public int UpdateTime { get; set; }
+    //    public ZWayMetrics NewMetrics { get; set; }
+    //}
 }

@@ -24,10 +24,20 @@ namespace DeafX.Richter.Business.Interfaces
     {
         string Id { get; }
 
-        int LastChanged { get; }
+        //int LastChanged { get; }
 
         object Value { get; }
 
+       DeviceValueType ValueType { get; } 
+
         IDeviceService ParentService { get; }
+    }
+
+    public enum DeviceValueType
+    {
+        Unknown,
+        Binary,
+        Temperature,
+        Luminosity
     }
 }

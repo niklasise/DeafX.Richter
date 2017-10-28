@@ -1,10 +1,8 @@
 ﻿using DeafX.Richter.Business.Interfaces;
 using DeafX.Richter.Business.Models;
-using DeafX.Richter.Common.Http.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DeafX.Richter.Business.Services
@@ -12,6 +10,8 @@ namespace DeafX.Richter.Business.Services
     public class VirtualDeviceService : IDeviceService
     {
         private Dictionary<string, IDevice> _devices;
+
+        public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
         public VirtualDeviceService()
         {
@@ -21,11 +21,6 @@ namespace DeafX.Richter.Business.Services
         public IDevice[] GetAllDevices()
         {
             return _devices.Values.ToArray();
-        }
-
-        public IDevice[] GetUpdatedDevices(int since)
-        {
-            return _devices.Values.Where(d => d.LastChanged > since).ToArray();
         }
 
         public async Task ToggleDeviceAsync(string deviceId, bool toggled)
@@ -51,7 +46,9 @@ namespace DeafX.Richter.Business.Services
 
             await Task.WhenAll(taskList);
 
-            deviceGrp.LastChanged = DateTime.UtcNow.ToUnixTimestamp();
+            deviceGrp.Toggled = toggled;
+
+            OnDevicesUpdated.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGrp }));
         }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using DeafX.Richter.Business.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DeafX.Richter.Business.Models
 {
@@ -30,6 +27,8 @@ namespace DeafX.Richter.Business.Models
         }
 
         public IToggleDevice[] Devices { get; private set; }
+
+        public DeviceValueType ValueType => DeviceValueType.Binary;
 
         public DeviceGroup(string id, IToggleDevice[] devices, IDeviceService parentService)
         {
