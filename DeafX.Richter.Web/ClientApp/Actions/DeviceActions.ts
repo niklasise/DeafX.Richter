@@ -61,19 +61,34 @@ export function setDeviceAutomated(device: ToggleDevice, automated: boolean) {
     }
 }
 
-export function loadDevicesAndListenForUpdates() {
+//export function loadDevicesAndListenForUpdates() {
+//    return function (dispatch) {
+//        return deviceApi.getAlldevices().then(devices => {
+//            dispatch(loadDevicesSuccess(devices as DeviceModel[]));
+//            deviceApi.listenForDeviceUpdates(event => dispatch(devicesUpdated(event.data)));
+//        }).catch(error => {
+//            throw error;
+//        });
+//    }
+//}
+
+//export function stopListeningForDeviceUpdates() {
+//    return function (dispatch) {
+//        deviceApi.stopListeningForDeviceUpdates();
+//    }
+//}
+
+export function connectToDeviceApi() {
     return function (dispatch) {
-        return deviceApi.getAlldevices().then(devices => {
-            dispatch(loadDevicesSuccess(devices as DeviceModel[]));
-            deviceApi.listenForDeviceUpdates(event => dispatch(devicesUpdated(event.data)));
-        }).catch(error => {
-            throw error;
-        });
+        deviceApi.connect(
+            devices => dispatch(loadDevicesSuccess(devices)),
+            devices => dispatch(devicesUpdated(devices))
+        );
     }
 }
 
-export function stopListeningForDeviceUpdates() {
+export function disconnectFromDeviceApi() {
     return function (dispatch) {
-        deviceApi.stopListeningForDeviceUpdates();
+        deviceApi.disconnect();
     }
 }

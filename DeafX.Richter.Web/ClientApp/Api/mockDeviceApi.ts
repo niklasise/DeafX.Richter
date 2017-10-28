@@ -38,7 +38,7 @@ let deviceListeners: DeviceListener[] = [];
 let lastUpdateSent: number = 0;
 
 interface DeviceListener {
-    (event: { data: DeviceModel[] }) : any
+    (devices: DeviceModel[]) : any
 }
 
 function replaceAll(str, find, replace) {
@@ -119,17 +119,18 @@ class deviceApi {
         });
     }
 
-    static listenForDeviceUpdates(listener: DeviceListener) {
-        deviceListeners.push(listener);
+    static connect(onAllDevices: DeviceListener, onDevicesUpdated: DeviceListener) {
+        deviceApi.getAlldevices().then(devices => onAllDevices(devices));
+        deviceListeners.push(onDevicesUpdated);
     }
 
-    static stopListeningForDeviceUpdates() {
+    static disconnect() {
         deviceListeners = [];
     }
 
     private static alertDeviceListeners() {
         deviceListeners.forEach(val => {
-            val({ data: devices.filter(device => device.lastUpdated > lastUpdateSent) });
+            val(devices.filter(device => device.lastUpdated > lastUpdateSent));
         });
 
         lastUpdateSent = new Date().getTime();

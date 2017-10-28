@@ -5,7 +5,7 @@ import { connect, Dispatch } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "../../Store/ConfigureStore";
 import { DeviceState } from "../../Reducers/DeviceReducer";
-import { toggleDevice, setTimerDevice, setDeviceAutomated, ToggleDeviceAction, loadDevicesAndListenForUpdates, stopListeningForDeviceUpdates } from "../../Actions/DeviceActions"
+import { toggleDevice, setTimerDevice, setDeviceAutomated, ToggleDeviceAction, connectToDeviceApi, disconnectFromDeviceApi } from "../../Actions/DeviceActions"
 import TimerModal from "../Shared/TimerModalComponent";
 
 interface DeviceContainerStateProps
@@ -20,8 +20,8 @@ interface DeviceContainerBlah {
 interface DeviceContainerActions {
     setTimerDevice,
     toggleDevice,
-    loadDevices,
-    stopDeviceUpdates,
+    connectToDeviceApi,
+    disconnectFromDeviceApi,
     setDeviceAutomated
 }
 
@@ -97,11 +97,11 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
     }
 
     public componentWillMount() {
-        this.props.loadDevices();
+        this.props.connectToDeviceApi();
     }
 
     public componentWillUnmount() {
-        this.props.stopDeviceUpdates();
+        this.props.disconnectFromDeviceApi();
     }
 
 }
@@ -116,8 +116,8 @@ function mapDispatchToProps(dispatch): DeviceContainerActions {
     return {
         setTimerDevice: (device: ToggleDevice, time: number) => dispatch(setTimerDevice(device, time)),
         toggleDevice: (device: ToggleDevice, toggled: boolean) => dispatch(toggleDevice(device, toggled)),
-        loadDevices: () => dispatch(loadDevicesAndListenForUpdates()),
-        stopDeviceUpdates: () => dispatch(stopListeningForDeviceUpdates()),
+        connectToDeviceApi: () => dispatch(connectToDeviceApi()),
+        disconnectFromDeviceApi: () => dispatch(disconnectFromDeviceApi()),
         setDeviceAutomated: (device: ToggleDevice, automated: boolean) => dispatch(setDeviceAutomated(device, automated))
     }
 }

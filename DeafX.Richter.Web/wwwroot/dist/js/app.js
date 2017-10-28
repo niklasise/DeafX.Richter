@@ -60,7 +60,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "4cc43350761a3f2f6c42"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "f317f00f07e358fcc0db"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -8173,15 +8173,16 @@ class deviceApi {
             }, __WEBPACK_IMPORTED_MODULE_0__delay__["a" /* default */]);
         });
     }
-    static listenForDeviceUpdates(listener) {
-        deviceListeners.push(listener);
+    static connect(onAllDevices, onDevicesUpdated) {
+        deviceApi.getAlldevices().then(devices => onAllDevices(devices));
+        deviceListeners.push(onDevicesUpdated);
     }
-    static stopListeningForDeviceUpdates() {
+    static disconnect() {
         deviceListeners = [];
     }
     static alertDeviceListeners() {
         deviceListeners.forEach(val => {
-            val({ data: devices.filter(device => device.lastUpdated > lastUpdateSent) });
+            val(devices.filter(device => device.lastUpdated > lastUpdateSent));
         });
         lastUpdateSent = new Date().getTime();
     }
@@ -12249,10 +12250,10 @@ class HomePage extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         }, this), !!this.state.timerModalObject && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__Shared_TimerModalComponent__["a" /* default */], { initialTime: this.state.timerModalTimeLeft, onOkClick: this.onTimerOk, onCancelClick: this.onTimerCancel, onResetClick: this.onTimerReset }));
     }
     componentWillMount() {
-        this.props.loadDevices();
+        this.props.connectToDeviceApi();
     }
     componentWillUnmount() {
-        this.props.stopDeviceUpdates();
+        this.props.disconnectFromDeviceApi();
     }
 }
 function mapStateToProps(state, ownProps) {
@@ -12262,11 +12263,11 @@ function mapStateToProps(state, ownProps) {
 }
 function mapDispatchToProps(dispatch) {
     return {
-        setTimerDevice: (device, time) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* setTimerDevice */])(device, time)),
+        setTimerDevice: (device, time) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["d" /* setTimerDevice */])(device, time)),
         toggleDevice: (device, toggled) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["e" /* toggleDevice */])(device, toggled)),
-        loadDevices: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["a" /* loadDevicesAndListenForUpdates */])()),
-        stopDeviceUpdates: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["d" /* stopListeningForDeviceUpdates */])()),
-        setDeviceAutomated: (device, automated) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* setDeviceAutomated */])(device, automated))
+        connectToDeviceApi: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["a" /* connectToDeviceApi */])()),
+        disconnectFromDeviceApi: () => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["b" /* disconnectFromDeviceApi */])()),
+        setDeviceAutomated: (device, automated) => dispatch(Object(__WEBPACK_IMPORTED_MODULE_4__Actions_DeviceActions__["c" /* setDeviceAutomated */])(device, automated))
     };
 }
 /* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(mapStateToProps, mapDispatchToProps)(Object(__WEBPACK_IMPORTED_MODULE_3_react_router_dom__["withRouter"])(HomePage)));
@@ -12407,11 +12408,11 @@ class DeviceTimer extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* unused harmony export setTimerDeviceStarted */
 /* unused harmony export devicesUpdated */
 /* unused harmony export loadDevicesSuccess */
-/* harmony export (immutable) */ __webpack_exports__["c"] = setTimerDevice;
+/* harmony export (immutable) */ __webpack_exports__["d"] = setTimerDevice;
 /* harmony export (immutable) */ __webpack_exports__["e"] = toggleDevice;
-/* harmony export (immutable) */ __webpack_exports__["b"] = setDeviceAutomated;
-/* harmony export (immutable) */ __webpack_exports__["a"] = loadDevicesAndListenForUpdates;
-/* harmony export (immutable) */ __webpack_exports__["d"] = stopListeningForDeviceUpdates;
+/* harmony export (immutable) */ __webpack_exports__["c"] = setDeviceAutomated;
+/* harmony export (immutable) */ __webpack_exports__["a"] = connectToDeviceApi;
+/* harmony export (immutable) */ __webpack_exports__["b"] = disconnectFromDeviceApi;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__ = __webpack_require__(180);
 
 function toggleDeviceStarted(device) {
@@ -12450,19 +12451,29 @@ function setDeviceAutomated(device, automated) {
         })]);
     };
 }
-function loadDevicesAndListenForUpdates() {
+//export function loadDevicesAndListenForUpdates() {
+//    return function (dispatch) {
+//        return deviceApi.getAlldevices().then(devices => {
+//            dispatch(loadDevicesSuccess(devices as DeviceModel[]));
+//            deviceApi.listenForDeviceUpdates(event => dispatch(devicesUpdated(event.data)));
+//        }).catch(error => {
+//            throw error;
+//        });
+//    }
+//}
+//export function stopListeningForDeviceUpdates() {
+//    return function (dispatch) {
+//        deviceApi.stopListeningForDeviceUpdates();
+//    }
+//}
+function connectToDeviceApi() {
     return function (dispatch) {
-        return __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].getAlldevices().then(devices => {
-            dispatch(loadDevicesSuccess(devices));
-            __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].listenForDeviceUpdates(event => dispatch(devicesUpdated(event.data)));
-        }).catch(error => {
-            throw error;
-        });
+        __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].connect(devices => dispatch(loadDevicesSuccess(devices)), devices => dispatch(devicesUpdated(devices)));
     };
 }
-function stopListeningForDeviceUpdates() {
+function disconnectFromDeviceApi() {
     return function (dispatch) {
-        __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].stopListeningForDeviceUpdates();
+        __WEBPACK_IMPORTED_MODULE_0__Api_mockDeviceApi__["a" /* default */].disconnect();
     };
 }
 
