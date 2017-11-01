@@ -24,6 +24,9 @@
     <Folder Include="wwwroot\dist\js\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DeafX.Richter.Business\DeafX.Richter.Business.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
     <TypeScriptCompile Include="ClientApp\Api\delay.ts" />
     <TypeScriptCompile Include="ClientApp\Api\mockDeviceApi.ts" />

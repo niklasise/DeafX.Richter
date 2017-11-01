@@ -20,12 +20,11 @@ namespace DeafX.Richter.Business.Services
         #region Fields
 
         private HttpClient _httpClient;
-        private CookieContainer _authenticationCookies;
+        private string _authenticationCookie;
         private Dictionary<string, IDevice> _zWaveDeviceDictonary;
         private Dictionary<string, ZWayDevice> _zWayDeviceDictonary;
         private int _lastDeviceUpdate;
         private ILogger<ZWayService> _logger;
-        private bool _successfullyInitated;
         private string _baseAdress;
 
         public event OnDevicesUpdatedHandler OnDevicesUpdated;
@@ -44,22 +43,23 @@ namespace DeafX.Richter.Business.Services
 
         #region Public Methods
 
-        public async Task InitAsync(ZWayConfiguration configuration)
+        public async Task<bool> InitAsync(ZWayConfiguration configuration)
         {
             try
             {
                 _logger.LogInformation("Initiating ZWayService");
 
-                _baseAdress = configuration.Adress;
+                _baseAdress = configuration.Adress.TrimEnd('/') + '/';
 
-                _successfullyInitated = await AuthenticateServiceAsync(configuration);
+                await AuthenticateServiceAsync(configuration);
                 await PopulateDevices(configuration.Devices);
                 UpdateDevicesAsync();
+                return true;
             }
             catch (Exception e)
             {
                 _logger.LogCritical(e, "Failed to initiate ZWayService");
-                _successfullyInitated = false;
+                throw e;
             }
         }
 
@@ -168,12 +168,12 @@ namespace DeafX.Richter.Business.Services
 
             if (since != 0)
             {
-                request.Properties.Add("since", since.ToString());
+                request.RequestUri = new Uri(request.RequestUri, $"?since={since}");
             }
 
             var result = await _httpClient.SendAsync(request);
 
-            if(result.IsSuccessStatusCode)
+            if(!result.IsSuccessStatusCode)
             {
                 _logger.LogError($"ZWay request for devices returned with status code {result.StatusCode}");
                 return new ZWayDeviceData() { devices = new List<ZWayDevice>() };
@@ -211,8 +211,8 @@ namespace DeafX.Richter.Business.Services
 
             if(result.IsSuccessStatusCode)
             {
-                _authenticationCookies = result.Headers.GetCookies((_baseAdress));
-                return true;
+                _authenticationCookie = result.Headers.GetValues("Set-Cookie")?.FirstOrDefault()?.Split(';')?.FirstOrDefault();
+                return !string.IsNullOrEmpty(_authenticationCookie);
             }
 
             return false;
@@ -226,7 +226,7 @@ namespace DeafX.Richter.Business.Services
                 RequestUri = new Uri(_baseAdress + path),
             };
 
-            request.Headers.Add("Cookie ", _authenticationCookies.GetCookieHeader(new Uri(_baseAdress)));
+            request.Headers.Add("Cookie", _authenticationCookie);
             
             return request;
         }
