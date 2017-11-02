@@ -13,9 +13,11 @@ namespace DeafX.Richter.Business.Services
 
         public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
-        public VirtualDeviceService()
+        public VirtualDeviceService(/*IDeviceService subService, IViruta*/)
         {
             _devices = new Dictionary<string, IDevice>();
+
+
         }
 
         public IDevice[] GetAllDevices()
