@@ -9,6 +9,8 @@ namespace DeafX.Richter.Business.Models
     {
         public string Id { get; private set; }
 
+        public string Title { get; private set; }
+
         public IDeviceService ParentService { get; private set; }
 
         public object Value {
@@ -42,9 +44,10 @@ namespace DeafX.Richter.Business.Models
 
         internal ZWayDevice InternalDevice { get; private set; }
 
-        public ZWaveSensorDevice(string id, ZWayDevice zWayDevice , IDeviceService parentService)
+        public ZWaveSensorDevice(string id, string title, ZWayDevice zWayDevice , IDeviceService parentService)
         {
             Id = id;
+            Title = title;
             ParentService = parentService;
             InternalDevice = zWayDevice;
 

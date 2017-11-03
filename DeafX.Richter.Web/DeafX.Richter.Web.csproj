@@ -8,6 +8,8 @@
   <ItemGroup>
     <None Remove="ClientApp\Actions\DeviceActions.ts" />
     <None Remove="ClientApp\Api\delay.ts" />
+    <None Remove="ClientApp\Api\deviceApi.ts" />
+    <None Remove="ClientApp\Api\IDeviceApi.ts" />
     <None Remove="ClientApp\Api\mockDeviceApi.ts" />
     <None Remove="ClientApp\Models\Device.ts" />
     <None Remove="ClientApp\Routes.tsx" />
@@ -17,6 +19,7 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha2-final" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
   </ItemGroup>
@@ -29,6 +32,8 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
     <TypeScriptCompile Include="ClientApp\Api\delay.ts" />
+    <TypeScriptCompile Include="ClientApp\Api\deviceApi.ts" />
+    <TypeScriptCompile Include="ClientApp\Api\IDeviceApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\mockDeviceApi.ts" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\TimerModalComponent.tsx" />
     <TypeScriptCompile Include="ClientApp\Index.tsx" />

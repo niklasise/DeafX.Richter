@@ -1,5 +1,6 @@
 ﻿import delay from './delay';
 import { Device as DeviceModel, ToggleDevice, ValueDevice, UpdatedDevices } from "../Models/Device"
+import { IDeviceListener as DeviceListener } from "./IDeviceApi"
 
 // This file mocks a web API by working with the hard-coded data below.
 // It uses setTimeout to simulate the delay of an AJAX call.
@@ -36,10 +37,6 @@ let devices : DeviceModel[] = [
 
 let deviceListeners: DeviceListener[] = [];
 let lastUpdateSent: number = 0;
-
-interface DeviceListener {
-    (devices: DeviceModel[]) : any
-}
 
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);

@@ -21,6 +21,11 @@
 
             return (level == null && otherMetrics.level == null) || level.Equals(otherMetrics.level);
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
 }

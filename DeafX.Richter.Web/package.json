@@ -9,6 +9,7 @@
     "@types/react-router-dom": "4.0.7",
     "@types/redux": "3.6.0",
     "@types/webpack-env": "1.13.0",
+    "@aspnet/signalr-client": "1.0.0-alpha2-final",
     "aspnet-webpack": "2.0.1",
     "aspnet-webpack-react": "3.0.0",
     "awesome-typescript-loader": "3.2.3",

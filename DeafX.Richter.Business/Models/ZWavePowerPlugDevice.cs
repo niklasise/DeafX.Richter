@@ -15,6 +15,8 @@ namespace DeafX.Richter.Business.Models
 
         public string Id { get; private set; }
 
+        public string Title { get; private set; }
+
         public IDeviceService ParentService { get; private set; }
 
         public object Value => Toggled;
@@ -28,9 +30,10 @@ namespace DeafX.Richter.Business.Models
             }
         }
 
-        public ZWavePowerPlugDevice(string id, ZWayDevice switchDevice, ZWayDevice powerDevice, IDeviceService parentService)
+        public ZWavePowerPlugDevice(string id, string title, ZWayDevice switchDevice, ZWayDevice powerDevice, IDeviceService parentService)
         {
             Id = id;
+            Title = title;
             ParentService = parentService;
             InternalSwitchDevice = switchDevice;
             InternalPowerDevice = powerDevice;

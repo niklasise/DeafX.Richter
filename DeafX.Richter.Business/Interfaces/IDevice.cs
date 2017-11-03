@@ -24,11 +24,11 @@ namespace DeafX.Richter.Business.Interfaces
     {
         string Id { get; }
 
-        //int LastChanged { get; }
+        string Title { get; }
 
         object Value { get; }
 
-       DeviceValueType ValueType { get; } 
+        DeviceValueType ValueType { get; } 
 
         IDeviceService ParentService { get; }
     }

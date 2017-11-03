@@ -14,7 +14,8 @@ module.exports = (env) => {
                 'react-redux',
                 'react-router-dom',
                 'redux',
-                'redux-thunk'
+                'redux-thunk',
+                '@aspnet/signalr-client'
             ],
         },
         output: {

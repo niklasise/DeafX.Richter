@@ -1,6 +1,7 @@
 ﻿import { Device as DeviceModel, ToggleDevice } from "../Models/Device";
 import { Action } from "redux";
-import deviceApi from "../Api/mockDeviceApi";
+//import deviceApi from "../Api/mockDeviceApi";
+import deviceApi from "../Api/deviceApi";
 
 export interface ToggleDeviceAction extends Action {
     device: DeviceModel;

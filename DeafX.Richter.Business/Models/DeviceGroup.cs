@@ -26,6 +26,8 @@ namespace DeafX.Richter.Business.Models
             get; internal set;
         }
 
+        public string Title { get; set; }
+
         public IToggleDevice[] Devices { get; private set; }
 
         public DeviceValueType ValueType => DeviceValueType.Binary;

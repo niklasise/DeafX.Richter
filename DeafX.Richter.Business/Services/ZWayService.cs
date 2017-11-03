@@ -65,7 +65,7 @@ namespace DeafX.Richter.Business.Services
 
         public async Task ToggleDeviceAsync(string deviceId, bool toggleState)
         {
-            if(_zWaveDeviceDictonary.ContainsKey(deviceId))
+            if(!_zWaveDeviceDictonary.ContainsKey(deviceId))
             {
                 throw new ArgumentException($"No device with id '{deviceId}' found");
             }
@@ -94,28 +94,28 @@ namespace DeafX.Richter.Business.Services
             _zWaveDeviceDictonary = new Dictionary<string, IDevice>();
             _zWayDeviceDictonary = (await GetDeviceDataAsync(0)).devices.ToDictionary(d => d.id);
 
-            foreach (var configuration in deviceConfigurations)
+            foreach (var config in deviceConfigurations)
             {
-                if (!_zWayDeviceDictonary.ContainsKey(configuration.ZWayId))
+                if (!_zWayDeviceDictonary.ContainsKey(config.ZWayId))
                 {
-                    throw new ZWayDeviceConfigurationException($"No ZWayDevice found with id '{configuration.ZWayId}'");
+                    throw new ZWayDeviceConfigurationException($"No ZWayDevice found with id '{config.ZWayId}'");
                 }
 
-                if (configuration.ZWayPowerId != null && !_zWayDeviceDictonary.ContainsKey(configuration.ZWayPowerId))
+                if (config.ZWayPowerId != null && !_zWayDeviceDictonary.ContainsKey(config.ZWayPowerId))
                 {
-                    throw new ZWayDeviceConfigurationException($"No ZWayDevice found with id '{configuration.ZWayPowerId}'");
+                    throw new ZWayDeviceConfigurationException($"No ZWayDevice found with id '{config.ZWayPowerId}'");
                 }
 
-                switch (configuration.Type)
+                switch (config.Type)
                 {
                     case "sensor":
-                        _zWaveDeviceDictonary.Add(configuration.Id, new ZWaveSensorDevice(id: configuration.Id, zWayDevice: _zWayDeviceDictonary[configuration.ZWayId], parentService: this));
+                        _zWaveDeviceDictonary.Add(config.Id, new ZWaveSensorDevice(id: config.Id, title: config.Title, zWayDevice: _zWayDeviceDictonary[config.ZWayId], parentService: this));
                         continue;
                     case "powerplug":
-                        _zWaveDeviceDictonary.Add(configuration.Id, new ZWavePowerPlugDevice(id: configuration.Id, switchDevice: _zWayDeviceDictonary[configuration.ZWayId], powerDevice: _zWayDeviceDictonary[configuration.ZWayPowerId], parentService: this));
+                        _zWaveDeviceDictonary.Add(config.Id, new ZWavePowerPlugDevice(id: config.Id, title: config.Title, switchDevice: _zWayDeviceDictonary[config.ZWayId], powerDevice: _zWayDeviceDictonary[config.ZWayPowerId], parentService: this));
                         continue;
                     default:
-                        throw new ZWayDeviceConfigurationException($"Unable to create device with type '{configuration.Type}'");
+                        throw new ZWayDeviceConfigurationException($"Unable to create device with type '{config.Type}'");
                 }
             }
 
