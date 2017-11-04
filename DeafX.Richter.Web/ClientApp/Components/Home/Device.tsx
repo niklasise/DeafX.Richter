@@ -34,13 +34,15 @@ export class Device extends React.Component<DeviceProps, DeviceState> {
                                 <div className="fa fa-gear"></div>
                             </div>
                             <div className="tileCenter">
-
                                 {this.props.device.deviceType === "TOGGLE_DEVICE" && <i className={"fa fa-lightbulb-o clickable" + ((this.props.device as ToggleDevice).toggled ? "" : " off")} onClick={(e) => { this.props.onIconClick(this.props.device) }}/>}
-                                {this.props.device.deviceType === "VALUE_DEVICE" &&
-                                    <span style={{ position: "relative" }}>
-                                    {(this.props.device as ValueDevice).value}
-                                    <span style={{ position: "absolute", top: 13, right: -30, fontSize: 80 }}>&deg;</span>
-                                    </span>}
+                                {this.props.device.deviceType === "VALUE_DEVICE" && 
+                                <div>
+                                    <span>
+                                        {(this.props.device as ValueDevice).value}
+                                    </span>
+                                    <span className="valueUnit">&deg;</span>
+                                </div>
+                                    }
                             </div>
                             <div className="tileBottomLeft">
                                 {this.props.device.deviceType === "TOGGLE_DEVICE" && <DeviceTimer device={this.props.device} onTimerClick={this.props.onTimerClick} timerValue={(this.props.device as ToggleDevice).timerValue} />}

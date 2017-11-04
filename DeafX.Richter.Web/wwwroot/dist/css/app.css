@@ -19,6 +19,9 @@
 .dib {
   display: inline-block; }
 
+.pr {
+  position: relative; }
+
 .clr:after {
   content: ".";
   visibility: hidden;
@@ -97,7 +100,8 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
-  background-color: #464646; }
+  background-color: #464646;
+  margin: 0; }
 
 .tileContainer {
   max-width: 900px;
@@ -163,17 +167,24 @@ body {
   .tileCenter .smallIcon {
     font-size: 40px; }
 
-.tileCenter > i, .tileCenter > span {
+.tileCenter > i, .tileCenter > div > span {
   font-size: 120px; }
   @media screen and (max-width: 700px) {
-    .tileCenter > i, .tileCenter > span {
+    .tileCenter > i, .tileCenter > div > span {
       font-size: 90px; } }
   @media screen and (max-width: 500px) {
-    .tileCenter > i, .tileCenter > span {
+    .tileCenter > i, .tileCenter > div > span {
       font-size: 60px; } }
   @media screen and (max-width: 400px) {
-    .tileCenter > i, .tileCenter > span {
+    .tileCenter > i, .tileCenter > div > span {
       font-size: 40px; } }
+
+.valueUnit {
+  position: absolute;
+  margin-left: -10px; }
+  @media screen and (max-width: 500px) {
+    .valueUnit {
+      margin-left: -5px; } }
 
 .tileLabel {
   position: absolute;
@@ -205,10 +216,12 @@ body {
   @media screen and (max-width: 700px) {
     .tileRight, .tileTopRight, .tileBottomRight {
       font-size: 25px;
+      line-height: 25px;
       right: 15px; } }
   @media screen and (max-width: 500px) {
     .tileRight, .tileTopRight, .tileBottomRight {
       font-size: 15px;
+      line-height: 15px;
       right: 10px; } }
 
 .tileTopRight {
@@ -237,10 +250,12 @@ body {
   @media screen and (max-width: 700px) {
     .tileLeft, .tileTopLeft, .tileBottomLeft {
       font-size: 25px;
+      line-height: 25px;
       left: 15px; } }
   @media screen and (max-width: 500px) {
     .tileLeft, .tileTopLeft, .tileBottomLeft {
       font-size: 15px;
+      line-height: 15px;
       left: 10px; } }
 
 .tileTopLeft {
@@ -263,8 +278,7 @@ body {
         height: 15px; } }
 
 .tileBottomLeft {
-  bottom: 20px;
-  line-height: 15px; }
+  bottom: 20px; }
   @media screen and (max-width: 700px) {
     .tileBottomLeft {
       bottom: 15px; } }

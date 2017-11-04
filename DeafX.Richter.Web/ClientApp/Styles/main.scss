@@ -19,6 +19,7 @@ body {
     background-attachment: fixed;
     background-size: cover;
     background-color: #464646;
+    margin: 0;
 }
 
 .tileContainer {
@@ -107,7 +108,7 @@ body {
     }
 }
 
-.tileCenter > i, .tileCenter > span {
+.tileCenter > i, .tileCenter > div > span {
     font-size: 120px;
 
     @media screen and (max-width: $break-large) {
@@ -121,6 +122,17 @@ body {
     @media screen and (max-width: $break-small) {
         font-size: 40px;
     }
+
+}
+
+.valueUnit {
+    position: absolute;
+    margin-left: -10px;
+
+    @media screen and (max-width: $break-medium) {
+        margin-left: -5px;
+    }
+
 }
 
 .tileLabel {
@@ -158,11 +170,13 @@ body {
 
     @media screen and (max-width: $break-large) {
         font-size: 25px;
+        line-height: 25px;
         right: 15px;
     }
 
     @media screen and (max-width: $break-medium) {
         font-size: 15px;
+        line-height: 15px;
         right: 10px;
     }
 }
@@ -201,11 +215,13 @@ body {
 
     @media screen and (max-width: $break-large) {
         font-size: 25px;
+        line-height: 25px;
         left: 15px;
     }
 
     @media screen and (max-width: $break-medium) {
         font-size: 15px;
+        line-height: 15px;
         left: 10px;
     }
 }
@@ -242,8 +258,7 @@ body {
 .tileBottomLeft {
     @extend .tileLeft;
     bottom: 20px;
-    line-height: 15px;
-
+    
     @media screen and (max-width: $break-large) {
         bottom: 15px;
     }
