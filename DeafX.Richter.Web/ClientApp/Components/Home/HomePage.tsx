@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { Device, DeviceProps } from "./Device";
+import Device from "./Device";
 import { Device as DeviceModel, ToggleDevice } from "../../Models/Device";
 import { connect, Dispatch } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";

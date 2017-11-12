@@ -4,8 +4,10 @@
     title: string;
 
     deviceType: string;
-    lastUpdated: number;
+    value: string;
+    valueType: string;
     isUpdating: boolean;
+    lastUpdated: number;
 }
 
 export class ToggleDevice extends Device {
@@ -13,13 +15,6 @@ export class ToggleDevice extends Device {
     toggled: boolean;
     timerValue: number;
     automated: boolean;
-
-}
-
-export class ValueDevice extends Device {
-
-    value: string;
-    valueType: string;
 
 }
 

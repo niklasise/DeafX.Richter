@@ -37,6 +37,8 @@ namespace DeafX.Richter.Business.Interfaces
     {
         Unknown,
         Binary,
+        Toggle,
+        GroupToggle,
         Temperature,
         Luminosity
     }

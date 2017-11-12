@@ -1,6 +1,7 @@
-﻿import delay from './delay';
-import { Device as DeviceModel, ToggleDevice, ValueDevice, UpdatedDevices } from "../Models/Device"
-import { IDeviceListener as DeviceListener } from "./IDeviceApi"
+﻿import { Device as DeviceModel, ToggleDevice, UpdatedDevices } from "../Models/Device"
+import { IDeviceListener as DeviceListener } from "./IDeviceListener"
+
+let delay : number = 1000;
 
 // This file mocks a web API by working with the hard-coded data below.
 // It uses setTimeout to simulate the delay of an AJAX call.
@@ -26,13 +27,13 @@ let devices : DeviceModel[] = [
         title: "Hall Nedervåning",
         value: "21",
         deviceType: "VALUE_DEVICE",
-    } as ValueDevice,
+    } as DeviceModel,
     {
         id: "4",
         title: "Hall övervåning",
         value: "23",
         deviceType: "VALUE_DEVICE",
-    } as ValueDevice,
+    } as DeviceModel,
 ];
 
 let deviceListeners: DeviceListener[] = [];
@@ -107,15 +108,6 @@ class deviceApi {
         });
     }
 
-    static getUpdatedDevices(since: number): Promise<UpdatedDevices> {
-        console.log("Updating devices");
-        return new Promise<UpdatedDevices>((resolve, reject) => {
-            setTimeout(() => {
-                resolve({ devices: devices.filter(device => device.lastUpdated > since), timestamp: new Date().getTime() });
-            }, delay);
-        });
-    }
-
     static connect(onAllDevices: DeviceListener, onDevicesUpdated: DeviceListener) {
         deviceApi.getAlldevices().then(devices => onAllDevices(devices));
         deviceListeners.push(onDevicesUpdated);
@@ -133,11 +125,7 @@ class deviceApi {
         lastUpdateSent = new Date().getTime();
     }
 
-    static startRandomizingValueDevices() {
-        deviceApi.randomizeValueDevices();
-    }
-
-    private static randomizeValueDevices()
+    static randomizeValueDevices()
     {
         setTimeout(function () {
             devices.forEach((val, index, arr) => {
@@ -145,7 +133,7 @@ class deviceApi {
                     return;
                 }
 
-                (val as ValueDevice).value = "" + Math.round(20 + Math.random() * 5);
+                val.value = "" + Math.round(20 + Math.random() * 5);
                 val.lastUpdated = new Date().getTime();
             });
 
@@ -156,5 +144,7 @@ class deviceApi {
     }
 
 }
+
+deviceApi.randomizeValueDevices();
 
 export default deviceApi;

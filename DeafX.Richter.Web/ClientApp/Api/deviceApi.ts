@@ -1,6 +1,6 @@
 ﻿import * as SignalR from "@aspnet/signalr-client"
-import { Device as DeviceModel, ToggleDevice, ValueDevice, UpdatedDevices } from "../Models/Device"
-import { IDeviceListener as DeviceListener } from "./IDeviceApi"
+import { Device as DeviceModel, ToggleDevice, UpdatedDevices } from "../Models/Device"
+import { IDeviceListener as DeviceListener } from "./IDeviceListener"
 
 class DeviceApi {
 

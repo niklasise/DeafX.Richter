@@ -21,7 +21,7 @@ namespace DeafX.Richter.Business.Models
 
         public object Value => Toggled;
 
-        public DeviceValueType ValueType => DeviceValueType.Binary;
+        public DeviceValueType ValueType => DeviceValueType.Toggle;
 
         public string Power {
             get

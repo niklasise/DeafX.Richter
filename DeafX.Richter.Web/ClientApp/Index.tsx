@@ -12,7 +12,6 @@ const store = configureStore({
         deviceList: []
     }
 })
-mockApi.startRandomizingValueDevices();
 
 function renderApp() {
     ReactDOM.render(

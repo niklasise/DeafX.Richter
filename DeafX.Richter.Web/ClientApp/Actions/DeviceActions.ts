@@ -1,7 +1,7 @@
 ﻿import { Device as DeviceModel, ToggleDevice } from "../Models/Device";
 import { Action } from "redux";
-//import deviceApi from "../Api/mockDeviceApi";
-import deviceApi from "../Api/deviceApi";
+//import deviceApi from "../Api/MockDeviceApi";
+import deviceApi from "../Api/DeviceApi";
 
 export interface ToggleDeviceAction extends Action {
     device: DeviceModel;
@@ -61,23 +61,6 @@ export function setDeviceAutomated(device: ToggleDevice, automated: boolean) {
         ]);
     }
 }
-
-//export function loadDevicesAndListenForUpdates() {
-//    return function (dispatch) {
-//        return deviceApi.getAlldevices().then(devices => {
-//            dispatch(loadDevicesSuccess(devices as DeviceModel[]));
-//            deviceApi.listenForDeviceUpdates(event => dispatch(devicesUpdated(event.data)));
-//        }).catch(error => {
-//            throw error;
-//        });
-//    }
-//}
-
-//export function stopListeningForDeviceUpdates() {
-//    return function (dispatch) {
-//        deviceApi.stopListeningForDeviceUpdates();
-//    }
-//}
 
 export function connectToDeviceApi() {
     return function (dispatch) {
