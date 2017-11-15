@@ -82,7 +82,7 @@ namespace DeafX.Richter.Business.Test
             Assert.AreEqual(DeviceValueType.Temperature, devices[0].ValueType);
             Assert.AreEqual(22.3, devices[0].Value);
 
-            Assert.AreEqual(DeviceValueType.Binary, devices[1].ValueType);
+            Assert.AreEqual(DeviceValueType.Toggle, devices[1].ValueType);
             Assert.AreEqual(true, devices[1].Value);
             Assert.AreEqual("0", (devices[1] as ZWavePowerPlugDevice).Power);
         }

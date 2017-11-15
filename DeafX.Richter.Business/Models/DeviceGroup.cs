@@ -26,17 +26,18 @@ namespace DeafX.Richter.Business.Models
             get; internal set;
         }
 
-        public string Title { get; set; }
+        public string Title { get; private set; }
 
         public IToggleDevice[] Devices { get; private set; }
 
-        public DeviceValueType ValueType => DeviceValueType.Binary;
+        public DeviceValueType ValueType => DeviceValueType.GroupToggle;
 
-        public DeviceGroup(string id, IToggleDevice[] devices, IDeviceService parentService)
+        public DeviceGroup(string id, string title,IToggleDevice[] devices, IDeviceService parentService)
         {
             Id = id;
             ParentService = parentService;
             Devices = devices;
+            Title = title;
         }
 
     }
