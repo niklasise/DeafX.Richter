@@ -5,7 +5,7 @@ using System;
 
 namespace DeafX.Richter.Business.Models
 {
-    public class ZWaveSensorDevice : IDevice
+    public class ZWaveDevice : IDevice
     {
         public string Id { get; private set; }
 
@@ -16,11 +16,12 @@ namespace DeafX.Richter.Business.Models
         public object Value {
             get
             {
-                return ValueType == DeviceValueType.Binary ? ParseBinaryLevel() : InternalDevice.metrics.level;
+                return ValueType == DeviceValueType.Binary || ValueType == DeviceValueType.Toggle ? 
+                    ParseBinaryLevel() : InternalDevice.metrics.level;
             }
         }
 
-        public DeviceValueType ValueType {
+        public virtual DeviceValueType ValueType {
             get
             {
                 if (InternalDevice.deviceType.Equals("sensorbinary", StringComparison.InvariantCultureIgnoreCase))
@@ -42,9 +43,11 @@ namespace DeafX.Richter.Business.Models
             }
         }
 
+        public event DeviceValueChangedHandler OnValueChanged;
+
         internal ZWayDevice InternalDevice { get; private set; }
 
-        public ZWaveSensorDevice(string id, string title, ZWayDevice zWayDevice , IDeviceService parentService)
+        public ZWaveDevice(string id, string title, ZWayDevice zWayDevice , IDeviceService parentService)
         {
             Id = id;
             Title = title;
@@ -57,12 +60,19 @@ namespace DeafX.Richter.Business.Models
             }
 
             if (!string.Equals(InternalDevice.deviceType, "sensormultilevel", StringComparison.InvariantCultureIgnoreCase) &&
-                !string.Equals(InternalDevice.deviceType, "sensorbinary", StringComparison.InvariantCultureIgnoreCase))
+                !string.Equals(InternalDevice.deviceType, "sensorbinary", StringComparison.InvariantCultureIgnoreCase) &&
+                !string.Equals(InternalDevice.deviceType, "switchBinary", StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'sensormultilevel' or 'sensorBinary'. Is '{InternalDevice.deviceType}'");
+                throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'sensormultilevel', 'sensorBinary' or 'switchBinary'. Is '{InternalDevice.deviceType}'");
             }
 
             InternalDevice.ParentDevice = this;
+            InternalDevice.OnDeviceUpdated += OnInternalDeviceUpdated;
+        }
+
+        private void OnInternalDeviceUpdated(object sender)
+        {
+            OnValueChanged?.Invoke(this);
         }
 
         private bool ParseBinaryLevel()

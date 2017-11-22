@@ -31,6 +31,8 @@ namespace DeafX.Richter.Business.Interfaces
         DeviceValueType ValueType { get; } 
 
         IDeviceService ParentService { get; }
+
+        event DeviceValueChangedHandler OnValueChanged;
     }
 
     public enum DeviceValueType
@@ -42,4 +44,18 @@ namespace DeafX.Richter.Business.Interfaces
         Temperature,
         Luminosity
     }
+
+    public delegate void DeviceValueChangedHandler(object sender);
+
+    //public class DeviceValueChangedEventArgs : EventArgs
+    //{
+    //    public DeviceValueChangedEventArgs(object previousValue, object newValue)
+    //    {
+    //        PreviousValue = previousValue;
+    //        NewValue = newValue;
+    //    }
+
+    //    public object PreviousValue { get; private set; }
+    //    public object NewValue { get; private set; }
+    //}
 }

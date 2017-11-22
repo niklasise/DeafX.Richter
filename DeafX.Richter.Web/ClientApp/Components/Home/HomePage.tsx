@@ -55,7 +55,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
     }
 
     onIconClick(device: ToggleDevice): void {
-        this.props.toggleDevice(device, !device.toggled);
+        this.props.toggleDevice(device, !device.value);
     }
 
     onConfigClick(device: DeviceModel): void {

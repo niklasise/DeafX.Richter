@@ -184,6 +184,8 @@ namespace DeafX.Richter.Business.Test
             public DeviceValueType ValueType => DeviceValueType.Toggle;
 
             public IDeviceService ParentService { get; set; }
+
+            public event DeviceValueChangedHandler OnValueChanged;
         }
     }
 }

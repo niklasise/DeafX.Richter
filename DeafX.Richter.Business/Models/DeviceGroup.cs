@@ -4,6 +4,8 @@ namespace DeafX.Richter.Business.Models
 {
     public class DeviceGroup : IToggleDevice
     {
+        private bool _toggled;
+
         public string Id
         {
             get; private set;
@@ -18,7 +20,19 @@ namespace DeafX.Richter.Business.Models
 
         public bool Toggled
         {
-            get; internal set;
+            get
+            {
+                return _toggled;
+            }
+
+            set
+            {
+                if(value != _toggled)
+                {
+                    _toggled = value;
+                    OnValueChanged?.Invoke(this);
+                }
+            }
         }
 
         public int LastChanged
@@ -40,5 +54,6 @@ namespace DeafX.Richter.Business.Models
             Title = title;
         }
 
+        public event DeviceValueChangedHandler OnValueChanged;
     }
 }

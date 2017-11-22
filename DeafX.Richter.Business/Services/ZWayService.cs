@@ -77,7 +77,7 @@ namespace DeafX.Richter.Business.Services
                 throw new ArgumentException($"Device id '{deviceId}' is not a valid toggle device");
             }
 
-            var request = GenerateRequest(string.Format("devices/{0}/command/{1}", device.InternalSwitchDevice.id, toggleState ? "on" : "off"));
+            var request = GenerateRequest(string.Format("devices/{0}/command/{1}", device.InternalDevice.id, toggleState ? "on" : "off"));
 
             var result = await _httpClient.SendAsync(request);
 
@@ -109,7 +109,7 @@ namespace DeafX.Richter.Business.Services
                 switch (config.Type)
                 {
                     case "sensor":
-                        _zWaveDeviceDictonary.Add(config.Id, new ZWaveSensorDevice(id: config.Id, title: config.Title, zWayDevice: _zWayDeviceDictonary[config.ZWayId], parentService: this));
+                        _zWaveDeviceDictonary.Add(config.Id, new ZWaveDevice(id: config.Id, title: config.Title, zWayDevice: _zWayDeviceDictonary[config.ZWayId], parentService: this));
                         continue;
                     case "powerplug":
                         _zWaveDeviceDictonary.Add(config.Id, new ZWavePowerPlugDevice(id: config.Id, title: config.Title, switchDevice: _zWayDeviceDictonary[config.ZWayId], powerDevice: _zWayDeviceDictonary[config.ZWayPowerId], parentService: this));

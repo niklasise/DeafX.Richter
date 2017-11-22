@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DeafX.Richter.Business.Models.ZWay
 {
-    //public delegate void ZWayDeviceUpdated(object sender, ZWayDeviceUpdatedEventArgs args);
+    internal delegate void ZWayDeviceUpdatedHandler(object sender);
 
     public class ZWayDevice
     { 
@@ -23,9 +23,11 @@ namespace DeafX.Richter.Business.Models.ZWay
         public int? creatorId { get; set; }
         public ZWayMetrics metrics { get; set; }
 
-        internal IDevice ParentDevice { get; set; } 
+        internal IDevice ParentDevice { get; set; }
 
-        public bool UpdateMetrics(ZWayMetrics metrics)
+        internal event ZWayDeviceUpdatedHandler OnDeviceUpdated;
+
+        internal bool UpdateMetrics(ZWayMetrics metrics)
         {
             // If metrics are equal, just return
             if (this.metrics.Equals(metrics))
@@ -35,13 +37,10 @@ namespace DeafX.Richter.Business.Models.ZWay
 
             this.metrics = metrics;
 
+            OnDeviceUpdated?.Invoke(this);
+
             return true;
         }
     }
 
-    //public class ZWayDeviceUpdatedEventArgs : EventArgs
-    //{
-    //    public int UpdateTime { get; set; }
-    //    public ZWayMetrics NewMetrics { get; set; }
-    //}
 }

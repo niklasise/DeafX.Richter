@@ -13,7 +13,7 @@ const ToggleDevice: React.SFC<DeviceProps> = (props) => {
             <div className="fa fa-gear"></div>
         </div>
         <div className="tileCenter">
-            <i className={"fa fa-lightbulb-o clickable" + ((props.device as ToggleDeviceModel).toggled ? "" : " off")} onClick={(e) => { props.onIconClick(props.device) }} />
+            <i className={"fa fa-lightbulb-o clickable" + ((props.device as ToggleDeviceModel).value ? "" : " off")} onClick={(e) => { props.onIconClick(props.device) }} />
         </div>
         <div className="tileBottomLeft">
             {props.device.deviceType === "TOGGLE_DEVICE" && <DeviceTimer device={props.device} onTimerClick={props.onTimerClick} timerValue={(props.device as ToggleDeviceModel).timerValue} />}

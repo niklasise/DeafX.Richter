@@ -80,7 +80,7 @@ namespace DeafX.Richter.Business.Services
             await Task.WhenAll(taskList);
 
             deviceGrp.Toggled = toggled;
-
+            
             OnDevicesUpdated.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGrp }));
         }
     }

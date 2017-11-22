@@ -5,25 +5,16 @@ using System;
 
 namespace DeafX.Richter.Business.Models
 {
-    public class ZWavePowerPlugDevice : IToggleDevice
+    public class ZWavePowerPlugDevice : ZWaveDevice, IToggleDevice
     {
-        internal ZWayDevice InternalSwitchDevice { get; private set; }
-
         internal ZWayDevice InternalPowerDevice { get; private set; }
 
-        public bool Toggled => ParseLevel();
+        public bool Toggled => (bool)Value;
 
-        public string Id { get; private set; }
+        public override DeviceValueType ValueType => DeviceValueType.Toggle;
 
-        public string Title { get; private set; }
-
-        public IDeviceService ParentService { get; private set; }
-
-        public object Value => Toggled;
-
-        public DeviceValueType ValueType => DeviceValueType.Toggle;
-
-        public string Power {
+        public string Power
+        {
             get
             {
                 return InternalPowerDevice.metrics?.level?.ToString();
@@ -31,35 +22,80 @@ namespace DeafX.Richter.Business.Models
         }
 
         public ZWavePowerPlugDevice(string id, string title, ZWayDevice switchDevice, ZWayDevice powerDevice, IDeviceService parentService)
+            : base(id, title, switchDevice, parentService)
         {
-            Id = id;
-            Title = title;
-            ParentService = parentService;
-            InternalSwitchDevice = switchDevice;
             InternalPowerDevice = powerDevice;
-
-            if (InternalSwitchDevice.ParentDevice != null || InternalPowerDevice.ParentDevice != null)
-            {
-                throw new ZWayDeviceConfigurationException("A ZWayDevice cannot have multiple parent devices");
-            }
 
             if (!string.Equals(InternalPowerDevice.deviceType, "sensormultilevel", StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'sensormultilevel'. Is '{InternalPowerDevice.deviceType}'");
             }
 
-            if (!string.Equals(InternalSwitchDevice.deviceType, "switchBinary", StringComparison.InvariantCultureIgnoreCase))
+            if (!string.Equals(switchDevice.deviceType, "switchBinary", StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'switchBinary'. Is '{InternalSwitchDevice.deviceType}'");
+                throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'switchBinary'. Is '{switchDevice.deviceType}'");
             }
 
             InternalPowerDevice.ParentDevice = this;
-            InternalSwitchDevice.ParentDevice = this;
-        }
-
-        private bool ParseLevel()
-        {
-            return string.Equals(InternalSwitchDevice.metrics.level?.ToString(), "on", StringComparison.OrdinalIgnoreCase);
         }
     }
+    //public class ZWavePowerPlugDevice : IToggleDevice
+    //{
+    //    internal ZWayDevice InternalSwitchDevice { get; private set; }
+
+    //    internal ZWayDevice InternalPowerDevice { get; private set; }
+
+    //    public bool Toggled => ParseLevel();
+
+    //    public string Id { get; private set; }
+
+    //    public string Title { get; private set; }
+
+    //    public IDeviceService ParentService { get; private set; }
+
+    //    public object Value => Toggled;
+
+    //    public DeviceValueType ValueType => DeviceValueType.Toggle;
+
+    //    public string Power {
+    //        get
+    //        {
+    //            return InternalPowerDevice.metrics?.level?.ToString();
+    //        }
+    //    }
+
+    //    public ZWavePowerPlugDevice(string id, string title, ZWayDevice switchDevice, ZWayDevice powerDevice, IDeviceService parentService)
+    //    {
+    //        Id = id;
+    //        Title = title;
+    //        ParentService = parentService;
+    //        InternalSwitchDevice = switchDevice;
+    //        InternalPowerDevice = powerDevice;
+
+    //        if (InternalSwitchDevice.ParentDevice != null || InternalPowerDevice.ParentDevice != null)
+    //        {
+    //            throw new ZWayDeviceConfigurationException("A ZWayDevice cannot have multiple parent devices");
+    //        }
+
+    //        if (!string.Equals(InternalPowerDevice.deviceType, "sensormultilevel", StringComparison.InvariantCultureIgnoreCase))
+    //        {
+    //            throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'sensormultilevel'. Is '{InternalPowerDevice.deviceType}'");
+    //        }
+
+    //        if (!string.Equals(InternalSwitchDevice.deviceType, "switchBinary", StringComparison.InvariantCultureIgnoreCase))
+    //        {
+    //            throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'switchBinary'. Is '{InternalSwitchDevice.deviceType}'");
+    //        }
+
+    //        InternalPowerDevice.ParentDevice = this;
+    //        InternalSwitchDevice.ParentDevice = this;
+    //    }
+
+    //    public event DeviceValueChangedHandler OnValueChanged;
+
+    //    private bool ParseLevel()
+    //    {
+    //        return string.Equals(InternalSwitchDevice.metrics.level?.ToString(), "on", StringComparison.OrdinalIgnoreCase);
+    //    }
+    //}
 }
