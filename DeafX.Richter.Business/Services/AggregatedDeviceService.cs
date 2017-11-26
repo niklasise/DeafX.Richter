@@ -10,21 +10,23 @@ namespace DeafX.Richter.Business.Services
     public class AggregatedDeviceService : IDeviceService
     {
         private IDeviceService[] _services;
+        private IDateTimeProvider _dateTimeProvider;
         private Dictionary<string, IDevice> _allDevices;
-        private List<ToggleTrigger> _triggers;
+        private Dictionary<IToggleDevice, ToggleAutomationRule> _toggleAutomationRules;
 
         public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
-        public IEnumerable<ToggleTrigger> ToggleTriggers
-        {
-            get
-            {
-                return _triggers;
-            }
-        }
+        //public IEnumerable<ToggleAutomationRule> ToggleAutomationRules
+        //{
+        //    get
+        //    {
+        //        return _toggleAutomationRules.Values;
+        //    }
+        //}
 
-        public AggregatedDeviceService(params IDeviceService[] services)
+        public AggregatedDeviceService(IDateTimeProvider dateTimeProvider, params IDeviceService[] services)
         {
+            _dateTimeProvider = dateTimeProvider;
             _services = services;
 
             // Set child serivce OnDeviceUpdated to just forward to our own
@@ -35,92 +37,105 @@ namespace DeafX.Richter.Business.Services
 
         }
 
-        public void Init(TriggerConfiguration[] triggerConfigurations)
+        public AggregatedDeviceService(params IDeviceService[] services) : this(new DefaultDateTimeProvider(), services) { }
+
+        public void Init(ToggleAutomationRuleConfiguration[] ruleConfigurations)
         {
-            _triggers = new List<ToggleTrigger>();
+            _toggleAutomationRules = new Dictionary<IToggleDevice, ToggleAutomationRule>();
 
             if (_allDevices == null)
             {
                 PopulateDevices();
             }
 
-            foreach (var triggerConfiguration in triggerConfigurations)
+            foreach (var ruleConfiguration in ruleConfigurations)
             {
-                if(!_allDevices.ContainsKey(triggerConfiguration.DeviceToToggle))
+                if(!_allDevices.ContainsKey(ruleConfiguration.DeviceToToggle))
                 {
-                    throw new ArgumentException($"Cannot find device with id '{triggerConfiguration.DeviceToToggle}'");
+                    throw new ArgumentException($"Cannot find device with id '{ruleConfiguration.DeviceToToggle}'");
                 }
 
-                var deviceToToggle = _allDevices[triggerConfiguration.DeviceToToggle] as IToggleDevice;
+                var deviceToToggle = _allDevices[ruleConfiguration.DeviceToToggle] as IToggleDevice;
 
                 if (deviceToToggle == null)
                 {
-                    throw new ArgumentException($"Device with id '{triggerConfiguration.DeviceToToggle}' is not of type IToggleDevice");
+                    throw new ArgumentException($"Device with id '{ruleConfiguration.DeviceToToggle}' is not of type IToggleDevice");
                 }
 
-                var conditions = GetConditionsFromConfiguration(triggerConfiguration.Conditions);
+                if(_toggleAutomationRules.ContainsKey(deviceToToggle))
+                {
+                    throw new ArgumentException($"Device with id '{ruleConfiguration.DeviceToToggle}' cannot have multiple automation rules");
+                }
 
-                var trigger = new ToggleTrigger(
-                        id: triggerConfiguration.Id,
-                        title: triggerConfiguration.Title,
-                        stateToSet: triggerConfiguration.StateToSet,
-                        deviceToToggle: deviceToToggle,
-                        conditions: conditions
+                var condition = GetConditionFromConfiguration(ruleConfiguration.Condition);
+
+                var rule = new ToggleAutomationRule(
+                        id: ruleConfiguration.Id,
+                        toggleDevice: deviceToToggle,
+                        condition: condition
                     );
 
-                // If triggered at initiation, invoke action
-                if(trigger.Triggered)
-                {
-                    OnTriggerTriggered(trigger);
-                }
+                // Set toggle state for device according to the rule
+                OnRuleStateChanged(rule, rule.State);
 
-                trigger.OnTriggered += OnTriggerTriggered;
+                rule.OnStateChanged += (sender, args) => OnRuleStateChanged(args.Rule, args.NewState);
 
-                _triggers.Add(trigger);
+                _toggleAutomationRules.Add(deviceToToggle, rule);
             }
         }
 
-        private async void OnTriggerTriggered(object sender)
+        private async void OnRuleStateChanged(ToggleAutomationRule rule, bool newState)
         {
-            var toggleTrigger = sender as ToggleTrigger;
-
-            await  ToggleDeviceAsync(toggleTrigger.DeviceToToggle.Id, toggleTrigger.StateToSet);
+            await  ToggleDeviceAsync(rule.ToggleDevice.Id, newState);
         }
 
-        private ITriggerCondition[] GetConditionsFromConfiguration(ITriggerConditionConfiguration[] conditions)
+        private IToggleAutomationCondition GetConditionFromConfiguration(IToggleAutomationConditionConfiguration configuration)
         {
-            var triggerConditions = new List<ITriggerCondition>();
-
-            foreach(var configuration in conditions)
+            if(configuration is TimerConditionConfiguration)
             {
-                if(configuration is TimeConditionConfiguration)
-                {
-                    var timeConfiguration = configuration as TimeConditionConfiguration;
+                return GetTimerConditionFromConfiguration(configuration as TimerConditionConfiguration);
+            }
+            else
+            {
+                return GetDeviceConditionFromConfiguration(configuration as DeviceConditionConfiguration);
+            }
+        }
 
-                    triggerConditions.Add(new TimerCondition(
-                        time: timeConfiguration.Time
-                    ));
-                }
-                else
-                {
-                    var deviceConfiguration = configuration as DeviceConditionConfiguration;
+        private TimerCondition GetTimerConditionFromConfiguration(TimerConditionConfiguration timerConfiguration)
+        {
+            var intervals = new List<TimerConditionInterval>();
 
-                    if(!_allDevices.ContainsKey(deviceConfiguration.Device))
-                    {
-                        throw new ArgumentException($"Cannot find device with id '{deviceConfiguration.Device}'");
-                    }
+            foreach (var interval in timerConfiguration.Intervals)
+            {
+                var additionalConditions = interval.AdditionalConditions?.Select(c => GetDeviceConditionFromConfiguration(c)).ToArray();
 
-                    var device = _allDevices[deviceConfiguration.Device];
-
-                    triggerConditions.Add(new DeviceCondition(
-                        device: device,
-                        compareValue: deviceConfiguration.CompareValue,
-                        compareOperator: deviceConfiguration.CompareOperator
-                    ));
-                }
+                intervals.Add(new TimerConditionInterval(
+                    start: interval.Start,
+                    end: interval.End,
+                    additionalConditions: additionalConditions
+                ));
             }
 
-            return triggerConditions.ToArray();
+            return new TimerCondition(
+                intervals: intervals.ToArray(),
+                dateTimeProvider: _dateTimeProvider
+            );
+        }
+
+        private DeviceCondition GetDeviceConditionFromConfiguration(DeviceConditionConfiguration deviceConfiguration)
+        {
+            if (!_allDevices.ContainsKey(deviceConfiguration.Device))
+            {
+                throw new ArgumentException($"Cannot find device with id '{deviceConfiguration.Device}'");
+            }
+
+            var device = _allDevices[deviceConfiguration.Device];
+
+            return new DeviceCondition(
+                device: device,
+                compareValue: deviceConfiguration.CompareValue,
+                compareOperator: deviceConfiguration.CompareOperator
+            );
         }
 
         public IDevice[] GetAllDevices()

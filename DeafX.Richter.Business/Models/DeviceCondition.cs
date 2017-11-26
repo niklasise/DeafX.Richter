@@ -14,15 +14,15 @@ namespace DeafX.Richter.Business.Models
         GreaterOrEqual
     }
 
-    public class DeviceCondition : ITriggerCondition
+    public class DeviceCondition : IToggleAutomationCondition
     {
         private IComparable _compareValue;
         private DeviceConditionOperator _compareOperator;
         private IDevice _device;
 
-        public bool Fullfilled { get; private set; }
+        public bool State { get; private set; }
 
-        public event OnTriggerConditionFullfilledHandler OnConditionFullfilled;
+        public event OnToggleAutomationConditionStateChangedHandler OnStateChanged;
 
         public DeviceCondition(IDevice device, IComparable compareValue, DeviceConditionOperator compareOperator)
         {
@@ -30,23 +30,19 @@ namespace DeafX.Richter.Business.Models
             _compareOperator = compareOperator;
             _compareValue = compareValue;
 
-            device.OnValueChanged += (sender) => TestDeviceValue();
+            device.OnValueChanged += (sender) => CalculateState();
 
-            TestDeviceValue();
+            CalculateState();
         }
-
-        public void Reset()
+        
+        private void CalculateState()
         {
-            Fullfilled = false;
-            TestDeviceValue();
-        }
+            var newState = CompareWithOperator(_compareValue.CompareTo(_device.Value));
 
-        private void TestDeviceValue()
-        {
-            if(!Fullfilled && CompareWithOperator(_compareValue.CompareTo(_device.Value)))
+            if (State != newState)
             {
-                Fullfilled = true;
-                OnConditionFullfilled?.Invoke(this);
+                State = newState;
+                OnStateChanged?.Invoke(this, new ToggleAutomationConditionStateChangedHandler(this, newState));
             }
         }
 

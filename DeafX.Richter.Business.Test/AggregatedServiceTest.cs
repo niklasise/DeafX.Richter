@@ -1,6 +1,8 @@
 ﻿using DeafX.Richter.Business.Interfaces;
 using DeafX.Richter.Business.Models;
 using DeafX.Richter.Business.Services;
+using DeafX.Richter.Common.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -29,28 +31,46 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "TestDevice2",
                     Title = "Test Device #2"
+                },
+                new TestToggleDevice()
+                {
+                    Id = "TestDevice3",
+                    Title = "Test Device #3"
                 }
             };
 
-            public TriggerConfiguration[] TriggerConfigurations { get; set; } =
+            public List<ToggleAutomationRuleConfiguration> RuleConfigurations { get; set; } = new List<ToggleAutomationRuleConfiguration>()
             {
-                new TriggerConfiguration()
+                new ToggleAutomationRuleConfiguration()
                 {
-                    Id = "Trigger1",
+                    Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    StateToSet = true,
-                    Title = "Trigger #1",
-                    Conditions = new ITriggerConditionConfiguration[]
+                    Condition = new DeviceConditionConfiguration
                     {
-                        new DeviceConditionConfiguration()
+                        Device = "TestDevice1",
+                        CompareOperator = DeviceConditionOperator.GreaterOrEqual,
+                        CompareValue = 22
+                    }
+                },
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule2",
+                    DeviceToToggle = "TestDevice3",
+                    Condition = new TimerConditionConfiguration
+                    {
+                        Intervals = new TimerConditionIntervalConfiguration[]
                         {
-                            Device = "TestDevice1",
-                            CompareOperator = DeviceConditionOperator.GreaterOrEqual,
-                            CompareValue = 22
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = new TimeSpan(12,0,0),
+                                End = new TimeSpan(13,0,0)
+                            }
                         }
                     }
                 }
             };
+
+            public DateTime DateTimeToUse { get; set; }
         }
 
         #region Init Tests
@@ -61,112 +81,96 @@ namespace DeafX.Richter.Business.Test
             var data = new MockData();
             var container = GetMockContainer(data);
 
-            container.Service.Init(data.TriggerConfigurations);
-
-            Assert.AreEqual(1, container.Service.ToggleTriggers.Count());
-            Assert.AreEqual("Trigger1", container.Service.ToggleTriggers.First().Id);
-            Assert.AreEqual(data.AllSubDevices.First(d => d.Id == "TestDevice2"), container.Service.ToggleTriggers.First().DeviceToToggle);
+            container.Service.Init(data.RuleConfigurations.ToArray());
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void InitFailIncorrectId()
+        public void InitFailDuplicatedDeviceRules()
         {
             var data = new MockData();
             var container = GetMockContainer(data);
 
-            container.Service.Init(new TriggerConfiguration[]
+            data.RuleConfigurations.Add(new ToggleAutomationRuleConfiguration()
             {
-                new TriggerConfiguration() {
-                    Id = "Trigger1",
-                    DeviceToToggle = "TestDevice3",
-                    StateToSet = true,
-                    Title = "Trigger #1",
-                    Conditions = new ITriggerConditionConfiguration[]
-                    {
-                            new DeviceConditionConfiguration()
-                            {
-                                Device = "TestDevice1",
-                                CompareOperator = DeviceConditionOperator.GreaterOrEqual,
-                                CompareValue = 22
-                            }
-                    }
+                Id = "Rule3",
+                DeviceToToggle = "TestDevice2",
+                Condition = new DeviceConditionConfiguration
+                {
+                    Device = "TestDevice1",
+                    CompareOperator = DeviceConditionOperator.GreaterOrEqual,
+                    CompareValue = 22
                 }
             });
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void InitFailIncorrectIdCondition()
+        public void InitFailIncorrectDeviceId()
         {
             var data = new MockData();
             var container = GetMockContainer(data);
 
-            container.Service.Init(new TriggerConfiguration[]
+            data.RuleConfigurations.Add(new ToggleAutomationRuleConfiguration()
             {
-                new TriggerConfiguration() {
-                    Id = "Trigger1",
-                    DeviceToToggle = "TestDevice2",
-                    StateToSet = true,
-                    Title = "Trigger #1",
-                    Conditions = new ITriggerConditionConfiguration[]
-                    {
-                            new DeviceConditionConfiguration()
-                            {
-                                Device = "TestDevice3",
-                                CompareOperator = DeviceConditionOperator.GreaterOrEqual,
-                                CompareValue = 22
-                            }
-                    }
+                Id = "Rule3",
+                DeviceToToggle = "TestDevice4",
+                Condition = new DeviceConditionConfiguration
+                {
+                    Device = "TestDevice1",
+                    CompareOperator = DeviceConditionOperator.GreaterOrEqual,
+                    CompareValue = 22
                 }
             });
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void InitFailIncorrectConditionDeviceId()
+        {
+            var data = new MockData();
+            var container = GetMockContainer(data);
+
+            data.RuleConfigurations.Add(new ToggleAutomationRuleConfiguration()
+            {
+                Id = "Rule3",
+                DeviceToToggle = "TestDevice3",
+                Condition = new DeviceConditionConfiguration
+                {
+                    Device = "TestDevice4",
+                    CompareOperator = DeviceConditionOperator.GreaterOrEqual,
+                    CompareValue = 22
+                }
+            });
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
         }
 
         #endregion
 
-        #region DeviceTrigger Tests
-
-        [TestMethod]
-        public async Task DeviceTriggerSuccessTriggeredAtStart()
-        {
-            var data = new MockData();
-
-            data.TriggerConfigurations[0].Conditions = new ITriggerConditionConfiguration[]
-            {
-                new DeviceConditionConfiguration()
-                {
-                    CompareOperator = DeviceConditionOperator.GreaterOrEqual,
-                    CompareValue = 21,
-                    Device = "TestDevice1"
-                }
-            };
-
-            var container = GetMockContainer(data);
-
-            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
-            var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
-
-            Assert.IsFalse(deviceToTrigger.Toggled);
-
-            container.Service.Init(data.TriggerConfigurations);
-
-            await Task.Delay(10);
-
-            Assert.IsTrue(deviceToTrigger.Toggled);
-        }
+        #region DeviceCondition Tests
 
         [TestMethod]
         public async Task DeviceTriggerSuccessGreater()
         {
             var data = new MockData();
 
-            data.TriggerConfigurations[0].Conditions = new ITriggerConditionConfiguration[]
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
             {
-                new DeviceConditionConfiguration()
+                new ToggleAutomationRuleConfiguration()
                 {
-                    CompareOperator = DeviceConditionOperator.Greater,
-                    CompareValue = 22,
-                    Device = "TestDevice1"
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new DeviceConditionConfiguration
+                    {
+                        Device = "TestDevice1",
+                        CompareOperator = DeviceConditionOperator.Greater,
+                        CompareValue = 20
+                    }
                 }
             };
 
@@ -175,17 +179,19 @@ namespace DeafX.Richter.Business.Test
             var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
             var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
 
-            container.Service.Init(data.TriggerConfigurations);
+            container.Service.Init(data.RuleConfigurations.ToArray());
 
-            Assert.IsFalse(deviceToTrigger.Toggled);
+            await Task.Delay(10);
 
-            deviceThatTriggers.Value = 22;
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 20;
 
             await Task.Delay(10);
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
-            deviceThatTriggers.Value = 23;
+            deviceThatTriggers.Value = 21;
 
             await Task.Delay(10);
 
@@ -197,13 +203,18 @@ namespace DeafX.Richter.Business.Test
         {
             var data = new MockData();
 
-            data.TriggerConfigurations[0].Conditions = new ITriggerConditionConfiguration[]
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
             {
-                new DeviceConditionConfiguration()
+                new ToggleAutomationRuleConfiguration()
                 {
-                    CompareOperator = DeviceConditionOperator.GreaterOrEqual,
-                    CompareValue = 23,
-                    Device = "TestDevice1"
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new DeviceConditionConfiguration
+                    {
+                        Device = "TestDevice1",
+                        CompareOperator = DeviceConditionOperator.GreaterOrEqual,
+                        CompareValue = 21
+                    }
                 }
             };
 
@@ -212,46 +223,11 @@ namespace DeafX.Richter.Business.Test
             var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
             var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
 
-            container.Service.Init(data.TriggerConfigurations);
-
-            Assert.IsFalse(deviceToTrigger.Toggled);
-
-            deviceThatTriggers.Value = 22;
-
-            await Task.Delay(10);
-
-            Assert.IsFalse(deviceToTrigger.Toggled);
-
-            deviceThatTriggers.Value = 23;
+            container.Service.Init(data.RuleConfigurations.ToArray());
 
             await Task.Delay(10);
 
             Assert.IsTrue(deviceToTrigger.Toggled);
-        }
-
-        [TestMethod]
-        public async Task DeviceTriggerSuccessLessOrEqual()
-        {
-            var data = new MockData();
-
-            data.TriggerConfigurations[0].Conditions = new ITriggerConditionConfiguration[]
-            {
-                new DeviceConditionConfiguration()
-                {
-                    CompareOperator = DeviceConditionOperator.LessOrEqual,
-                    CompareValue = 19,
-                    Device = "TestDevice1"
-                }
-            };
-
-            var container = GetMockContainer(data);
-
-            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
-            var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
-
-            container.Service.Init(data.TriggerConfigurations);
-
-            Assert.IsFalse(deviceToTrigger.Toggled);
 
             deviceThatTriggers.Value = 20;
 
@@ -259,44 +235,7 @@ namespace DeafX.Richter.Business.Test
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
-            deviceThatTriggers.Value = 19;
-
-            await Task.Delay(10);
-
-            Assert.IsTrue(deviceToTrigger.Toggled);
-        }
-
-        [TestMethod]
-        public async Task DeviceTriggerSuccessLess()
-        {
-            var data = new MockData();
-
-            data.TriggerConfigurations[0].Conditions = new ITriggerConditionConfiguration[]
-            {
-                new DeviceConditionConfiguration()
-                {
-                    CompareOperator = DeviceConditionOperator.Less,
-                    CompareValue = 19,
-                    Device = "TestDevice1"
-                }
-            };
-
-            var container = GetMockContainer(data);
-
-            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
-            var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
-
-            container.Service.Init(data.TriggerConfigurations);
-
-            Assert.IsFalse(deviceToTrigger.Toggled);
-
-            deviceThatTriggers.Value = 19;
-
-            await Task.Delay(10);
-
-            Assert.IsFalse(deviceToTrigger.Toggled);
-
-            deviceThatTriggers.Value = 18;
+            deviceThatTriggers.Value = 21;
 
             await Task.Delay(10);
 
@@ -308,13 +247,18 @@ namespace DeafX.Richter.Business.Test
         {
             var data = new MockData();
 
-            data.TriggerConfigurations[0].Conditions = new ITriggerConditionConfiguration[]
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
             {
-                new DeviceConditionConfiguration()
+                new ToggleAutomationRuleConfiguration()
                 {
-                    CompareOperator = DeviceConditionOperator.Equal,
-                    CompareValue = 22,
-                    Device = "TestDevice1"
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new DeviceConditionConfiguration
+                    {
+                        Device = "TestDevice1",
+                        CompareOperator = DeviceConditionOperator.Equal,
+                        CompareValue = 21
+                    }
                 }
             };
 
@@ -323,11 +267,230 @@ namespace DeafX.Richter.Business.Test
             var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
             var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
 
-            container.Service.Init(data.TriggerConfigurations);
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 20;
+
+            await Task.Delay(10);
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
-            deviceThatTriggers.Value = 20;
+            deviceThatTriggers.Value = 21;
+
+            await Task.Delay(10);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+        }
+
+        [TestMethod]
+        public async Task DeviceTriggerSuccessLess()
+        {
+            var data = new MockData();
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new DeviceConditionConfiguration
+                    {
+                        Device = "TestDevice1",
+                        CompareOperator = DeviceConditionOperator.Less,
+                        CompareValue = 22
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+            var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 22;
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 21;
+
+            await Task.Delay(10);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+        }
+
+        [TestMethod]
+        public async Task DeviceTriggerSuccessLessOrEqual()
+        {
+            var data = new MockData();
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new DeviceConditionConfiguration
+                    {
+                        Device = "TestDevice1",
+                        CompareOperator = DeviceConditionOperator.LessOrEqual,
+                        CompareValue = 21
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+            var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 22;
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 21;
+
+            await Task.Delay(10);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+        }
+
+        #endregion
+
+        #region TimerCondition Tests
+
+        [TestMethod]
+        public async Task TimerConditionSuccess()
+        {
+            LoggerFactoryWrapper.LoggerFactory = new LoggerFactory();
+            //LoggerFactoryWrapper.LoggerFactory.AddFile("Logs/myapp-{Date}.txt", LogLevel.Debug);
+            //LoggerFactoryWrapper.LoggerFactory.AddDebug(LogLevel.Debug);
+            var logger = LoggerFactoryWrapper.CreateLogger<AggregatedServiceTest>();
+            //LoggerFactoryWrapper.LoggerFactory.AddConsole(LogLevel.Debug);
+
+            var data = new MockData();
+
+            var startTime = DateTime.Now.TimeOfDay;
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new TimerConditionConfiguration()
+                    {
+                        Intervals = new TimerConditionIntervalConfiguration[]
+                        {
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(400))
+                            }
+                        }
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            logger.LogDebug($"First assert (False) - RealTime - {DateTime.Now.TimeOfDay}");
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+
+            logger.LogDebug($"Second assert (True) - RealTime - {DateTime.Now.TimeOfDay}");
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(450) - DateTime.Now.TimeOfDay);
+
+            logger.LogDebug($"Third assert (False) - RealTime - {DateTime.Now.TimeOfDay}");
+            Assert.IsFalse(deviceToTrigger.Toggled);
+        }
+
+        [TestMethod]
+        public async Task TimerConditionSuccessAdditionalConditions()
+        {
+            var data = new MockData();
+
+            var startTime = DateTime.Now.TimeOfDay;
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new TimerConditionConfiguration()
+                    {
+                        Intervals = new TimerConditionIntervalConfiguration[]
+                        {
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(500)),
+                                AdditionalConditions = new DeviceConditionConfiguration[]
+                                {
+                                    new DeviceConditionConfiguration()
+                                    {
+                                        Device = "TestDevice1",
+                                        CompareOperator = DeviceConditionOperator.Greater,
+                                        CompareValue = 22
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+            var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1") as TestDevice;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 23;
+
+            await Task.Delay(10);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 21;
 
             await Task.Delay(10);
 
@@ -337,13 +500,113 @@ namespace DeafX.Richter.Business.Test
 
             await Task.Delay(10);
 
-            Assert.IsFalse(deviceToTrigger.Toggled);
+            Assert.IsTrue(deviceToTrigger.Toggled);
 
-            deviceThatTriggers.Value = 22;
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(550) - DateTime.Now.TimeOfDay);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+        }
+
+        [TestMethod]
+        public async Task TimerConditionSuccessTrueAtStart()
+        {
+            var data = new MockData();
+
+            var startTime = DateTime.Now.TimeOfDay;
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new TimerConditionConfiguration()
+                    {
+                        Intervals = new TimerConditionIntervalConfiguration[]
+                        {
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(-100)),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(300))
+                            }
+                        }
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
 
             await Task.Delay(10);
 
             Assert.IsTrue(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+        }
+
+        [TestMethod]
+        public async Task TimerConditionSuccessMultipleIntervals()
+        {
+            var data = new MockData();
+
+            var startTime = DateTime.Now.TimeOfDay;
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new TimerConditionConfiguration()
+                    {
+                        Intervals = new TimerConditionIntervalConfiguration[]
+                        {
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(400))
+                            },
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(500)),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(600))
+                            }
+                        }
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(450) - DateTime.Now.TimeOfDay);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(550) - DateTime.Now.TimeOfDay);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(650) - DateTime.Now.TimeOfDay);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
         }
 
         #endregion
@@ -365,7 +628,7 @@ namespace DeafX.Richter.Business.Test
             }
 
             mock.Setup(m => m.GetAllDevices()).Returns(data.AllSubDevices);
-            mock.Setup(m => m.ToggleDeviceAsync(It.IsAny<string>(), true)).
+            mock.Setup(m => m.ToggleDeviceAsync(It.IsAny<string>(), It.IsAny<bool>())).
                 Returns(
                     (string id, bool toggled) =>
                     {
@@ -377,14 +640,20 @@ namespace DeafX.Richter.Business.Test
             return mock;
         }
 
+        private TestDateTimeProvdier GetTestDateTimeProvdier(MockData data)
+        {
+            return new TestDateTimeProvdier(data.DateTimeToUse);
+        }
+
         private MockContainer GetMockContainer(MockData data)
         {
             var mockContainer = new MockContainer()
             {
-                SubService = GetMockSubService(data)
+                SubService = GetMockSubService(data),
+                DateTimeProvider = new DefaultDateTimeProvider()//GetTestDateTimeProvdier(data)
             };
 
-            mockContainer.Service = new AggregatedDeviceService(new IDeviceService[] { mockContainer.SubService.Object });
+            mockContainer.Service = new AggregatedDeviceService(mockContainer.DateTimeProvider, new IDeviceService[] { mockContainer.SubService.Object });
 
             return mockContainer;
         }
@@ -392,6 +661,8 @@ namespace DeafX.Richter.Business.Test
         private class MockContainer
         {
             public Mock<IDeviceService> SubService { get; set; }
+
+            public IDateTimeProvider DateTimeProvider { get; set; }
 
             public AggregatedDeviceService Service { get; set; }
         }
@@ -428,6 +699,25 @@ namespace DeafX.Richter.Business.Test
             public bool Toggled { get { return Value == null ? false : (bool)Value; } set { Value = value; } }
 
             public override DeviceValueType ValueType => DeviceValueType.Toggle;
+        }
+
+        private class TestDateTimeProvdier : IDateTimeProvider
+        {
+            private DateTime _dateTimeToUse;
+            private DateTime _dateTimeAtCreation;
+
+            public TestDateTimeProvdier(DateTime dateTimeToUse)
+            {
+                _dateTimeAtCreation = DateTime.Now;
+                _dateTimeToUse = dateTimeToUse;
+            }
+
+            public DateTime Now {
+                get
+                {
+                    return _dateTimeToUse + (DateTime.Now - _dateTimeAtCreation);
+                }
+            }
         }
     }
 }

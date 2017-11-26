@@ -1,49 +1,212 @@
 ﻿using DeafX.Richter.Business.Interfaces;
+using DeafX.Richter.Common.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DeafX.Richter.Business.Models
 {
-    public class TimerCondition : ITriggerCondition
+    public class TimerCondition : IToggleAutomationCondition
     {
-        public TimeSpan TriggerTime { get; private set; }
+        public bool State { get; private set; }
 
-        //public TimeSpan Interval { get; private set; }
+        public event OnToggleAutomationConditionStateChangedHandler OnStateChanged;
 
-        public bool Fullfilled { get; private set; }
+        private List<TimerConditionInterval> _intervals;
+        private IDateTimeProvider _dateTimeProvider;
+        private TimerConditionInterval _currentInterval;
+        private ILogger<TimerCondition> _logger;
 
-        public TimerCondition(TimeSpan time/*, TimeSpan interval*/)
+        public TimerCondition(TimerConditionInterval[] intervals, IDateTimeProvider dateTimeProvider)
         {
-            TriggerTime = time;
-            //Interval = interval;
-            StartTimer();
+            _logger = LoggerFactoryWrapper.CreateLogger<TimerCondition>();
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+
+            if(intervals == null || intervals.Length == 0)
+            {
+                throw new ArgumentException("Intervals cant be null or empty");
+            }
+
+            ValidateNoOverlappingConditions(intervals);
+
+            // Order the intervals
+            _intervals = intervals.OrderBy(i => i).ToList();
+
+            Start();
         }
 
-        //public TimerCondition(TimeSpan time) : this(time, TimeSpan.FromDays(1)) { }
-        
-        public event OnTriggerConditionFullfilledHandler OnConditionFullfilled;
-
-        public void Reset()
+        private void Start()
         {
-            Fullfilled = false;
-            StartTimer();
+            var timeOfDay = _dateTimeProvider.Now.TimeOfDay;
+
+            var startInterval = _intervals.FirstOrDefault(i => (i.Start <= timeOfDay && i.End >= timeOfDay) || i.Start > timeOfDay);
+
+            var intervalIndex = startInterval == null ? 0 : _intervals.IndexOf(startInterval);
+
+            var interval = _intervals[intervalIndex];
+
+            SetCurrentInterval(intervalIndex);
+
+            CalculateState();
+
+            SetTimer(intervalIndex, timeOfDay < interval.Start);
         }
 
-        private async void StartTimer()
+        private async void SetTimer(int intervalIndex,bool isStart)
         {
-            // Calculate time left until timer should be triggered
-            var timeOfDay = DateTime.Now.TimeOfDay;
+            var timeOfDay = _dateTimeProvider.Now.TimeOfDay;
 
-            var timeLeft = timeOfDay >= TriggerTime ? 
-                TriggerTime + TimeSpan.FromHours(24) - timeOfDay : 
-                timeOfDay - TriggerTime;
+            _logger.LogDebug($"Setting Timer. TimeOfDay: {timeOfDay}. intervalIndex: {intervalIndex}. isStart: {isStart}");
+            _logger.LogDebug($"_intervals[intervalIndex].Start: {_intervals[intervalIndex].Start}");
+            _logger.LogDebug($"_intervals[intervalIndex].End: {_intervals[intervalIndex].End}");
 
+            // Set triggertime to either interval start or end
+            var triggerTime = isStart ? _intervals[intervalIndex].Start : _intervals[intervalIndex].End;
+
+            _logger.LogDebug($"Trigger time set to: {triggerTime}");
+
+            // Calculate time left unitl either Start or End of current interval
+            var timeLeft = timeOfDay >= triggerTime ? triggerTime + TimeSpan.FromHours(24) - timeOfDay : triggerTime - timeOfDay;
+
+            // Increment TimeLeft with 20 in order to make sure that threa inst delayed to short due to the lack of precision on Task.Delay
+            timeLeft += TimeSpan.FromMilliseconds(20);
+
+            _logger.LogDebug($"TimeLeft: {timeLeft}. ActualTime: {DateTime.Now.TimeOfDay}");
+
+            // Delay execution with calculated amoun of time left
             await Task.Delay(timeLeft);
 
-            Fullfilled = true;
-            OnConditionFullfilled?.Invoke(this);
+            _logger.LogDebug($"Delay complete. ActualTime: {DateTime.Now.TimeOfDay}");
+
+            // Increment index if end-timer
+            var nextIndex = isStart ? intervalIndex : intervalIndex + 1 < _intervals.Count ? intervalIndex + 1 : 0;
+
+            // Update currentInterval if index change
+            if (intervalIndex != nextIndex)
+            {
+                SetCurrentInterval(nextIndex);
+            }
+
+            CalculateState();
+
+            SetTimer(nextIndex, !isStart);
         }
+
+        private void SetCurrentInterval(int index)
+        {
+            _logger.LogDebug($"Setting current interval to: {index}");
+
+            // Detach event handlers from additional conditions
+            if(_currentInterval != null && _currentInterval.AdditionalConditions != null)
+            {
+                foreach(var condition in _currentInterval.AdditionalConditions)
+                {
+                    condition.OnStateChanged -= OnConditionStateChanged;
+                }
+            }
+
+            _currentInterval = _intervals[index];
+
+            // Hook up event handler to addional conditions
+            if (_currentInterval.AdditionalConditions != null)
+            {
+                foreach (var condition in _currentInterval.AdditionalConditions)
+                {
+                    condition.OnStateChanged += OnConditionStateChanged;
+                }
+            }
+        }
+
+        private void OnConditionStateChanged(object sender, ToggleAutomationConditionStateChangedHandler args)
+        {
+            _logger.LogDebug($"Condition '{sender}' state changed to {args.NewState}");
+            CalculateState();
+        }
+
+        private void CalculateState()
+        {
+            var timeOfDay = _dateTimeProvider.Now.TimeOfDay;
+
+            _logger.LogDebug($"Calculating state at time: {timeOfDay}");
+            _logger.LogDebug($"_currentInterval.Start: {_currentInterval.Start}");
+            _logger.LogDebug($"_currentInterval.End: {_currentInterval.End}");
+
+            if (_currentInterval.AdditionalConditions != null)
+            {
+                foreach (var condition in _currentInterval.AdditionalConditions)
+                {
+                    _logger.LogDebug($"Additional Condition: {condition.State}");
+                }
+            }
+
+            var newState =  timeOfDay >= _currentInterval.Start && 
+                            timeOfDay < _currentInterval.End &&
+                            (_currentInterval.AdditionalConditions == null ||
+                            _currentInterval.AdditionalConditions.All(c => c.State));
+
+            _logger.LogDebug($"newState: {newState}");
+
+            if (newState != State)
+            {
+                _logger.LogDebug($"State changed, setting new state at RealTime - {DateTime.Now.TimeOfDay}");
+                State = newState;
+                OnStateChanged?.Invoke(this, new ToggleAutomationConditionStateChangedHandler(this, newState));
+            }
+        }
+
+        private void ValidateNoOverlappingConditions(TimerConditionInterval[] intervals)
+        {
+            foreach(var interval in intervals)
+            {
+                if(intervals.Any(i => i != interval && interval.Start >= i.Start && interval.Start <= i.End))
+                {
+                    throw new ArgumentException("Intervals cannot overlap eachother");
+                }
+            }
+        }
+    }
+
+    public class TimerConditionInterval : IComparable<TimerConditionInterval>
+    {
+        public TimeSpan Start { get; private set; }
+
+        public TimeSpan End { get; private set; }
+
+        public IToggleAutomationCondition[] AdditionalConditions { get; set; }
+
+        public TimerConditionInterval(TimeSpan start, TimeSpan end, IToggleAutomationCondition[] additionalConditions)
+        {
+            if(start >= end)
+            {
+                throw new ArgumentException("End-time must be greater than Start-time");
+            }
+
+            if(start.Days != 0 || end.Days != 0)
+            {
+                throw new ArgumentException("Start or End cannot have time assigned with days");
+            }
+
+            Start = start;
+            End = end;
+            AdditionalConditions = additionalConditions;
+        }
+
+        public int CompareTo(TimerConditionInterval other)
+        {
+            return Start.CompareTo(other.Start);
+        }
+    }
+
+    public interface IDateTimeProvider
+    {
+        DateTime Now { get; }
+    }
+
+    public class DefaultDateTimeProvider : IDateTimeProvider
+    {
+        public DateTime Now => DateTime.Now;
     }
 }
