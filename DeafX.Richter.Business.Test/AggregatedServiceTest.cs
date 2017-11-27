@@ -16,7 +16,6 @@ namespace DeafX.Richter.Business.Test
     [TestClass]
     public class AggregatedServiceTest
     {
-
         private class MockData
         {
             public TestDevice[] AllSubDevices { get; set; } =
@@ -640,20 +639,14 @@ namespace DeafX.Richter.Business.Test
             return mock;
         }
 
-        private TestDateTimeProvdier GetTestDateTimeProvdier(MockData data)
-        {
-            return new TestDateTimeProvdier(data.DateTimeToUse);
-        }
-
         private MockContainer GetMockContainer(MockData data)
         {
             var mockContainer = new MockContainer()
             {
                 SubService = GetMockSubService(data),
-                DateTimeProvider = new DefaultDateTimeProvider()//GetTestDateTimeProvdier(data)
             };
 
-            mockContainer.Service = new AggregatedDeviceService(mockContainer.DateTimeProvider, new IDeviceService[] { mockContainer.SubService.Object });
+            mockContainer.Service = new AggregatedDeviceService(new IDeviceService[] { mockContainer.SubService.Object });
 
             return mockContainer;
         }
@@ -661,8 +654,6 @@ namespace DeafX.Richter.Business.Test
         private class MockContainer
         {
             public Mock<IDeviceService> SubService { get; set; }
-
-            public IDateTimeProvider DateTimeProvider { get; set; }
 
             public AggregatedDeviceService Service { get; set; }
         }
@@ -699,25 +690,6 @@ namespace DeafX.Richter.Business.Test
             public bool Toggled { get { return Value == null ? false : (bool)Value; } set { Value = value; } }
 
             public override DeviceValueType ValueType => DeviceValueType.Toggle;
-        }
-
-        private class TestDateTimeProvdier : IDateTimeProvider
-        {
-            private DateTime _dateTimeToUse;
-            private DateTime _dateTimeAtCreation;
-
-            public TestDateTimeProvdier(DateTime dateTimeToUse)
-            {
-                _dateTimeAtCreation = DateTime.Now;
-                _dateTimeToUse = dateTimeToUse;
-            }
-
-            public DateTime Now {
-                get
-                {
-                    return _dateTimeToUse + (DateTime.Now - _dateTimeAtCreation);
-                }
-            }
         }
     }
 }

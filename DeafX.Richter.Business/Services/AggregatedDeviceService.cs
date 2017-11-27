@@ -10,23 +10,13 @@ namespace DeafX.Richter.Business.Services
     public class AggregatedDeviceService : IDeviceService
     {
         private IDeviceService[] _services;
-        private IDateTimeProvider _dateTimeProvider;
         private Dictionary<string, IDevice> _allDevices;
         private Dictionary<IToggleDevice, ToggleAutomationRule> _toggleAutomationRules;
 
         public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
-        //public IEnumerable<ToggleAutomationRule> ToggleAutomationRules
-        //{
-        //    get
-        //    {
-        //        return _toggleAutomationRules.Values;
-        //    }
-        //}
-
-        public AggregatedDeviceService(IDateTimeProvider dateTimeProvider, params IDeviceService[] services)
+        public AggregatedDeviceService(params IDeviceService[] services)
         {
-            _dateTimeProvider = dateTimeProvider;
             _services = services;
 
             // Set child serivce OnDeviceUpdated to just forward to our own
@@ -36,8 +26,6 @@ namespace DeafX.Richter.Business.Services
             }
 
         }
-
-        public AggregatedDeviceService(params IDeviceService[] services) : this(new DefaultDateTimeProvider(), services) { }
 
         public void Init(ToggleAutomationRuleConfiguration[] ruleConfigurations)
         {
@@ -117,8 +105,7 @@ namespace DeafX.Richter.Business.Services
             }
 
             return new TimerCondition(
-                intervals: intervals.ToArray(),
-                dateTimeProvider: _dateTimeProvider
+                intervals: intervals.ToArray()
             );
         }
 

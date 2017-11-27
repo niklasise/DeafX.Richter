@@ -16,14 +16,12 @@ namespace DeafX.Richter.Business.Models
         public event OnToggleAutomationConditionStateChangedHandler OnStateChanged;
 
         private List<TimerConditionInterval> _intervals;
-        private IDateTimeProvider _dateTimeProvider;
         private TimerConditionInterval _currentInterval;
         private ILogger<TimerCondition> _logger;
 
-        public TimerCondition(TimerConditionInterval[] intervals, IDateTimeProvider dateTimeProvider)
+        public TimerCondition(TimerConditionInterval[] intervals)
         {
             _logger = LoggerFactoryWrapper.CreateLogger<TimerCondition>();
-            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
 
             if(intervals == null || intervals.Length == 0)
             {
@@ -40,7 +38,7 @@ namespace DeafX.Richter.Business.Models
 
         private void Start()
         {
-            var timeOfDay = _dateTimeProvider.Now.TimeOfDay;
+            var timeOfDay = DateTime.Now.TimeOfDay;
 
             var startInterval = _intervals.FirstOrDefault(i => (i.Start <= timeOfDay && i.End >= timeOfDay) || i.Start > timeOfDay);
 
@@ -57,7 +55,7 @@ namespace DeafX.Richter.Business.Models
 
         private async void SetTimer(int intervalIndex,bool isStart)
         {
-            var timeOfDay = _dateTimeProvider.Now.TimeOfDay;
+            var timeOfDay = DateTime.Now.TimeOfDay;
 
             _logger.LogDebug($"Setting Timer. TimeOfDay: {timeOfDay}. intervalIndex: {intervalIndex}. isStart: {isStart}");
             _logger.LogDebug($"_intervals[intervalIndex].Start: {_intervals[intervalIndex].Start}");
@@ -128,7 +126,7 @@ namespace DeafX.Richter.Business.Models
 
         private void CalculateState()
         {
-            var timeOfDay = _dateTimeProvider.Now.TimeOfDay;
+            var timeOfDay = DateTime.Now.TimeOfDay;
 
             _logger.LogDebug($"Calculating state at time: {timeOfDay}");
             _logger.LogDebug($"_currentInterval.Start: {_currentInterval.Start}");
@@ -167,46 +165,5 @@ namespace DeafX.Richter.Business.Models
                 }
             }
         }
-    }
-
-    public class TimerConditionInterval : IComparable<TimerConditionInterval>
-    {
-        public TimeSpan Start { get; private set; }
-
-        public TimeSpan End { get; private set; }
-
-        public IToggleAutomationCondition[] AdditionalConditions { get; set; }
-
-        public TimerConditionInterval(TimeSpan start, TimeSpan end, IToggleAutomationCondition[] additionalConditions)
-        {
-            if(start >= end)
-            {
-                throw new ArgumentException("End-time must be greater than Start-time");
-            }
-
-            if(start.Days != 0 || end.Days != 0)
-            {
-                throw new ArgumentException("Start or End cannot have time assigned with days");
-            }
-
-            Start = start;
-            End = end;
-            AdditionalConditions = additionalConditions;
-        }
-
-        public int CompareTo(TimerConditionInterval other)
-        {
-            return Start.CompareTo(other.Start);
-        }
-    }
-
-    public interface IDateTimeProvider
-    {
-        DateTime Now { get; }
-    }
-
-    public class DefaultDateTimeProvider : IDateTimeProvider
-    {
-        public DateTime Now => DateTime.Now;
     }
 }
