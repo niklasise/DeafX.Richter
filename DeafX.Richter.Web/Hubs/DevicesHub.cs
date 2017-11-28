@@ -34,6 +34,11 @@ namespace DeafX.Richter.Web.Hubs
             return _deviceService.ToggleDeviceAsync(deviceId, toggled);
         }
 
+        public void SetAutomated(string deviceId, bool automated)
+        {
+            _deviceService.SetAutomated(deviceId, automated);
+        }
+
         private void OnDevicesUpdated(IHubContext<DevicesHub> hubContext, IDevice[] devices)
         {
             var deviceModels = devices.Select(d => DeviceViewModel.FromDevice(d)).ToArray();

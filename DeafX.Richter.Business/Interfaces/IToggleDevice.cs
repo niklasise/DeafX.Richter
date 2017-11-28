@@ -7,5 +7,7 @@ namespace DeafX.Richter.Business.Interfaces
     public interface IToggleDevice : IDevice
     {
         bool Toggled { get; }
+
+        bool Automated { get; }
     }
 }

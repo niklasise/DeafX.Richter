@@ -45,7 +45,7 @@ namespace DeafX.Richter.Web.Models
 
         public ToggleDeviceViewModel(IToggleDevice device) : base(device)
         {
-            
+            automated = device.Automated;
         }
     }
 

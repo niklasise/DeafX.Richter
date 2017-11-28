@@ -181,6 +181,8 @@ namespace DeafX.Richter.Business.Test
 
             public object Value => Toggled;
 
+            public bool Automated { get; set; }
+
             public DeviceValueType ValueType => DeviceValueType.Toggle;
 
             public IDeviceService ParentService { get; set; }

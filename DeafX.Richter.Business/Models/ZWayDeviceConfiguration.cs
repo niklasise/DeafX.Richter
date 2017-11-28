@@ -12,5 +12,7 @@
 
         public string ZWayPowerId { get; set; }
 
+        public bool Automated { get; set; }
+
     }
 }

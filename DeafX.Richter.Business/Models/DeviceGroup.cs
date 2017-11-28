@@ -44,14 +44,17 @@ namespace DeafX.Richter.Business.Models
 
         public IToggleDevice[] Devices { get; private set; }
 
+        public bool Automated { get; internal set; }
+
         public DeviceValueType ValueType => DeviceValueType.GroupToggle;
 
-        public DeviceGroup(string id, string title,IToggleDevice[] devices, IDeviceService parentService)
+        public DeviceGroup(string id, string title, bool automated,IToggleDevice[] devices, IDeviceService parentService)
         {
             Id = id;
             ParentService = parentService;
             Devices = devices;
             Title = title;
+            Automated = automated;
         }
 
         public event DeviceValueChangedHandler OnValueChanged;

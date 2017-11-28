@@ -74,7 +74,10 @@ namespace DeafX.Richter.Business.Services
 
         private async void OnRuleStateChanged(ToggleAutomationRule rule, bool newState)
         {
-            await  ToggleDeviceAsync(rule.ToggleDevice.Id, newState);
+            if (rule.ToggleDevice.Automated)
+            {
+                await ToggleDeviceAsync(rule.ToggleDevice.Id, newState);
+            }
         }
 
         private IToggleAutomationCondition GetConditionFromConfiguration(IToggleAutomationConditionConfiguration configuration)
@@ -147,6 +150,18 @@ namespace DeafX.Richter.Business.Services
             await device.ParentService.ToggleDeviceAsync(deviceId, toggled);
         }
 
+        public void SetAutomated(string deviceId, bool automated)
+        {
+            if (!_allDevices.ContainsKey(deviceId))
+            {
+                throw new ArgumentException($"No paramater with id '{deviceId}' found");
+            }
+
+            var device = _allDevices[deviceId];
+
+            device.ParentService.SetAutomated(deviceId, automated);
+        }
+
         private void PopulateDevices()
         {
             _allDevices = new Dictionary<string, IDevice>();
@@ -160,6 +175,5 @@ namespace DeafX.Richter.Business.Services
             }
 
         }
-
     }
 }

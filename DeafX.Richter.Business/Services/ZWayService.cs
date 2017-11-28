@@ -112,7 +112,7 @@ namespace DeafX.Richter.Business.Services
                         _zWaveDeviceDictonary.Add(config.Id, new ZWaveDevice(id: config.Id, title: config.Title, zWayDevice: _zWayDeviceDictonary[config.ZWayId], parentService: this));
                         continue;
                     case "powerplug":
-                        _zWaveDeviceDictonary.Add(config.Id, new ZWavePowerPlugDevice(id: config.Id, title: config.Title, switchDevice: _zWayDeviceDictonary[config.ZWayId], powerDevice: _zWayDeviceDictonary[config.ZWayPowerId], parentService: this));
+                        _zWaveDeviceDictonary.Add(config.Id, new ZWavePowerPlugDevice(id: config.Id, title: config.Title, automated: config.Automated, switchDevice: _zWayDeviceDictonary[config.ZWayId], powerDevice: _zWayDeviceDictonary[config.ZWayPowerId], parentService: this));
                         continue;
                     default:
                         throw new ZWayDeviceConfigurationException($"Unable to create device with type '{config.Type}'");
@@ -124,6 +124,25 @@ namespace DeafX.Richter.Business.Services
         public IDevice[] GetAllDevices()
         {
             return _zWaveDeviceDictonary.Values.ToArray();
+        }
+
+        public void SetAutomated(string deviceId, bool automated)
+        {
+            if(!_zWaveDeviceDictonary.ContainsKey(deviceId))
+            {
+                throw new ArgumentException($"No device found with id '{deviceId}'");
+            }
+
+            var device = _zWaveDeviceDictonary[deviceId] as ZWavePowerPlugDevice;
+
+            if(device == null)
+            {
+                throw new ArgumentException($"Device must be of type IToggleDevice");
+            }
+
+            device.Automated = automated;
+
+            OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { device }));
         }
 
         #endregion

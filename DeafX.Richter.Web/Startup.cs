@@ -14,6 +14,7 @@ using System.Net.Http;
 using DeafX.Richter.Business.Services;
 using DeafX.Richter.Web.Hubs;
 using DeafX.Richter.Business.Interfaces;
+using DeafX.Richter.Business.Models;
 
 namespace DeafX.Richter.Web
 {
@@ -42,13 +43,32 @@ namespace DeafX.Richter.Web
             var httpClient = new HttpClient();
             var zWayService = new ZWayService(httpClient, LoggerFactory.CreateLogger<ZWayService>());
             //var virtualService = new VirtualDeviceService();
-            //var aggregatedService = new AggregatedDeviceService(zWayService, virtualService);
+            var aggregatedService = new AggregatedDeviceService(zWayService);
 
             zWayService.InitAsync(Configuration.Get<AppConfiguration>().ZWay).Wait();
-            
+            aggregatedService.Init(new ToggleAutomationRuleConfiguration[]
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "Device2",
+                    Condition = new TimerConditionConfiguration()
+                    {
+                        Intervals = new TimerConditionIntervalConfiguration[]
+                        {
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = new TimeSpan(21,34,0),
+                                End = new TimeSpan(21,35, 0)
+                            }
+                        }
+                    }
+                }
+            });
+
             services.AddMvc();
             services.AddSingleton<HttpClient>(new HttpClient());
-            services.AddSingleton<IDeviceService>(zWayService);
+            services.AddSingleton<IDeviceService>(aggregatedService);
             services.AddSignalR();
         }
 

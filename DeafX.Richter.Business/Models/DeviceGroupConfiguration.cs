@@ -11,5 +11,7 @@ namespace DeafX.Richter.Business.Models
         public string Title { get; set; }
 
         public string[] Devices { get; set; }
+
+        public bool Automated { get; set; }
     }
 }

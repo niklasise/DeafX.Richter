@@ -9,14 +9,14 @@ namespace DeafX.Richter.Business.Services
 {
     public class DeviceGroupService : IDeviceService
     {
-        private Dictionary<string, IDevice> _devices;
+        private Dictionary<string, DeviceGroup> _devices;
         private IDeviceService[] _subServices;
 
         public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
         public DeviceGroupService(IDeviceService[] subServices)
         {
-            _devices = new Dictionary<string, IDevice>();
+            _devices = new Dictionary<string, DeviceGroup>();
             _subServices = subServices;
         }
 
@@ -40,10 +40,10 @@ namespace DeafX.Richter.Business.Services
                     devices.Add(device as IToggleDevice);
                 }
 
-
                 _devices.Add(deviceConfiguration.Id, new DeviceGroup(
                     id: deviceConfiguration.Id,
                     title: deviceConfiguration.Title,
+                    automated: deviceConfiguration.Automated,
                     devices: devices.ToArray(),
                     parentService: this
                     )
@@ -82,6 +82,20 @@ namespace DeafX.Richter.Business.Services
             deviceGrp.Toggled = toggled;
             
             OnDevicesUpdated.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGrp }));
+        }
+
+        public void SetAutomated(string deviceId, bool automated)
+        {
+            if(!_devices.ContainsKey(deviceId))
+            {
+                throw new ArgumentException($"No device with id '{deviceId}'");
+            }
+
+            var device = _devices[deviceId];
+
+            device.Automated = automated;
+
+            OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { device }));
         }
     }
 }

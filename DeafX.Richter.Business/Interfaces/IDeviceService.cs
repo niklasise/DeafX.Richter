@@ -9,6 +9,7 @@ namespace DeafX.Richter.Business.Interfaces
     {
         IDevice[] GetAllDevices();
         Task ToggleDeviceAsync(string deviceId, bool toggled);
+        void SetAutomated(string deviceId, bool automated);
         event OnDevicesUpdatedHandler OnDevicesUpdated;
     }
 

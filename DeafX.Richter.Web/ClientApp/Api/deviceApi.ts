@@ -13,9 +13,7 @@ class DeviceApi {
     }
 
     static setDeviceAutomated(device: ToggleDevice, automated: boolean) {
-        return new Promise((resolve, reject) => {
-
-        });
+        return DeviceApi._connection.invoke("setAutomated", device.id, automated);
     }
 
     static setDeviceTimer(device: ToggleDevice, time: number) {

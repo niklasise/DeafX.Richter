@@ -29,12 +29,14 @@ namespace DeafX.Richter.Business.Test
                 new TestToggleDevice()
                 {
                     Id = "TestDevice2",
-                    Title = "Test Device #2"
+                    Title = "Test Device #2",
+                    Automated = true,
                 },
                 new TestToggleDevice()
                 {
                     Id = "TestDevice3",
-                    Title = "Test Device #3"
+                    Title = "Test Device #3",
+                    Automated = true
                 }
             };
 
@@ -152,6 +154,52 @@ namespace DeafX.Richter.Business.Test
         #endregion
 
         #region DeviceCondition Tests
+
+        [TestMethod]
+        public async Task DeviceTriggerSuccessNotAutomated()
+        {
+            var data = new MockData();
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    Condition = new DeviceConditionConfiguration
+                    {
+                        Device = "TestDevice1",
+                        CompareOperator = DeviceConditionOperator.Greater,
+                        CompareValue = 20
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+            var deviceThatTriggers = data.AllSubDevices.First(d => d.Id == "TestDevice1");
+
+            deviceToTrigger.Automated = false;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 20;
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            deviceThatTriggers.Value = 21;
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+        }
 
         [TestMethod]
         public async Task DeviceTriggerSuccessGreater()
@@ -688,6 +736,8 @@ namespace DeafX.Richter.Business.Test
         private class TestToggleDevice : TestDevice, IToggleDevice
         {
             public bool Toggled { get { return Value == null ? false : (bool)Value; } set { Value = value; } }
+
+            public bool Automated { get; set; }
 
             public override DeviceValueType ValueType => DeviceValueType.Toggle;
         }
