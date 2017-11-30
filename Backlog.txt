@@ -1,0 +1,6 @@
+- Fixa resoponsivitet
+- Lägg till triggers i backend
+- Lägg till hantering av triggers i frontend
+- Toggla triggers på/av
+- Lägg till timerfunktionalitet i backend
+- Fixa ordentlig struktur på Model/Viewmodel för Devices

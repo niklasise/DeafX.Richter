@@ -1,0 +1,20 @@
+﻿.m15 { margin: 15px; }
+.mb15 { margin-bottom: 15px; }
+.mr15 { margin-right: 15px; }
+.ml15 { margin-left: 15px; }
+.fr { float: right; }
+.fl { float: left; }
+.dib { display: inline-block }
+.pr { position: relative }
+
+.clr:after {
+    content: ".";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+.clickable {
+    cursor: pointer;
+}
