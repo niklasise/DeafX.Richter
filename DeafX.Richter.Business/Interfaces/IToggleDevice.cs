@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeafX.Richter.Business.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,5 +10,14 @@ namespace DeafX.Richter.Business.Interfaces
         bool Toggled { get; }
 
         bool Automated { get; }
+
+        ToggleTimer Timer { get; }
     }
+
+    internal interface IToggleDeviceTimerSet
+    {
+        ToggleTimer Timer { set; }
+    }
+
+    internal interface IToggleDeviceInternal : IToggleDevice, IToggleDeviceTimerSet { }
 }

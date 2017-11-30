@@ -5,7 +5,7 @@ using System;
 
 namespace DeafX.Richter.Business.Models
 {
-    public class ZWavePowerPlugDevice : ZWaveDevice, IToggleDevice
+    public class ZWavePowerPlugDevice : ZWaveDevice, IToggleDevice, IToggleDeviceInternal
     {
         internal ZWayDevice InternalPowerDevice { get; private set; }
 
@@ -21,6 +21,18 @@ namespace DeafX.Richter.Business.Models
             {
                 return InternalPowerDevice.metrics?.level?.ToString();
             }
+        }
+
+        public ToggleTimer Timer { get; internal set; }
+
+        ToggleTimer IToggleDevice.Timer
+        {
+            get { return Timer; }
+        }
+
+        ToggleTimer IToggleDeviceTimerSet.Timer
+        {
+            set { Timer = value; }
         }
 
         public ZWavePowerPlugDevice(string id, string title, bool automated, ZWayDevice switchDevice, ZWayDevice powerDevice, IDeviceService parentService)

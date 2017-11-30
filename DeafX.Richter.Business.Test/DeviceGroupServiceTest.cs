@@ -171,7 +171,7 @@ namespace DeafX.Richter.Business.Test
             public DeviceGroupService Service { get; set; }
         }
 
-        private class TestDevice : IToggleDevice
+        private class TestDevice : IToggleDeviceInternal
         {
             public bool Toggled { get; set; }
 
@@ -188,6 +188,18 @@ namespace DeafX.Richter.Business.Test
             public IDeviceService ParentService { get; set; }
 
             public event DeviceValueChangedHandler OnValueChanged;
+
+            public ToggleTimer Timer { get; internal set; }
+
+            ToggleTimer IToggleDevice.Timer
+            {
+                get { return Timer; }
+            }
+
+            ToggleTimer IToggleDeviceTimerSet.Timer
+            {
+                set { Timer = value; }
+            }
         }
     }
 }

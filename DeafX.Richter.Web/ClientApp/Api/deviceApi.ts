@@ -17,9 +17,7 @@ class DeviceApi {
     }
 
     static setDeviceTimer(device: ToggleDevice, time: number) {
-        return new Promise((resolve, reject) => {
-
-        });
+        return DeviceApi._connection.invoke("setTimer", device.id, time, true);
     }
 
     static connect(onAllDevices: DeviceListener, onDevicesUpdated: DeviceListener) {

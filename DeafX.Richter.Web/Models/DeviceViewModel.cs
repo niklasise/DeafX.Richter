@@ -46,6 +46,7 @@ namespace DeafX.Richter.Web.Models
         public ToggleDeviceViewModel(IToggleDevice device) : base(device)
         {
             automated = device.Automated;
+            timerValue = device.Timer == null ? 0 : device.Timer.RemainingSeconds;
         }
     }
 

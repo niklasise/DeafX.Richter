@@ -658,6 +658,35 @@ namespace DeafX.Richter.Business.Test
 
         #endregion
 
+        #region ToggleTimer Tests
+
+        [TestMethod]
+        public async Task ToggleTimerSuccess()
+        {
+            var data = new MockData();
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            container.Service.SetTimer("TestDevice2", 1, true);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            await Task.Delay(1010);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+        }
+
+
+        #endregion
+
         private MockContainer GetContainerAndInitService(MockData data)
         {
             var container = GetMockContainer(data);
@@ -733,13 +762,25 @@ namespace DeafX.Richter.Business.Test
             }
         }
 
-        private class TestToggleDevice : TestDevice, IToggleDevice
+        private class TestToggleDevice : TestDevice, IToggleDeviceInternal
         {
             public bool Toggled { get { return Value == null ? false : (bool)Value; } set { Value = value; } }
 
             public bool Automated { get; set; }
 
             public override DeviceValueType ValueType => DeviceValueType.Toggle;
+
+            public ToggleTimer Timer { get; internal set; }
+
+            ToggleTimer IToggleDevice.Timer
+            {
+                get { return Timer; }
+            }
+
+            ToggleTimer IToggleDeviceTimerSet.Timer
+            {
+                set { Timer = value; }
+            }
         }
     }
 }

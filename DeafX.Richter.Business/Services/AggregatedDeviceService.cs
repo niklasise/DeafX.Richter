@@ -11,7 +11,7 @@ namespace DeafX.Richter.Business.Services
     {
         private IDeviceService[] _services;
         private Dictionary<string, IDevice> _allDevices;
-        private Dictionary<IToggleDevice, ToggleAutomationRule> _toggleAutomationRules;
+        private Dictionary<IToggleDeviceInternal, ToggleAutomationRule> _toggleAutomationRules;
 
         public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
@@ -29,28 +29,84 @@ namespace DeafX.Richter.Business.Services
 
         public void Init(ToggleAutomationRuleConfiguration[] ruleConfigurations)
         {
-            _toggleAutomationRules = new Dictionary<IToggleDevice, ToggleAutomationRule>();
+            _toggleAutomationRules = new Dictionary<IToggleDeviceInternal, ToggleAutomationRule>();
 
             if (_allDevices == null)
             {
                 PopulateDevices();
             }
 
+            InitAutomationRules(ruleConfigurations);
+            //InitToggleTimers();
+        }
+
+        private void InitToggleTimers(ToggleTimerConfiguration[] timerConfigurations)
+        {
+            foreach (var timerConfiguration in timerConfigurations)
+            {
+                if (!_allDevices.ContainsKey(timerConfiguration.DeviceToToggle))
+                {
+                    throw new ArgumentException($"Cannot find device with id '{timerConfiguration.DeviceToToggle}'");
+                }
+
+                var deviceToToggle = _allDevices[timerConfiguration.DeviceToToggle] as IToggleDeviceInternal;
+
+                if (deviceToToggle == null)
+                {
+                    throw new ArgumentException($"Device with id '{timerConfiguration.DeviceToToggle}' is not of type IToggleDevice");
+                }
+
+                if (((IToggleDevice)deviceToToggle).Timer != null)
+                {
+                    throw new ArgumentException($"Device with id '{timerConfiguration.DeviceToToggle}' cannot have multiple timers");
+                }
+
+                if(timerConfiguration.ExpirationTime > DateTime.Now)
+                {
+                    var toggleTimer = new ToggleTimer(
+                        deviceToToggle: deviceToToggle,
+                        stateToToggle: timerConfiguration.StateToToggle,
+                        expirationTime: timerConfiguration.ExpirationTime
+                    );
+
+                    toggleTimer.OnTimerExpired += OnToggleTimerExpired;
+                    ((IToggleDeviceTimerSet)deviceToToggle).Timer = toggleTimer;
+
+                    //_toggleTimers.Add(deviceToToggle, toggleTimer);
+                }
+            }
+
+        }
+
+        private void OnToggleTimerExpired(ToggleTimer sender)
+        {
+            sender.DeviceToToggle.ParentService.ToggleDeviceAsync(sender.DeviceToToggle.Id, sender.StateToToggle);
+
+            sender.OnTimerExpired -= OnToggleTimerExpired;
+
+            (sender.DeviceToToggle as IToggleDeviceTimerSet).Timer  = null;
+
+            OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { sender.DeviceToToggle }));
+            //_toggleTimers.Remove(sender.DeviceToToggle);
+        }
+
+        private void InitAutomationRules(ToggleAutomationRuleConfiguration[] ruleConfigurations)
+        {
             foreach (var ruleConfiguration in ruleConfigurations)
             {
-                if(!_allDevices.ContainsKey(ruleConfiguration.DeviceToToggle))
+                if (!_allDevices.ContainsKey(ruleConfiguration.DeviceToToggle))
                 {
                     throw new ArgumentException($"Cannot find device with id '{ruleConfiguration.DeviceToToggle}'");
                 }
 
-                var deviceToToggle = _allDevices[ruleConfiguration.DeviceToToggle] as IToggleDevice;
+                var deviceToToggle = _allDevices[ruleConfiguration.DeviceToToggle] as IToggleDeviceInternal;
 
                 if (deviceToToggle == null)
                 {
                     throw new ArgumentException($"Device with id '{ruleConfiguration.DeviceToToggle}' is not of type IToggleDevice");
                 }
 
-                if(_toggleAutomationRules.ContainsKey(deviceToToggle))
+                if (_toggleAutomationRules.ContainsKey(deviceToToggle))
                 {
                     throw new ArgumentException($"Device with id '{ruleConfiguration.DeviceToToggle}' cannot have multiple automation rules");
                 }
@@ -160,6 +216,35 @@ namespace DeafX.Richter.Business.Services
             var device = _allDevices[deviceId];
 
             device.ParentService.SetAutomated(deviceId, automated);
+        }
+
+        public void SetTimer(string deviceId, int seconds, bool stateToSet)
+        {
+            if (!_allDevices.ContainsKey(deviceId))
+            {
+                throw new ArgumentException($"No paramater with id '{deviceId}' found");
+            }
+
+            var device = _allDevices[deviceId] as IToggleDeviceInternal;
+
+            if(device == null)
+            {
+                throw new ArgumentException($"Device must be of type {nameof(IToggleDeviceInternal)}");
+            }
+
+            var timer = new ToggleTimer(
+                deviceToToggle: device,
+                stateToToggle: stateToSet,
+                expirationTime: DateTime.Now.AddSeconds(seconds)
+            );
+
+            timer.OnTimerExpired += OnToggleTimerExpired;
+
+            //_toggleTimers.Add(device, timer);
+
+            ((IToggleDeviceTimerSet)device).Timer = timer;
+
+            OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { device }));
         }
 
         private void PopulateDevices()

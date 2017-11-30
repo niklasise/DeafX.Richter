@@ -2,7 +2,7 @@
 
 namespace DeafX.Richter.Business.Models
 {
-    public class DeviceGroup : IToggleDevice
+    public class DeviceGroup : IToggleDeviceInternal
     {
         private bool _toggled;
 
@@ -47,6 +47,18 @@ namespace DeafX.Richter.Business.Models
         public bool Automated { get; internal set; }
 
         public DeviceValueType ValueType => DeviceValueType.GroupToggle;
+
+        public ToggleTimer Timer { get; internal set; }
+
+        ToggleTimer IToggleDevice.Timer
+        {
+            get { return Timer; }
+        }
+
+        ToggleTimer IToggleDeviceTimerSet.Timer
+        {
+            set { Timer = value; }
+        }
 
         public DeviceGroup(string id, string title, bool automated,IToggleDevice[] devices, IDeviceService parentService)
         {

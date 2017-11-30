@@ -97,5 +97,10 @@ namespace DeafX.Richter.Business.Services
 
             OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { device }));
         }
+
+        public void SetTimer(string deviceId, int seconds, bool stateToSet)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

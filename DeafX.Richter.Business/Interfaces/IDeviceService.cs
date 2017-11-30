@@ -10,6 +10,7 @@ namespace DeafX.Richter.Business.Interfaces
         IDevice[] GetAllDevices();
         Task ToggleDeviceAsync(string deviceId, bool toggled);
         void SetAutomated(string deviceId, bool automated);
+        void SetTimer(string deviceId, int seconds, bool stateToSet);
         event OnDevicesUpdatedHandler OnDevicesUpdated;
     }
 
