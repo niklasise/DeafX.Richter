@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DeafX.Richter.Business.Interfaces;
+using DeafX.Richter.Business.Models;
+using DeafX.Richter.Business.Services;
+using DeafX.Richter.Common.DataStorage;
+using DeafX.Richter.Web.Hubs;
+using DeafX.Richter.Web.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
-using DeafX.Richter.Web.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Net.Http;
-using DeafX.Richter.Business.Services;
-using DeafX.Richter.Web.Hubs;
-using DeafX.Richter.Business.Interfaces;
-using DeafX.Richter.Business.Models;
 
 namespace DeafX.Richter.Web
 {
@@ -75,7 +72,8 @@ namespace DeafX.Richter.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
+            loggerFactory.AddDatabase(new LiteDbDataStorage(@"C:\Temp\Richter\storage.db"));
+            loggerFactory.AddFile(@"C:\Temp\Richter\Logs\log-{Date}.txt", minimumLevel: LogLevel.Warning);
 
             if (env.IsDevelopment())
             {
@@ -84,6 +82,10 @@ namespace DeafX.Richter.Web
                     HotModuleReplacement = true,
                     ReactHotModuleReplacement = true,
                 });
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseStaticFiles();

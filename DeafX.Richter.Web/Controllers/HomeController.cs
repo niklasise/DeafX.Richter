@@ -1,20 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using DeafX.Richter.Web.Models;
-using Microsoft.Extensions.Options;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.Extensions.Logging;
 
 namespace DeafX.Richter.Web.Controllers
 {
     public class HomeController : Controller
     {
+        private ILogger<HomeController> _logger;
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
+
         // GET: /<controller>/
         public IActionResult Index()
         {
+            return View();
+        }
+
+        public IActionResult Error()
+        {
+            var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+
+            if (exceptionFeature != null)
+            {
+                _logger.LogError($"Unhandled exception from path '{exceptionFeature.Path}'", exceptionFeature.Error);
+            }
+
             return View();
         }
     }

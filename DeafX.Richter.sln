@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeafX.Richter.Web", "DeafX.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestProjects", "TestProjects", "{670C0038-8816-4E6A-A83B-66527E86C4AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeafX.Richter.Business.Test", "DeafX.Richter.Business.Test\DeafX.Richter.Business.Test.csproj", "{7543BD1B-BC0D-4EFC-9BB5-AFDCA9C2EB75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeafX.Richter.Business.Test", "DeafX.Richter.Business.Test\DeafX.Richter.Business.Test.csproj", "{7543BD1B-BC0D-4EFC-9BB5-AFDCA9C2EB75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

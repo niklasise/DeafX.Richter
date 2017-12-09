@@ -22,12 +22,14 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha2-final" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00023" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\dist\js\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DeafX.Richter.Business\DeafX.Richter.Business.csproj" />
+    <ProjectReference Include="..\DeafX.Richter.Common\DeafX.Richter.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
