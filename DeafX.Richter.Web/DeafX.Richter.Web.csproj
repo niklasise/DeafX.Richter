@@ -7,11 +7,15 @@
 
   <ItemGroup>
     <None Remove="ClientApp\Actions\DeviceActions.ts" />
+    <None Remove="ClientApp\Actions\LogActions.ts" />
     <None Remove="ClientApp\Api\deviceApi.ts" />
     <None Remove="ClientApp\Api\mockDeviceApi.ts" />
     <None Remove="ClientApp\Components\Home\ToggleDevice.tsx" />
     <None Remove="ClientApp\Components\Home\ValueDevice.tsx" />
     <None Remove="ClientApp\Models\Device.ts" />
+    <None Remove="ClientApp\Models\Log\ClientLog.ts" />
+    <None Remove="ClientApp\Models\Log\ServerLog.ts" />
+    <None Remove="ClientApp\Reducers\LogReducer.ts" />
     <None Remove="ClientApp\Routes.tsx" />
     <None Remove="ClientApp\Store\ConfigureStore.ts" />
   </ItemGroup>
@@ -33,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
+    <TypeScriptCompile Include="ClientApp\Actions\LogActions.ts" />
     <TypeScriptCompile Include="ClientApp\Api\DeviceApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\IDeviceListener.ts" />
     <TypeScriptCompile Include="ClientApp\Api\MockDeviceApi.ts" />
@@ -44,7 +49,10 @@
     <TypeScriptCompile Include="ClientApp\Components\Home\Device.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Home\HomePage.tsx" />
     <TypeScriptCompile Include="ClientApp\Models\Device.ts" />
+    <TypeScriptCompile Include="ClientApp\Models\Log\ClientLog.ts" />
+    <TypeScriptCompile Include="ClientApp\Models\Log\ServerLog.ts" />
     <TypeScriptCompile Include="ClientApp\Reducers\DeviceReducer.ts" />
+    <TypeScriptCompile Include="ClientApp\Reducers\LogReducer.ts" />
     <TypeScriptCompile Include="ClientApp\Routes.tsx" />
     <TypeScriptCompile Include="ClientApp\Store\ConfigureStore.ts" />
   </ItemGroup>

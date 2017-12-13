@@ -10,6 +10,11 @@ import mockApi from "./Api/mockDeviceApi";
 const store = configureStore({
     devices: {
         deviceList: []
+    },
+    logs: {
+        clientLogs: [],
+        serverLogs: [],
+        currentErrorMessage: null
     }
 })
 
