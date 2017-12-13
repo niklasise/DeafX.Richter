@@ -2,6 +2,7 @@
 const webpack = require('webpack');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -31,6 +32,7 @@ module.exports = (env) => {
             new ExtractTextPlugin({ // define where to save the file
                 filename: '../css/app.css',
                 allChunks: true,
+                
             }),
             new webpack.DllReferencePlugin({
                 context: __dirname,
@@ -45,7 +47,7 @@ module.exports = (env) => {
                 })]
             : [
                 // Plugins that apply in production builds only
-                new webpack.optimize.UglifyJsPlugin()
+                new UglifyJSPlugin()
             ])
     };
 
