@@ -40,6 +40,8 @@ class App extends React.Component<AppProps, any> {
                errorStack: stack,
             };
 
+            // TEst
+
            //here I make a call to the server to log the error
            this.props.addClientError(data);
             //the error can still be triggered as usual, we just wanted to know what's happening on the client side
