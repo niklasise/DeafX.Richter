@@ -153,6 +153,42 @@ namespace DeafX.Richter.Business.Test
 
         #endregion
 
+        #region GetDevices Tests 
+
+        [TestMethod]
+        public void GetAllDevices()
+        {
+            var data = new MockData();
+            var container = GetMockContainer(data);
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            var devices = container.Service.GetAllDevices();
+
+            Assert.AreEqual(3, devices.Length);
+        }
+
+        [TestMethod]
+        public async void GetUpdatedDevices()
+        {
+            var data = new MockData();
+            var container = GetMockContainer(data);
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            var since = DateTime.Now;
+
+            await container.Service.ToggleDeviceAsync("TestDevice2", true);
+
+            var updatedDevices = container.Service.GetUpdatedDevices(since);
+
+            Assert.AreEqual(1, updatedDevices.Length);
+            Assert.AreEqual("TestDevice2", updatedDevices[0].Id);
+            Assert.AreEqual(true, updatedDevices[0].Value);
+        }
+
+        #endregion
+
         #region DeviceCondition Tests
 
         [TestMethod]
@@ -744,6 +780,8 @@ namespace DeafX.Richter.Business.Test
             public string Title { get; set; }
 
             public virtual DeviceValueType ValueType { get; set; } = DeviceValueType.Temperature;
+
+            public DateTime LastChanged { get; set; }
 
             public IDeviceService ParentService { get; set; }
 

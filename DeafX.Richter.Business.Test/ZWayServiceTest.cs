@@ -123,7 +123,39 @@ namespace DeafX.Richter.Business.Test
             Assert.AreEqual(false, updateDevices[2][0].Value);
         }
 
-            private MockContainer GetMockContainer(MockData data)
+        [TestMethod]
+        public async Task GetUpdatedDevices()
+        {
+            var data = new MockData() { PerformDeviceUpdates = true };
+            var container = GetMockContainer(data);
+
+            await container.Service.InitAsync(new Models.ZWayConfiguration()
+            {
+                Adress = data.BaseAdress,
+                Password = data.Password,
+                Username = data.Username,
+                Devices = data.DeviceConfiguration
+            });
+
+            var since = DateTime.Now;
+
+            await Task.Delay(4000);
+
+            var updatedDevices = container.Service.GetUpdatedDevices(since);
+
+            Assert.AreEqual(2, updatedDevices.Length);
+
+            Assert.AreEqual("Device1", updatedDevices[0].Id);
+            Assert.AreEqual(23.5, updatedDevices[0].Value);
+
+            Assert.AreEqual("Device2", updatedDevices[1].Id);
+            Assert.AreEqual("20", (updatedDevices[1] as ZWavePowerPlugDevice).Power);
+
+            Assert.AreEqual("Device2", updatedDevices[1].Id);
+            Assert.AreEqual(false, updatedDevices[1].Value);
+        }
+
+        private MockContainer GetMockContainer(MockData data)
         {
             var mockContainer = new MockContainer()
             {

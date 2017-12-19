@@ -88,6 +88,23 @@ namespace DeafX.Richter.Business.Test
         }
 
         [TestMethod]
+        public async Task GetUpdatedDevices()
+        {
+            var data = new MockData();
+            var container = GetContainerAndInitService(data);
+
+            var since = DateTime.Now;
+
+            await container.Service.ToggleDeviceAsync("DeviceGroup1", true);
+
+            var updatedDevices = container.Service.GetUpdatedDevices(since);
+
+            Assert.AreEqual(1, updatedDevices.Length);
+            Assert.AreEqual("DeviceGroup1", updatedDevices[0].Id);
+            Assert.AreEqual(true, updatedDevices[0].Value);
+        }
+
+        [TestMethod]
         public async Task ToggleDevice()
         {
             var data = new MockData();
@@ -124,7 +141,13 @@ namespace DeafX.Richter.Business.Test
                     Id = "DeviceGroup1",
                     Title = "Device Group #1",
                     Devices = new string[] { "TestDevice1", "TestDevice2" }
-                }
+                },
+                new DeviceGroupConfiguration()
+                {
+                    Id = "DeviceGroup2",
+                    Title = "Device Group #2",
+                    Devices = new string[] { "TestDevice1", "TestDevice2" }
+                },
             });
 
             return container;
@@ -182,6 +205,8 @@ namespace DeafX.Richter.Business.Test
             public object Value => Toggled;
 
             public bool Automated { get; set; }
+
+            public DateTime LastChanged { get; set; }
 
             public DeviceValueType ValueType => DeviceValueType.Toggle;
 

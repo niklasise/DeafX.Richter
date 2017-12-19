@@ -23,7 +23,7 @@ namespace DeafX.Richter.Business.Models.ZWay
         public int? creatorId { get; set; }
         public ZWayMetrics metrics { get; set; }
 
-        internal IDevice ParentDevice { get; set; }
+        internal ZWaveDevice ParentDevice { get; set; }
 
         internal event ZWayDeviceUpdatedHandler OnDeviceUpdated;
 

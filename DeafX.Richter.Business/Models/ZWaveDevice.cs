@@ -13,6 +13,8 @@ namespace DeafX.Richter.Business.Models
 
         public IDeviceService ParentService { get; private set; }
 
+        public DateTime LastChanged { get; internal set; }
+
         public object Value {
             get
             {

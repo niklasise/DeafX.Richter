@@ -14,6 +14,8 @@ namespace DeafX.Richter.Business.Interfaces
 
         IDeviceService ParentService { get; }
 
+        DateTime LastChanged { get; }
+
         event DeviceValueChangedHandler OnValueChanged;
     }
 

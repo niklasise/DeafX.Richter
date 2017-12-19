@@ -1,4 +1,5 @@
 ﻿using DeafX.Richter.Business.Interfaces;
+using System;
 
 namespace DeafX.Richter.Business.Models
 {
@@ -35,7 +36,7 @@ namespace DeafX.Richter.Business.Models
             }
         }
 
-        public int LastChanged
+        public DateTime LastChanged
         {
             get; internal set;
         }

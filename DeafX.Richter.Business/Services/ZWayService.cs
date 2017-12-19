@@ -96,6 +96,8 @@ namespace DeafX.Richter.Business.Services
 
             foreach (var config in deviceConfigurations)
             {
+                ZWaveDevice device = null;
+
                 if (!_zWayDeviceDictonary.ContainsKey(config.ZWayId))
                 {
                     throw new ZWayDeviceConfigurationException($"No ZWayDevice found with id '{config.ZWayId}'");
@@ -109,14 +111,18 @@ namespace DeafX.Richter.Business.Services
                 switch (config.Type)
                 {
                     case "sensor":
-                        _zWaveDeviceDictonary.Add(config.Id, new ZWaveDevice(id: config.Id, title: config.Title, zWayDevice: _zWayDeviceDictonary[config.ZWayId], parentService: this));
-                        continue;
+                        device = new ZWaveDevice(id: config.Id, title: config.Title, zWayDevice: _zWayDeviceDictonary[config.ZWayId], parentService: this);
+                        break;
                     case "powerplug":
-                        _zWaveDeviceDictonary.Add(config.Id, new ZWavePowerPlugDevice(id: config.Id, title: config.Title, automated: config.Automated, switchDevice: _zWayDeviceDictonary[config.ZWayId], powerDevice: _zWayDeviceDictonary[config.ZWayPowerId], parentService: this));
-                        continue;
+                        device = new ZWavePowerPlugDevice(id: config.Id, title: config.Title, automated: config.Automated, switchDevice: _zWayDeviceDictonary[config.ZWayId], powerDevice: _zWayDeviceDictonary[config.ZWayPowerId], parentService: this);
+                        break;
                     default:
                         throw new ZWayDeviceConfigurationException($"Unable to create device with type '{config.Type}'");
                 }
+
+                device.LastChanged = DateTime.Now;
+
+                _zWaveDeviceDictonary.Add(config.Id, device);
             }
 
         }
@@ -173,6 +179,7 @@ namespace DeafX.Richter.Business.Services
                     // Only trigger update if device has a parent device
                     if(storedDevice.ParentDevice != null && storedDevice.UpdateMetrics(device.metrics) && !updatedZWaveDevices.Contains(storedDevice.ParentDevice))
                     {
+                        storedDevice.ParentDevice.LastChanged = DateTime.Now;
                         updatedZWaveDevices.Add(storedDevice.ParentDevice);
                     }
                 }
@@ -253,6 +260,11 @@ namespace DeafX.Richter.Business.Services
             request.Headers.Add("Cookie", _authenticationCookie);
             
             return request;
+        }
+
+        public IDevice[] GetUpdatedDevices(DateTime since)
+        {
+            return _zWaveDeviceDictonary.Values.Where(d => d.LastChanged > since).ToArray();
         }
 
         #endregion

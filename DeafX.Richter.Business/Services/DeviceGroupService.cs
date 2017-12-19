@@ -40,14 +40,17 @@ namespace DeafX.Richter.Business.Services
                     devices.Add(device as IToggleDevice);
                 }
 
-                _devices.Add(deviceConfiguration.Id, new DeviceGroup(
+                var deviceGrp = new DeviceGroup(
                     id: deviceConfiguration.Id,
                     title: deviceConfiguration.Title,
                     automated: deviceConfiguration.Automated,
                     devices: devices.ToArray(),
                     parentService: this
-                    )
-                );
+                    );
+
+                deviceGrp.LastChanged = DateTime.Now;
+
+                _devices.Add(deviceConfiguration.Id, deviceGrp);
             }
         }
 
@@ -80,8 +83,9 @@ namespace DeafX.Richter.Business.Services
             await Task.WhenAll(taskList);
 
             deviceGrp.Toggled = toggled;
+            deviceGrp.LastChanged = DateTime.Now;
             
-            OnDevicesUpdated.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGrp }));
+            OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGrp }));
         }
 
         public void SetAutomated(string deviceId, bool automated)
@@ -101,6 +105,11 @@ namespace DeafX.Richter.Business.Services
         public void SetTimer(string deviceId, int seconds, bool stateToSet)
         {
             throw new NotImplementedException();
+        }
+
+        public IDevice[] GetUpdatedDevices(DateTime since)
+        {
+            return _devices.Values.Where(d => d.LastChanged > since).ToArray();
         }
     }
 }

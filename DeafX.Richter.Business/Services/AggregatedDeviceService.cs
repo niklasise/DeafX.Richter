@@ -260,5 +260,10 @@ namespace DeafX.Richter.Business.Services
             }
 
         }
+
+        public IDevice[] GetUpdatedDevices(DateTime since)
+        {
+            return _services.SelectMany(s => s.GetUpdatedDevices(since)).ToArray();
+        }
     }
 }
