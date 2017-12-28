@@ -19,5 +19,5 @@ namespace DeafX.Richter.Business.Interfaces
         ToggleTimer Timer { set; }
     }
 
-    internal interface IToggleDeviceInternal : IToggleDevice, IToggleDeviceTimerSet { }
+    internal interface IToggleDeviceInternal : IToggleDevice, IDeviceInternal, IToggleDeviceTimerSet { }
 }

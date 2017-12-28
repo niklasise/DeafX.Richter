@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace DeafX.Richter.Web.Models
 {
+    public class DeviceViewModelCollection
+    {
+        public DeviceViewModel[] Devices { get; set; }
+
+        public long LastUpdated { get; set; }
+    }
+
     public class DeviceViewModel
     {
         public string id { get; set; }

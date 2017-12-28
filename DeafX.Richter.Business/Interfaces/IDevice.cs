@@ -19,6 +19,13 @@ namespace DeafX.Richter.Business.Interfaces
         event DeviceValueChangedHandler OnValueChanged;
     }
 
+    internal interface IDeviceLastChangedSet
+    {
+        DateTime LastChanged { set; }
+    }
+
+    internal interface IDeviceInternal : IDevice, IDeviceLastChangedSet { }
+
     public enum DeviceValueType
     {
         Unknown,

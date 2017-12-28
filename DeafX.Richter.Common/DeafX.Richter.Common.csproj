@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Http\Extensions\DateTimeExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LiteDB" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>

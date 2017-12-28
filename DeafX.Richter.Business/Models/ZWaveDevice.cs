@@ -5,7 +5,7 @@ using System;
 
 namespace DeafX.Richter.Business.Models
 {
-    public class ZWaveDevice : IDevice
+    public class ZWaveDevice : IDeviceInternal
     {
         public string Id { get; private set; }
 
@@ -14,6 +14,16 @@ namespace DeafX.Richter.Business.Models
         public IDeviceService ParentService { get; private set; }
 
         public DateTime LastChanged { get; internal set; }
+
+        DateTime IDevice.LastChanged
+        {
+            get { return LastChanged; }
+        }
+
+        DateTime IDeviceLastChangedSet.LastChanged
+        {
+            set { LastChanged = value; }
+        }
 
         public object Value {
             get

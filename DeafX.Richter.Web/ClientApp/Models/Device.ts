@@ -20,5 +20,5 @@ export class ToggleDevice extends Device {
 
 export interface UpdatedDevices {
     devices: Device[],
-    timestamp: number
+    lastUpdated: number
 }

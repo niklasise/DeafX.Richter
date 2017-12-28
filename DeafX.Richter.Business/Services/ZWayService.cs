@@ -147,6 +147,7 @@ namespace DeafX.Richter.Business.Services
             }
 
             device.Automated = automated;
+            device.LastChanged = DateTime.Now;
 
             OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { device }));
         }

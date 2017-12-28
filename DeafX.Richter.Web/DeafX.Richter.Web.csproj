@@ -38,6 +38,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
     <TypeScriptCompile Include="ClientApp\Actions\LogActions.ts" />
+    <TypeScriptCompile Include="ClientApp\Api\DeviceWSApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\DeviceApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\IDeviceListener.ts" />
     <TypeScriptCompile Include="ClientApp\Api\MockDeviceApi.ts" />

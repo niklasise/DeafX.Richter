@@ -36,9 +36,16 @@ namespace DeafX.Richter.Business.Models
             }
         }
 
-        public DateTime LastChanged
+        public DateTime LastChanged { get; internal set; }
+
+        DateTime IDevice.LastChanged
         {
-            get; internal set;
+            get { return LastChanged; }
+        }
+
+        DateTime IDeviceLastChangedSet.LastChanged
+        {
+            set { LastChanged = value; }
         }
 
         public string Title { get; private set; }

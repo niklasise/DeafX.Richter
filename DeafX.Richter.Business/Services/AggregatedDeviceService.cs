@@ -243,6 +243,7 @@ namespace DeafX.Richter.Business.Services
             //_toggleTimers.Add(device, timer);
 
             ((IToggleDeviceTimerSet)device).Timer = timer;
+            ((IDeviceLastChangedSet)device).LastChanged = DateTime.Now;
 
             OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { device }));
         }
