@@ -12,6 +12,8 @@
     <None Remove="ClientApp\Api\mockDeviceApi.ts" />
     <None Remove="ClientApp\Components\Home\ToggleDevice.tsx" />
     <None Remove="ClientApp\Components\Home\ValueDevice.tsx" />
+    <None Remove="ClientApp\Components\Login\LoginPage.tsx" />
+    <None Remove="ClientApp\Components\Shared\Input\TextInput.tsx" />
     <None Remove="ClientApp\Models\Device.ts" />
     <None Remove="ClientApp\Models\Log\ClientLog.ts" />
     <None Remove="ClientApp\Models\Log\ServerLog.ts" />
@@ -44,6 +46,8 @@
     <TypeScriptCompile Include="ClientApp\Api\MockDeviceApi.ts" />
     <TypeScriptCompile Include="ClientApp\Components\Home\ToggleDevice.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Home\ValueDevice.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Login\LoginPage.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\TextInput.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\TimerModalComponent.tsx" />
     <TypeScriptCompile Include="ClientApp\Index.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Configuration\ConfigurationPage.tsx" />

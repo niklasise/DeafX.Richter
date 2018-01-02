@@ -1,7 +1,8 @@
-﻿
-@import 'constants.scss';
+﻿@import 'constants.scss';
 @import 'atomic.scss';
 @import 'modal.scss';
+@import 'login.scss';
+@import 'input.scss';
 
 * {
     box-sizing: border-box;
@@ -13,13 +14,14 @@ html {
 }
 
 body {
-    background-image: url(~/dist/img/bg5.jpg);
+    background-image: url(~/dist/img/bg7.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
     background-color: #464646;
     margin: 0;
+    height: 100%;
 }
 
 .errorToaster {
@@ -297,24 +299,7 @@ body {
 
 }
 
-.btn {
-    display: inline-block;
-    padding: 6px 12px;
-    background: $color-light;
-    color: $color-text;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.42857143;
-    text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 4px;
 
-    &.red {
-        background: $color-red;
-    }
-}
 
 
 

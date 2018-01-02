@@ -40,18 +40,15 @@ class App extends React.Component<AppProps, any> {
                errorStack: stack,
             };
 
-            // TEst
-
-           //here I make a call to the server to log the error
            this.props.addClientError(data);
-            //the error can still be triggered as usual, we just wanted to know what's happening on the client side
-            return false;
+
+           return false;
         }
     }
 
 
     public render() {
-        return <div>
+        return <div className="h100">
             {this.props.children}
             <div className={!!this.props.logs.currentErrorMessage ? "errorToaster show" : "errorToaster hide"}>{this.props.logs.currentErrorMessage}</div>
         </div>;
