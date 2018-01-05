@@ -43,6 +43,15 @@
     background-color: #f8d7da;
     font-size: 14px;
     padding: 12px 20px;
+
+    ul {
+        margin: 0;
+        padding: 0;
+
+        li {
+            margin-left: 10px;
+        }
+    }
 }
 
 .btn {
@@ -58,6 +67,11 @@
 
     &:active {
         background-color: #567756;
+    }
+
+    img {
+        margin-top: 5px;
+        height: 18px;
     }
 }
 

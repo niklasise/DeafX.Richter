@@ -8,6 +8,8 @@ export interface TextInputProps {
     name: string;
     placeholder?: string;
     error?: string;
+    additionalClasses?: string,
+    disabled?: boolean
 }
 
 const TextInput: React.SFC<TextInputProps> = (props) => {
@@ -15,10 +17,12 @@ const TextInput: React.SFC<TextInputProps> = (props) => {
 
         <input
             type={props.password ? "password" : "text"}
-            className={!props.error ? "" : "error"}
+            className={!props.error ? props.additionalClasses : "error " + props.additionalClasses}
             value={props.value}
             onChange={(event) => { props.onChange(props.name, event); }}
-            placeholder={props.placeholder == null ? "" : props.placeholder} />
+            placeholder={props.placeholder == null ? "" : props.placeholder}
+            disabled={props.disabled}
+        />
 
         {!!props.error && <span>{props.error}</span>}
 
@@ -28,7 +32,7 @@ const TextInput: React.SFC<TextInputProps> = (props) => {
 }
 
 TextInput.defaultProps = {
-    password: false
+    additionalClasses: ""
 }
 
 export default TextInput;
