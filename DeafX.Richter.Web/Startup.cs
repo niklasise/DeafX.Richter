@@ -45,22 +45,22 @@ namespace DeafX.Richter.Web
             zWayService.InitAsync(Configuration.Get<AppConfiguration>().ZWay).Wait();
             aggregatedService.Init(new ToggleAutomationRuleConfiguration[]
             {
-                new ToggleAutomationRuleConfiguration()
-                {
-                    Id = "Rule1",
-                    DeviceToToggle = "Device2",
-                    Condition = new TimerConditionConfiguration()
-                    {
-                        Intervals = new TimerConditionIntervalConfiguration[]
-                        {
-                            new TimerConditionIntervalConfiguration()
-                            {
-                                Start = new TimeSpan(21,34,0),
-                                End = new TimeSpan(21,35, 0)
-                            }
-                        }
-                    }
-                }
+                //new ToggleAutomationRuleConfiguration()
+                //{
+                //    Id = "Rule1",
+                //    DeviceToToggle = "Device2",
+                //    Condition = new TimerConditionConfiguration()
+                //    {
+                //        Intervals = new TimerConditionIntervalConfiguration[]
+                //        {
+                //            new TimerConditionIntervalConfiguration()
+                //            {
+                //                Start = new TimeSpan(21,34,0),
+                //                End = new TimeSpan(21,35, 0)
+                //            }
+                //        }
+                //    }
+                //}
             });
 
             services.AddMvc();
@@ -72,7 +72,7 @@ namespace DeafX.Richter.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddDatabase(new LiteDbDataStorage(@"C:\Temp\Richter\storage.db"));
+            loggerFactory.AddDatabase(new LiteDbDataStorage(@"C:\Temp\Richter\storage.db"), LogLevel.Warning);
             loggerFactory.AddFile(@"C:\Temp\Richter\Logs\log-{Date}.txt", minimumLevel: LogLevel.Warning);
 
             if (env.IsDevelopment())

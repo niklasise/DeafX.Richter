@@ -9,7 +9,7 @@ namespace DeafX.Richter.Common.Logging
 
         private IDataOverTimeStorage _dataStorage;
 
-        public DatabaseLoggerProvider(IDataOverTimeStorage dataStorage, LogLevel logLevel = LogLevel.Information)
+        public DatabaseLoggerProvider(IDataOverTimeStorage dataStorage, LogLevel logLevel)
         {
             _dataStorage = dataStorage;
             LogLevel = logLevel;
