@@ -14,10 +14,10 @@ namespace DeafX.Richter.Business.Services
 
         public event OnDevicesUpdatedHandler OnDevicesUpdated;
 
-        public DeviceGroupService(IDeviceService[] subServices)
+        public DeviceGroupService(params IDeviceService[] services)
         {
             _devices = new Dictionary<string, DeviceGroup>();
-            _subServices = subServices;
+            _subServices = services;
         }
 
         public void Init(DeviceGroupConfiguration[] deviceConfigurations)

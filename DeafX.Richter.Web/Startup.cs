@@ -39,10 +39,11 @@ namespace DeafX.Richter.Web
         {
             var httpClient = new HttpClient();
             var zWayService = new ZWayService(httpClient, LoggerFactory.CreateLogger<ZWayService>());
-            //var virtualService = new VirtualDeviceService();
-            var aggregatedService = new AggregatedDeviceService(zWayService);
+            var virtualService = new DeviceGroupService(zWayService);
+            var aggregatedService = new AggregatedDeviceService(zWayService, virtualService);
 
             zWayService.InitAsync(Configuration.Get<AppConfiguration>().ZWay).Wait();
+            virtualService.Init(Configuration.Get<AppConfiguration>().DeviceGroups);
             aggregatedService.Init(Configuration.Get<AppConfiguration>().ToggleAutomationRules);
 
             services.AddMvc();

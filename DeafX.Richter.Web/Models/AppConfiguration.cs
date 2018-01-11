@@ -11,5 +11,7 @@ namespace DeafX.Richter.Web.Models
         public ZWayConfiguration ZWay { get; set; }
 
         public ToggleAutomationRuleConfiguration[] ToggleAutomationRules { get; set; }
+
+        public DeviceGroupConfiguration[] DeviceGroups { get; set; }
     }
 }
