@@ -19,7 +19,7 @@ namespace DeafX.Richter.Business.Models
         {
             get
             {
-                return InternalPowerDevice.metrics?.level?.ToString();
+                return InternalPowerDevice?.metrics?.level?.ToString();
             }
         }
 
@@ -40,7 +40,7 @@ namespace DeafX.Richter.Business.Models
         {
             InternalPowerDevice = powerDevice;
 
-            if (!string.Equals(InternalPowerDevice.deviceType, "sensormultilevel", StringComparison.InvariantCultureIgnoreCase))
+            if (InternalPowerDevice != null && !string.Equals(InternalPowerDevice.deviceType, "sensormultilevel", StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'sensormultilevel'. Is '{InternalPowerDevice.deviceType}'");
             }
@@ -50,7 +50,11 @@ namespace DeafX.Richter.Business.Models
                 throw new ZWayDeviceConfigurationException($"{nameof(ZWayDevice)} must have deviceType 'switchBinary'. Is '{switchDevice.deviceType}'");
             }
 
-            InternalPowerDevice.ParentDevice = this;
+            if (InternalPowerDevice != null)
+            {
+                InternalPowerDevice.ParentDevice = this;
+            }
+
             Automated = automated;
         }
     }

@@ -46,7 +46,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new DeviceConditionConfiguration
+                    DeviceCondition = new DeviceConditionConfiguration
                     {
                         Device = "TestDevice1",
                         CompareOperator = DeviceConditionOperator.GreaterOrEqual,
@@ -57,14 +57,14 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule2",
                     DeviceToToggle = "TestDevice3",
-                    Condition = new TimerConditionConfiguration
+                    TimerCondition = new TimerConditionConfiguration
                     {
                         Intervals = new TimerConditionIntervalConfiguration[]
                         {
                             new TimerConditionIntervalConfiguration()
                             {
-                                Start = new TimeSpan(12,0,0),
-                                End = new TimeSpan(13,0,0)
+                                Start = "12:00",
+                                End = "13:00"
                             }
                         }
                     }
@@ -96,7 +96,7 @@ namespace DeafX.Richter.Business.Test
             {
                 Id = "Rule3",
                 DeviceToToggle = "TestDevice2",
-                Condition = new DeviceConditionConfiguration
+                DeviceCondition = new DeviceConditionConfiguration
                 {
                     Device = "TestDevice1",
                     CompareOperator = DeviceConditionOperator.GreaterOrEqual,
@@ -118,7 +118,7 @@ namespace DeafX.Richter.Business.Test
             {
                 Id = "Rule3",
                 DeviceToToggle = "TestDevice4",
-                Condition = new DeviceConditionConfiguration
+                DeviceCondition = new DeviceConditionConfiguration
                 {
                     Device = "TestDevice1",
                     CompareOperator = DeviceConditionOperator.GreaterOrEqual,
@@ -140,7 +140,7 @@ namespace DeafX.Richter.Business.Test
             {
                 Id = "Rule3",
                 DeviceToToggle = "TestDevice3",
-                Condition = new DeviceConditionConfiguration
+                DeviceCondition = new DeviceConditionConfiguration
                 {
                     Device = "TestDevice4",
                     CompareOperator = DeviceConditionOperator.GreaterOrEqual,
@@ -202,7 +202,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new DeviceConditionConfiguration
+                    DeviceCondition = new DeviceConditionConfiguration
                     {
                         Device = "TestDevice1",
                         CompareOperator = DeviceConditionOperator.Greater,
@@ -248,7 +248,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new DeviceConditionConfiguration
+                    DeviceCondition = new DeviceConditionConfiguration
                     {
                         Device = "TestDevice1",
                         CompareOperator = DeviceConditionOperator.Greater,
@@ -292,7 +292,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new DeviceConditionConfiguration
+                    DeviceCondition = new DeviceConditionConfiguration
                     {
                         Device = "TestDevice1",
                         CompareOperator = DeviceConditionOperator.GreaterOrEqual,
@@ -336,7 +336,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new DeviceConditionConfiguration
+                    DeviceCondition = new DeviceConditionConfiguration
                     {
                         Device = "TestDevice1",
                         CompareOperator = DeviceConditionOperator.Equal,
@@ -380,7 +380,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new DeviceConditionConfiguration
+                    DeviceCondition = new DeviceConditionConfiguration
                     {
                         Device = "TestDevice1",
                         CompareOperator = DeviceConditionOperator.Less,
@@ -424,7 +424,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new DeviceConditionConfiguration
+                    DeviceCondition = new DeviceConditionConfiguration
                     {
                         Device = "TestDevice1",
                         CompareOperator = DeviceConditionOperator.LessOrEqual,
@@ -480,14 +480,14 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new TimerConditionConfiguration()
+                    TimerCondition = new TimerConditionConfiguration()
                     {
                         Intervals = new TimerConditionIntervalConfiguration[]
                         {
                             new TimerConditionIntervalConfiguration()
                             {
-                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(400))
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(400)).ToString()
                             }
                         }
                     }
@@ -529,14 +529,14 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new TimerConditionConfiguration()
+                    TimerCondition = new TimerConditionConfiguration()
                     {
                         Intervals = new TimerConditionIntervalConfiguration[]
                         {
                             new TimerConditionIntervalConfiguration()
                             {
-                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(500)),
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(500)).ToString(),
                                 AdditionalConditions = new DeviceConditionConfiguration[]
                                 {
                                     new DeviceConditionConfiguration()
@@ -603,14 +603,14 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new TimerConditionConfiguration()
+                    TimerCondition = new TimerConditionConfiguration()
                     {
                         Intervals = new TimerConditionIntervalConfiguration[]
                         {
                             new TimerConditionIntervalConfiguration()
                             {
-                                Start = startTime.Add(TimeSpan.FromMilliseconds(-100)),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(300))
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(-100)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString()
                             }
                         }
                     }
@@ -646,19 +646,19 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "Rule1",
                     DeviceToToggle = "TestDevice2",
-                    Condition = new TimerConditionConfiguration()
+                    TimerCondition = new TimerConditionConfiguration()
                     {
                         Intervals = new TimerConditionIntervalConfiguration[]
                         {
                             new TimerConditionIntervalConfiguration()
                             {
-                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(400))
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(400)).ToString()
                             },
                             new TimerConditionIntervalConfiguration()
                             {
-                                Start = startTime.Add(TimeSpan.FromMilliseconds(500)),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(600))
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(500)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(600)).ToString()
                             }
                         }
                     }

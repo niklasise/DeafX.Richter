@@ -111,7 +111,7 @@ namespace DeafX.Richter.Business.Services
                     throw new ArgumentException($"Device with id '{ruleConfiguration.DeviceToToggle}' cannot have multiple automation rules");
                 }
 
-                var condition = GetConditionFromConfiguration(ruleConfiguration.Condition);
+                var condition = GetConditionFromConfiguration(ruleConfiguration);
 
                 var rule = new ToggleAutomationRule(
                         id: ruleConfiguration.Id,
@@ -136,15 +136,19 @@ namespace DeafX.Richter.Business.Services
             }
         }
 
-        private IToggleAutomationCondition GetConditionFromConfiguration(IToggleAutomationConditionConfiguration configuration)
+        private IToggleAutomationCondition GetConditionFromConfiguration(ToggleAutomationRuleConfiguration configuration)
         {
-            if(configuration is TimerConditionConfiguration)
+            if(configuration.TimerCondition != null)
             {
-                return GetTimerConditionFromConfiguration(configuration as TimerConditionConfiguration);
+                return GetTimerConditionFromConfiguration(configuration.TimerCondition);
+            }
+            else if (configuration.DeviceCondition != null)
+            {
+                return GetDeviceConditionFromConfiguration(configuration.DeviceCondition);
             }
             else
             {
-                return GetDeviceConditionFromConfiguration(configuration as DeviceConditionConfiguration);
+                return null;
             }
         }
 
@@ -157,8 +161,8 @@ namespace DeafX.Richter.Business.Services
                 var additionalConditions = interval.AdditionalConditions?.Select(c => GetDeviceConditionFromConfiguration(c)).ToArray();
 
                 intervals.Add(new TimerConditionInterval(
-                    start: interval.Start,
-                    end: interval.End,
+                    start: TimeSpan.Parse(interval.Start),
+                    end: TimeSpan.Parse(interval.End),
                     additionalConditions: additionalConditions
                 ));
             }

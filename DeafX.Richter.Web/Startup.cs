@@ -43,25 +43,7 @@ namespace DeafX.Richter.Web
             var aggregatedService = new AggregatedDeviceService(zWayService);
 
             zWayService.InitAsync(Configuration.Get<AppConfiguration>().ZWay).Wait();
-            aggregatedService.Init(new ToggleAutomationRuleConfiguration[]
-            {
-                //new ToggleAutomationRuleConfiguration()
-                //{
-                //    Id = "Rule1",
-                //    DeviceToToggle = "Device2",
-                //    Condition = new TimerConditionConfiguration()
-                //    {
-                //        Intervals = new TimerConditionIntervalConfiguration[]
-                //        {
-                //            new TimerConditionIntervalConfiguration()
-                //            {
-                //                Start = new TimeSpan(21,34,0),
-                //                End = new TimeSpan(21,35, 0)
-                //            }
-                //        }
-                //    }
-                //}
-            });
+            aggregatedService.Init(Configuration.Get<AppConfiguration>().ToggleAutomationRules);
 
             services.AddMvc();
             services.AddSingleton<HttpClient>(new HttpClient());

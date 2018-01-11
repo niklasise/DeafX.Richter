@@ -13,7 +13,9 @@ namespace DeafX.Richter.Business.Models
 
         public string DeviceToToggle { get; set; }
 
-        public IToggleAutomationConditionConfiguration Condition { get; set; }
+        public DeviceConditionConfiguration DeviceCondition { get; set; }
+
+        public TimerConditionConfiguration TimerCondition { get; set; }
 
     }
 
@@ -33,9 +35,9 @@ namespace DeafX.Richter.Business.Models
 
     public class TimerConditionIntervalConfiguration
     {
-        public TimeSpan Start { get; set; }
+        public string Start { get; set; }
 
-        public TimeSpan End { get; set; }
+        public string End { get; set; }
 
         public DeviceConditionConfiguration[] AdditionalConditions { get; set; }
     }

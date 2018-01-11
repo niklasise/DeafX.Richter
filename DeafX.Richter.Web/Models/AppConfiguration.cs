@@ -9,5 +9,7 @@ namespace DeafX.Richter.Web.Models
     public class AppConfiguration
     {
         public ZWayConfiguration ZWay { get; set; }
+
+        public ToggleAutomationRuleConfiguration[] ToggleAutomationRules { get; set; }
     }
 }

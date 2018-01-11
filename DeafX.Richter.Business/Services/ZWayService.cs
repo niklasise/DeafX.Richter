@@ -114,7 +114,13 @@ namespace DeafX.Richter.Business.Services
                         device = new ZWaveDevice(id: config.Id, title: config.Title, zWayDevice: _zWayDeviceDictonary[config.ZWayId], parentService: this);
                         break;
                     case "powerplug":
-                        device = new ZWavePowerPlugDevice(id: config.Id, title: config.Title, automated: config.Automated, switchDevice: _zWayDeviceDictonary[config.ZWayId], powerDevice: _zWayDeviceDictonary[config.ZWayPowerId], parentService: this);
+                        device = new ZWavePowerPlugDevice
+                            (id: config.Id, 
+                            title: config.Title, 
+                            automated: config.Automated, 
+                            switchDevice: _zWayDeviceDictonary[config.ZWayId],
+                            powerDevice: config.ZWayPowerId == null ? null : _zWayDeviceDictonary[config.ZWayPowerId],
+                            parentService: this);
                         break;
                     default:
                         throw new ZWayDeviceConfigurationException($"Unable to create device with type '{config.Type}'");
