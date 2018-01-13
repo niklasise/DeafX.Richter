@@ -48,6 +48,8 @@ namespace DeafX.Richter.Web.Controllers
         [HttpPut("toggle/{deviceId}/{toggled:bool}")]
         public async void ToggleDevice(string deviceId, bool toggled)
         {
+            _logger.LogDebug("Toggling like a baws");
+
             await _deviceService.ToggleDeviceAsync(deviceId, toggled);
         }
 

@@ -4,6 +4,7 @@ using DeafX.Richter.Business.Services;
 using DeafX.Richter.Common.DataStorage;
 using DeafX.Richter.Web.Hubs;
 using DeafX.Richter.Web.Models;
+using DeafX.Richter.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -49,6 +50,7 @@ namespace DeafX.Richter.Web
             services.AddMvc();
             services.AddSingleton<HttpClient>(new HttpClient());
             services.AddSingleton<IDeviceService>(aggregatedService);
+            services.AddSingleton<VersionService>(new VersionService());
             services.AddSignalR();
         }
 

@@ -207,6 +207,16 @@ body {
   margin: 0;
   height: 100%; }
 
+footer {
+  position: fixed;
+  bottom: 5px;
+  right: 0;
+  left: 0;
+  text-align: center;
+  font-size: 9px;
+  color: #FFF;
+  opacity: .7; }
+
 .errorToaster {
   background: #FF0000;
   text-align: center;
