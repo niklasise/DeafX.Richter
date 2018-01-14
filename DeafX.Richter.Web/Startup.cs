@@ -2,6 +2,7 @@
 using DeafX.Richter.Business.Models;
 using DeafX.Richter.Business.Services;
 using DeafX.Richter.Common.DataStorage;
+using DeafX.Richter.Common.Logging;
 using DeafX.Richter.Web.Hubs;
 using DeafX.Richter.Web.Models;
 using DeafX.Richter.Web.Services;
@@ -28,6 +29,8 @@ namespace DeafX.Richter.Web
             Configuration = configuration;
             Environment = environment;
             LoggerFactory = loggerFactory;
+
+            LoggerFactoryWrapper.LoggerFactory = loggerFactory;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
