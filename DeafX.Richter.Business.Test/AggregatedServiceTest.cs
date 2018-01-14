@@ -487,7 +487,7 @@ namespace DeafX.Richter.Business.Test
                             new TimerConditionIntervalConfiguration()
                             {
                                 Start = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString(),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(400)).ToString()
+                                End = startTime.Add(TimeSpan.FromMilliseconds(800)).ToString()
                             }
                         }
                     }
@@ -505,12 +505,12 @@ namespace DeafX.Richter.Business.Test
             logger.LogDebug($"First assert (False) - RealTime - {DateTime.Now.TimeOfDay}");
             Assert.IsFalse(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(650) - DateTime.Now.TimeOfDay);
 
             logger.LogDebug($"Second assert (True) - RealTime - {DateTime.Now.TimeOfDay}");
             Assert.IsTrue(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(450) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(1150) - DateTime.Now.TimeOfDay);
 
             logger.LogDebug($"Third assert (False) - RealTime - {DateTime.Now.TimeOfDay}");
             Assert.IsFalse(deviceToTrigger.Toggled);
@@ -536,7 +536,7 @@ namespace DeafX.Richter.Business.Test
                             new TimerConditionIntervalConfiguration()
                             {
                                 Start = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString(),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(500)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(800)).ToString(),
                                 AdditionalConditions = new DeviceConditionConfiguration[]
                                 {
                                     new DeviceConditionConfiguration()
@@ -563,7 +563,7 @@ namespace DeafX.Richter.Business.Test
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(650) - DateTime.Now.TimeOfDay);
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
@@ -585,7 +585,7 @@ namespace DeafX.Richter.Business.Test
 
             Assert.IsTrue(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(550) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(1150) - DateTime.Now.TimeOfDay);
 
             Assert.IsFalse(deviceToTrigger.Toggled);
         }
@@ -627,7 +627,7 @@ namespace DeafX.Richter.Business.Test
 
             Assert.IsTrue(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(650) - DateTime.Now.TimeOfDay);
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
@@ -653,12 +653,12 @@ namespace DeafX.Richter.Business.Test
                             new TimerConditionIntervalConfiguration()
                             {
                                 Start = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString(),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(400)).ToString()
+                                End = startTime.Add(TimeSpan.FromMilliseconds(800)).ToString()
                             },
                             new TimerConditionIntervalConfiguration()
                             {
-                                Start = startTime.Add(TimeSpan.FromMilliseconds(500)).ToString(),
-                                End = startTime.Add(TimeSpan.FromMilliseconds(600)).ToString()
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(1200)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(1700)).ToString()
                             }
                         }
                     }
@@ -675,19 +675,19 @@ namespace DeafX.Richter.Business.Test
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(350) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(650) - DateTime.Now.TimeOfDay);
 
             Assert.IsTrue(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(450) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(1150) - DateTime.Now.TimeOfDay);
 
             Assert.IsFalse(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(550) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(1550) - DateTime.Now.TimeOfDay);
 
             Assert.IsTrue(deviceToTrigger.Toggled);
 
-            await Task.Delay(startTime + TimeSpan.FromMilliseconds(650) - DateTime.Now.TimeOfDay);
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(2050) - DateTime.Now.TimeOfDay);
 
             Assert.IsFalse(deviceToTrigger.Toggled);
         }

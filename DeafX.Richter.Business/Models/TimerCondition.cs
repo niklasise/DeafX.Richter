@@ -69,12 +69,12 @@ namespace DeafX.Richter.Business.Models
             // Calculate time left unitl either Start or End of current interval
             var timeLeft = timeOfDay >= triggerTime ? triggerTime + TimeSpan.FromHours(24) - timeOfDay : triggerTime - timeOfDay;
 
-            // Increment TimeLeft with 20 in order to make sure that threa inst delayed to short due to the lack of precision on Task.Delay
-            timeLeft += TimeSpan.FromMilliseconds(20);
+            // Increment TimeLeft with 300ms in order to make sure that threa inst delayed to short due to the lack of precision on Task.Delay
+            timeLeft += TimeSpan.FromMilliseconds(300);
 
             _logger.LogDebug($"TimeLeft: {timeLeft}. ActualTime: {DateTime.Now.TimeOfDay}");
 
-            // Delay execution with calculated amoun of time left
+            // Delay execution with calculated amount of time left
             await Task.Delay(timeLeft);
 
             _logger.LogDebug($"Delay complete. ActualTime: {DateTime.Now.TimeOfDay}");
