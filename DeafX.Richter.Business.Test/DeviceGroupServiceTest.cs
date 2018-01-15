@@ -75,7 +75,7 @@ namespace DeafX.Richter.Business.Test
 
             var devices = container.Service.GetAllDevices();
 
-            Assert.AreEqual(1, devices.Length);
+            Assert.AreEqual(2, devices.Length);
             Assert.AreEqual("DeviceGroup1", devices[0].Id);
             Assert.AreEqual("Device Group #1", devices[0].Title);
 

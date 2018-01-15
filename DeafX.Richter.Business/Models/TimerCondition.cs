@@ -50,7 +50,7 @@ namespace DeafX.Richter.Business.Models
 
             CalculateState();
 
-            SetTimer(intervalIndex, timeOfDay < interval.Start);
+            SetTimer(intervalIndex, timeOfDay < interval.Start || timeOfDay >= interval.End);
         }
 
         private async void SetTimer(int intervalIndex,bool isStart)

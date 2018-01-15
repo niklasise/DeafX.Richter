@@ -692,6 +692,59 @@ namespace DeafX.Richter.Business.Test
             Assert.IsFalse(deviceToTrigger.Toggled);
         }
 
+        [TestMethod]
+        public async Task TimerConditionSuccessMultipleIntervalsStartInMiddle()
+        {
+            var data = new MockData();
+
+            var startTime = DateTime.Now.TimeOfDay;
+
+            data.RuleConfigurations = new List<ToggleAutomationRuleConfiguration>()
+            {
+                new ToggleAutomationRuleConfiguration()
+                {
+                    Id = "Rule1",
+                    DeviceToToggle = "TestDevice2",
+                    TimerCondition = new TimerConditionConfiguration()
+                    {
+                        Intervals = new TimerConditionIntervalConfiguration[]
+                        {
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(-2000)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(-1000)).ToString()
+                            },
+                            new TimerConditionIntervalConfiguration()
+                            {
+                                Start = startTime.Add(TimeSpan.FromMilliseconds(300)).ToString(),
+                                End = startTime.Add(TimeSpan.FromMilliseconds(800)).ToString()
+                            }
+                        }
+                    }
+                }
+            };
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(650) - DateTime.Now.TimeOfDay);
+
+            Assert.IsTrue(deviceToTrigger.Toggled);
+
+            await Task.Delay(startTime + TimeSpan.FromMilliseconds(1150) - DateTime.Now.TimeOfDay);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+        } 
+
+
         #endregion
 
         #region ToggleTimer Tests
