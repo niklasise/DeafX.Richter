@@ -2,41 +2,14 @@
 import { Device as DeviceModel, ToggleDevice } from "../../Models/Device";
 
 export interface DeviceTimerProps {
-    device: DeviceModel;
-    timerValue: number;
-    onTimerClick(source: DeviceModel, timeLeft: number): void;
+    device: ToggleDevice;
+    onTimerClick(source: DeviceModel): void;
+    onTimerAbortClick(source: DeviceModel): void;
 }
 
 interface DeviceTimerState {
     timeLeft: number;
 }
-//const DeviceTimer: React.SFC<DeviceClockProps> = (props) => {
-//    function formatTimerValue(seconds: number): string
-//    {
-//        let h: any = Math.floor(seconds / 3600);
-//        let m: any = Math.floor(seconds % 3600 / 60);
-//        let s: any = Math.floor(seconds % 3600 % 60);
-
-//        h = h >= 10 ? h : '0' + h;
-//        m = m >= 10 ? m : '0' + m;
-//        s = s >= 10 ? s : '0' + s;
-
-//        return h + ':' + m + ':' + s;
-//    }
-
-//    return <div className="clickable" onClick={(e) => { e.stopPropagation(); props.onTimerClick(props.device); }}>
-//        {!!props.timerValue &&
-//            <div>
-//                <i className="fa fa-clock-o" onClick={(e) => { e.stopPropagation(); props.onTimerClick(props.device); }} />
-//                <span>{formatTimerValue(props.timerValue)}</span>
-//            </div>
-//        }
-//        {!props.timerValue && <i className="fa fa-clock-o" onClick={(e) => { e.stopPropagation(); props.onTimerClick(props.device); }} />}
-
-//    </div>;
-//}
-
-//export default DeviceTimer;
 
 export default class DeviceTimer extends React.Component<DeviceTimerProps, DeviceTimerState> {
 
@@ -47,9 +20,12 @@ export default class DeviceTimer extends React.Component<DeviceTimerProps, Devic
         super();
 
         this.tick = this.tick.bind(this);
+        this.onTimerAbortClick = this.onTimerAbortClick.bind(this);
+        this.onTimerClick = this.onTimerClick.bind(this);
+        this.getIconColor = this.getIconColor.bind(this);
 
         this.state = {
-            timeLeft: props.timerValue
+            timeLeft: props.device.timer == null ? 0 : props.device.timer.timerValue
         };
     }
 
@@ -63,16 +39,18 @@ export default class DeviceTimer extends React.Component<DeviceTimerProps, Devic
     }
 
     componentWillReceiveProps(nextProps: DeviceTimerProps) {
-        if (nextProps.timerValue === this.props.timerValue)
+        if (nextProps.device.timer === this.props.device.timer)
         {
             return;
         }
 
         this.timeMounted = this.getTime();
 
+        var timerValue = nextProps.device.timer == null ? 0 : nextProps.device.timer.timerValue;
+
         this.setState({
             ...this.state,
-            timeLeft: this.getTimeLeft(nextProps.timerValue)
+            timeLeft: this.getTimeLeft(timerValue)
         });
 
         if (this.timeoutId === 0) {
@@ -81,9 +59,11 @@ export default class DeviceTimer extends React.Component<DeviceTimerProps, Devic
     }
 
     tick() {
+        var timerValue = this.props.device.timer == null ? 0 : this.props.device.timer.timerValue;
+
         this.setState({
             ...this.state,
-            timeLeft: this.getTimeLeft(this.props.timerValue)
+            timeLeft: this.getTimeLeft(timerValue)
         });
 
         if (this.state.timeLeft > 0)
@@ -106,6 +86,12 @@ export default class DeviceTimer extends React.Component<DeviceTimerProps, Devic
         return Math.floor(Date.now() / 1000);
     }
 
+    getIconColor(): string {
+        return this.props.device.timer == null ?
+            "" :
+            this.props.device.timer.stateToSet ? "green" : "red";
+    }
+
     formatTimerValue(seconds: number): string {
         let h: any = Math.floor(seconds / 3600);
         let m: any = Math.floor(seconds % 3600 / 60);
@@ -118,9 +104,21 @@ export default class DeviceTimer extends React.Component<DeviceTimerProps, Devic
         return h + ':' + m + ':' + s;
     }
 
+    onTimerClick(event: React.MouseEvent<HTMLDivElement>): void {
+        event.stopPropagation();
+        this.props.onTimerClick(this.props.device);
+    }
+
+    onTimerAbortClick(event: React.MouseEvent<HTMLDivElement>): void {
+        event.stopPropagation();
+        this.props.onTimerAbortClick(this.props.device);
+    }
+
     public render() {
-        return <div className="clickable" onClick={(e) => { e.stopPropagation(); this.props.onTimerClick(this.props.device, this.state.timeLeft); }}>
-                <i className="fa fa-clock-o" onClick={(e) => { e.stopPropagation(); this.props.onTimerClick(this.props.device, this.state.timeLeft); }} />
+        return <div
+            className="clickable"
+            onClick={!!this.state.timeLeft ? this.onTimerAbortClick : this.onTimerClick}>
+            <i className={"fa fa-clock-o " + this.getIconColor()} />
                 {!!this.state.timeLeft && <span>{this.formatTimerValue(this.state.timeLeft)}</span>}
         </div>;
     }

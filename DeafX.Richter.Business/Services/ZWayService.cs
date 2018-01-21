@@ -163,6 +163,11 @@ namespace DeafX.Richter.Business.Services
             throw new NotImplementedException();
         }
 
+        public void AbortTimer(string deviceId)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Private Methods

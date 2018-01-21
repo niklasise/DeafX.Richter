@@ -13,7 +13,10 @@
 export class ToggleDevice extends Device {
 
     toggled: boolean;
-    timerValue: number;
+    timer: {
+        timerValue: number,
+        stateToSet: boolean
+    };
     automated: boolean;
 
 }

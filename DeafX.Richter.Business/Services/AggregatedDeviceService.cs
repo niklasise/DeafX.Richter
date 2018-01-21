@@ -244,12 +244,34 @@ namespace DeafX.Richter.Business.Services
 
             timer.OnTimerExpired += OnToggleTimerExpired;
 
-            //_toggleTimers.Add(device, timer);
-
             ((IToggleDeviceTimerSet)device).Timer = timer;
             ((IDeviceLastChangedSet)device).LastChanged = DateTime.Now;
 
             OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { device }));
+        }
+
+        public void AbortTimer(string deviceId)
+        {
+            if (!_allDevices.ContainsKey(deviceId))
+            {
+                throw new ArgumentException($"No paramater with id '{deviceId}' found");
+            }
+
+            var device = _allDevices[deviceId] as IToggleDeviceInternal;
+
+            if (device == null)
+            {
+                throw new ArgumentException($"Device must be of type {nameof(IToggleDeviceInternal)}");
+            }
+
+            if(((IToggleDevice)device).Timer == null)
+            {
+                return;
+            }
+
+            ((IToggleDevice)device).Timer.OnTimerExpired -= OnToggleTimerExpired;
+            ((IToggleDeviceTimerSet)device).Timer = null;
+            ((IDeviceLastChangedSet)device).LastChanged = DateTime.Now;
         }
 
         private void PopulateDevices()
@@ -270,5 +292,6 @@ namespace DeafX.Richter.Business.Services
         {
             return _services.SelectMany(s => s.GetUpdatedDevices(since)).ToArray();
         }
+
     }
 }

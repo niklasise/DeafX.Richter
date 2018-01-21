@@ -8,15 +8,16 @@ export interface DeviceProps {
     device: DeviceModel;
     onIconClick(source: DeviceModel): void;
     onConfigClick(source: DeviceModel): void;
-    onTimerClick(source: DeviceModel, timeLeft: number): void;
+    onTimerClick(source: DeviceModel): void;
+    onTimerAbortClick(source: DeviceModel): void;
     onAutomatedClick(source: DeviceModel): void;
 }
 
 const Device: React.SFC<DeviceProps> = (props) => {
     return <div className="tile">
         <div>
-            {props.device.deviceType === "TOGGLE_DEVICE" && <ToggleDevice device={props.device} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} />}
-            {props.device.deviceType === "VALUE_DEVICE" && <ValueDevice device={props.device} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} />}
+            {props.device.deviceType === "TOGGLE_DEVICE" && <ToggleDevice device={props.device} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} onTimerAbortClick={props.onTimerAbortClick} />}
+            {props.device.deviceType === "VALUE_DEVICE" && <ValueDevice device={props.device} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} onTimerAbortClick={props.onTimerAbortClick} />}
         </div>
     </div>
 }

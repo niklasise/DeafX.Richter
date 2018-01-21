@@ -12,7 +12,10 @@ let devices : DeviceModel[] = [
         title: "Vardagsrum",
         toggled: true,
         deviceType: "TOGGLE_DEVICE",
-        timerValue: 3672,
+        timer: {
+            timerValue: 3672,
+            stateToSet: true
+        },
         automated: true
     } as ToggleDevice,
     {
@@ -91,14 +94,34 @@ class deviceApi {
         });
     }
 
-    static setDeviceTimer(device: ToggleDevice, time: number) {
+    static setDeviceTimer(device: ToggleDevice, time: number, state: boolean) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
 
                 let toggleDevice = (devices[deviceIndex] as ToggleDevice);
 
-                toggleDevice.timerValue = time;
+                toggleDevice.timer = {
+                    timerValue: time,
+                    stateToSet: state
+                };
+                toggleDevice.lastUpdated = new Date().getTime();
+
+                deviceApi.alertDeviceListeners();
+
+                resolve();
+            }, delay);
+        });
+    }
+
+    static abortDeviceTimer(device: ToggleDevice) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const deviceIndex = devices.findIndex(i => i.id === device.id);
+
+                let toggleDevice = (devices[deviceIndex] as ToggleDevice);
+
+                toggleDevice.timer = null;
                 toggleDevice.lastUpdated = new Date().getTime();
 
                 deviceApi.alertDeviceListeners();

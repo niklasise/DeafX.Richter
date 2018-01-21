@@ -1,30 +1,34 @@
 ﻿import * as React from "react";
-
+import Modal from "./ModalComponent";
+import Button from "./Input/Button";
 
 interface TimerModalState {
     selectedTime: number;
+    selectedState: boolean;
 }
 
 interface TimerModalProps {
-    initialTime: number;
-    onOkClick(selectedTime: number): void;
+    onOkClick(selectedTime: number, selectedState: boolean): void;
     onCancelClick(): void;
-    onResetClick(): void;
 }
 
 export default class TimerModal extends React.Component<TimerModalProps, TimerModalState> {
 
     private timeoutId: number;
+    private isIos: boolean;
 
     constructor(props: TimerModalProps) {
         super();
 
         this.state = {
-            selectedTime: !props.initialTime ? 0 : props.initialTime
+            selectedTime: 0,
+            selectedState: true
         };
 
         this.startClick = this.startClick.bind(this);
         this.stopClick = this.stopClick.bind(this);
+        this.onSelectedStateToggle = this.onSelectedStateToggle.bind(this);
+        this.isIos = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
     }
 
     private startClick(unit: string, decrement: boolean) {
@@ -46,6 +50,13 @@ export default class TimerModal extends React.Component<TimerModalProps, TimerMo
         this.timeoutId = setTimeout(this.clickTick.bind(this), 100, unit, decrement);
     }
 
+    private onSelectedStateToggle()
+    {
+        this.setState({
+            ...this.state,
+            selectedState: !this.state.selectedState
+        });
+    }
 
     private editSelectedTime(unit: string, decrement: boolean) {
 
@@ -84,56 +95,37 @@ export default class TimerModal extends React.Component<TimerModalProps, TimerMo
         m = m >= 10 ? m : '0' + m;
         s = s >= 10 ? s : '0' + s;
 
-        return <div className="modalOverlay">
-            <div className="modal">
-                <div className="modalHeader">
-                    <span>Välj tid</span>
-                    <i className="fa fa-times clickable" onClick={this.props.onCancelClick} />
+        return <Modal title="Välj tid" onCancelClick={this.props.onCancelClick}>
+            <div className="timerModalContainer">
+
+                <div className="timerSelectorContainer">
+                    <div className="timerSelector">
+                        <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('h', false); }} onMouseUp={this.stopClick} />
+                        <span>{h}</span>
+                        <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('h', true); }} onMouseUp={this.stopClick}/>
+                    </div>
+
+                    <span>:</span>
+
+                    <div className="timerSelector">
+                        <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('m', false); }} onMouseUp={this.stopClick}/>
+                        <span>{m}</span>
+                        <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('m', true); }} onMouseUp={this.stopClick}/>
+                    </div>
+
+                    {this.isIos && <input type="time"/>}
                 </div>
-
-                <div className="modalBody">
-
-                    <div className="timerContainer">
-
-                        <div className="timerSelector">
-                            <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('h', false); }} onMouseUp={this.stopClick} />
-                            <span>{h}</span>
-                            <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('h', true); }} onMouseUp={this.stopClick}/>
-                        </div>
-
-                        <span>:</span>
-
-                        <div className="timerSelector">
-                            <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('m', false); }} onMouseUp={this.stopClick}/>
-                            <span>{m}</span>
-                            <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('m', true); }} onMouseUp={this.stopClick}/>
-                        </div>
-
-                        <span>:</span>
-
-                        <div className="timerSelector">
-                            <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('s', false); }} onMouseUp={this.stopClick}/>
-                            <span>{s}</span>
-                            <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('s', true); }} onMouseUp={this.stopClick}/>
-                        </div>
-
-
-                    </div>
-
-                    <div className="fl ml15 mb15">
-                        <button className="btn red" onClick={this.props.onResetClick}>Nollställ</button>
-                    </div>
-
-                    <div className="fr mr15 mb15">
-                        <button className="btn mr15" onClick={() => { this.props.onOkClick(this.state.selectedTime); }}>Ok</button>
-                        <button className="btn" onClick={this.props.onCancelClick}>Avbryt</button>
-                    </div>
-
+                <div className="stateSelectorContainer">
+                    <Button additionalClasses="w100px" color={this.state.selectedState ? "green" : "red"} text={this.state.selectedState ? "På" : "Av"} onClicked={this.onSelectedStateToggle} />
                 </div>
-
-
             </div>
-        </div>;
+
+            <div className="fr mr15 mb15">
+                <Button text="Ok" additionalClasses="w80px mr15" onClicked={() => { this.props.onOkClick(this.state.selectedTime, this.state.selectedState); }} />
+                <Button text="Avbryt" additionalClasses="w80px" onClicked={this.props.onCancelClick}/>
+            </div>
+
+        </Modal>
     }
 
 }

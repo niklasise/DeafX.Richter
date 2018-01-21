@@ -773,6 +773,34 @@ namespace DeafX.Richter.Business.Test
             Assert.IsTrue(deviceToTrigger.Toggled);
         }
 
+        [TestMethod]
+        public async Task ToggleTimerAbortSuccess()
+        {
+            var data = new MockData();
+
+            var container = GetMockContainer(data);
+
+            var deviceToTrigger = data.AllSubDevices.First(d => d.Id == "TestDevice2") as TestToggleDevice;
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            container.Service.SetTimer("TestDevice2", 1, true);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+
+            await Task.Delay(10);
+
+            container.Service.AbortTimer("TestDevice2");
+
+            await Task.Delay(1010);
+
+            Assert.IsFalse(deviceToTrigger.Toggled);
+        }
+
 
         #endregion
 

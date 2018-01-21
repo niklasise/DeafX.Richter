@@ -140,7 +140,7 @@ class LoginPage extends React.Component<any, LoginPageState> {
                     </div>
                 }
 
-                <Button text="Log in" loading={this.state.submitting} onClicked={this.onSubmit} />
+                <Button text="Log in" color="green" additionalClasses="w100" loading={this.state.submitting} onClicked={this.onSubmit} />
 
             </div>
 

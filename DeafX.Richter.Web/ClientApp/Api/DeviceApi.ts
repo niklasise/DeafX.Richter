@@ -1,12 +1,10 @@
-﻿//import * as SignalR from "@aspnet/signalr-client"
-import { Device as DeviceModel, ToggleDevice, UpdatedDevices } from "../Models/Device"
+﻿import { Device as DeviceModel, ToggleDevice, UpdatedDevices } from "../Models/Device"
 import { IDeviceListener as DeviceListener } from "./IDeviceListener"
 
 const TIMEOUT: number = 1000; 
 
 class DeviceApi {
 
-    //private static _connection: SignalR.HubConnection;
     private static _onAllDevicesListener: DeviceListener;
     private static _onDevicesUpdatedListener: DeviceListener;
     private static _lastUpdated: number;
@@ -27,9 +25,16 @@ class DeviceApi {
         );
     }
 
-    static setDeviceTimer(device: ToggleDevice, time: number) {
+    static setDeviceTimer(device: ToggleDevice, time: number, state: boolean) {
         return DeviceApi.performRequest(
-            'api/devices/setTimer/' + device.id + '/' + time + '/' + true,
+            'api/devices/setTimer/' + device.id + '/' + time + '/' + state,
+            'PUT'
+        );
+    }
+
+    static abortDeviceTimer(device: ToggleDevice) {
+        return DeviceApi.performRequest(
+            'api/devices/abortTimer/' + device.id,
             'PUT'
         );
     }

@@ -5,8 +5,9 @@ import { connect, Dispatch } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "../../Store/ConfigureStore";
 import { DeviceState } from "../../Reducers/DeviceReducer";
-import { toggleDevice, setTimerDevice, setDeviceAutomated, ToggleDeviceAction, connectToDeviceApi, disconnectFromDeviceApi } from "../../Actions/DeviceActions"
+import { toggleDevice, setTimerDevice, abortTimerDevice, setDeviceAutomated, ToggleDeviceAction, connectToDeviceApi, disconnectFromDeviceApi } from "../../Actions/DeviceActions"
 import TimerModal from "../Shared/TimerModalComponent";
+import ConfirmationModal from "../Shared/ConfirmationModalComponent";
 
 interface DeviceContainerStateProps
 {
@@ -19,6 +20,7 @@ interface DeviceContainerBlah {
 
 interface DeviceContainerActions {
     setTimerDevice,
+    abortTimerDevice,
     toggleDevice,
     connectToDeviceApi,
     disconnectFromDeviceApi,
@@ -27,7 +29,7 @@ interface DeviceContainerActions {
 
 interface DeviceContainerState {
     timerModalObject: ToggleDevice,
-    timerModalTimeLeft: number
+    abortTimerModalObject: ToggleDevice,
 }
 
 type DeviceContainerProps =
@@ -44,13 +46,15 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         this.onConfigClick = this.onConfigClick.bind(this);
         this.onTimerClick = this.onTimerClick.bind(this);
         this.onTimerOk = this.onTimerOk.bind(this);
-        this.onTimerReset = this.onTimerReset.bind(this);
         this.onTimerCancel = this.onTimerCancel.bind(this);
         this.onAutomatedClick = this.onAutomatedClick.bind(this);
+        this.onTimerAbortClick = this.onTimerAbortClick.bind(this);
+        this.onTimerAbortOk = this.onTimerAbortOk.bind(this);
+        this.onTimerAbortCancel = this.onTimerAbortCancel.bind(this);
 
         this.state = {
+            abortTimerModalObject: null,
             timerModalObject: null,
-            timerModalTimeLeft: 0
         };
     }
 
@@ -66,32 +70,46 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         this.props.setDeviceAutomated(device, !device.automated);
     }
 
-    onTimerClick(device: ToggleDevice, timeLeft: number): void {
-        this.setState({ ...this.state, timerModalObject: device, timerModalTimeLeft: timeLeft });
+    onTimerClick(device: ToggleDevice): void {
+        this.setState({ ...this.state, timerModalObject: device });
     }
 
-    onTimerOk(selectedTime: number): void {
-        this.props.setTimerDevice(this.state.timerModalObject, selectedTime);
-        this.setState({ ...this.state, timerModalObject: null, timerModalTimeLeft: 0 });
+    onTimerAbortClick(device: ToggleDevice): void {
+        this.setState({ ...this.state, abortTimerModalObject: device });
+    }
+
+    onTimerAbortOk(): void {
+        this.props.abortTimerDevice(this.state.abortTimerModalObject);
+        this.setState({ ...this.state, abortTimerModalObject: null });
+    }
+
+    onTimerAbortCancel(): void {
+        this.setState({ ...this.state, abortTimerModalObject: null });
+    }
+
+    onTimerOk(selectedTime: number, state: boolean): void {
+        if (!selectedTime)
+        {
+            return;
+        }
+
+        this.props.setTimerDevice(this.state.timerModalObject, selectedTime, state);
+        this.setState({ ...this.state, timerModalObject: null });
     }
 
     onTimerCancel(): void {
-        this.setState({ ...this.state, timerModalObject: null, timerModalTimeLeft: 0 });
-    }
-
-    onTimerReset(): void {
-        this.props.setTimerDevice(this.state.timerModalObject, 0);
-        this.setState({ ...this.state, timerModalObject: null, timerModalTimeLeft: 0 });
+        this.setState({ ...this.state, timerModalObject: null });
     }
 
     public render() {
         return <div className="tileContainer">
 
             {this.props.devices.deviceList.map(function (device, index) {
-                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} onTimerClick={this.onTimerClick} onAutomatedClick={this.onAutomatedClick} />
+                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} onTimerClick={this.onTimerClick} onTimerAbortClick={this.onTimerAbortClick} onAutomatedClick={this.onAutomatedClick} />
             }, this)}
 
-            {!!this.state.timerModalObject && <TimerModal initialTime={this.state.timerModalTimeLeft} onOkClick={this.onTimerOk} onCancelClick={this.onTimerCancel} onResetClick={this.onTimerReset} />}
+            {!!this.state.timerModalObject && <TimerModal onOkClick={this.onTimerOk} onCancelClick={this.onTimerCancel} />}
+            {!!this.state.abortTimerModalObject && <ConfirmationModal onOkClick={this.onTimerAbortOk} onCancelClick={this.onTimerAbortCancel} title="Avbryt timer" message="Är du säker på att du vill avbryta timern?" />}
 
         </div>;
     }
@@ -114,7 +132,8 @@ function mapStateToProps(state: ApplicationState, ownProps): DeviceContainerStat
 
 function mapDispatchToProps(dispatch): DeviceContainerActions {
     return {
-        setTimerDevice: (device: ToggleDevice, time: number) => dispatch(setTimerDevice(device, time)),
+        setTimerDevice: (device: ToggleDevice, time: number, state: boolean) => dispatch(setTimerDevice(device, time, state)),
+        abortTimerDevice: (device: ToggleDevice) => dispatch(abortTimerDevice(device)),
         toggleDevice: (device: ToggleDevice, toggled: boolean) => dispatch(toggleDevice(device, toggled)),
         connectToDeviceApi: () => dispatch(connectToDeviceApi()),
         disconnectFromDeviceApi: () => dispatch(disconnectFromDeviceApi()),

@@ -107,9 +107,15 @@ namespace DeafX.Richter.Business.Services
             throw new NotImplementedException();
         }
 
+        public void AbortTimer(string deviceId)
+        {
+            throw new NotImplementedException();
+        }
+
         public IDevice[] GetUpdatedDevices(DateTime since)
         {
             return _devices.Values.Where(d => d.LastChanged > since).ToArray();
         }
+
     }
 }

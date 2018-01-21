@@ -47,9 +47,15 @@
     }
 }
 
-.timerContainer {
+.timerModalContainer {
     margin: 50px 0;
+}
 
+.timerSelectorContainer {
+    position: relative;
+    display: inline;
+    margin-right: 20px;
+    
     .timerSelector {
         position: relative;
         display: inline;
@@ -72,4 +78,25 @@
         margin-left: 20px;
         margin-right: 20px;
     }
+
+    input {
+        position: absolute;
+        top: -50px;
+        bottom: -50px;
+        left: 0;
+        right: 0;
+        opacity: 0.001;
+        min-width: 100%;
+        font-size: 16px;
+    }
+}
+
+.stateSelectorContainer {
+    display: inline;
+}
+
+.confirmationModalContainer {
+    margin: 30px 0;
+    font-size: 13px;
+    text-align: center;
 }

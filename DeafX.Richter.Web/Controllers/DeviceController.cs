@@ -65,6 +65,12 @@ namespace DeafX.Richter.Web.Controllers
             _deviceService.SetTimer(deviceId, seconds, stateToSet);
         }
 
+        [HttpPut("abortTimer/{deviceId}")]
+        public void AbortTimer(string deviceId)
+        {
+            _deviceService.AbortTimer(deviceId);
+        }
+
     }
 
 }

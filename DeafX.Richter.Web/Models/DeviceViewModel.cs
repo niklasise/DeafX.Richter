@@ -1,4 +1,5 @@
 ﻿using DeafX.Richter.Business.Interfaces;
+using DeafX.Richter.Business.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,14 +47,30 @@ namespace DeafX.Richter.Web.Models
     {
         public bool automated { get; set; }
 
-        public int timerValue { get; set; }
+        public DeviceTimerViewModel timer { get; set; }
 
         public override string deviceType => "TOGGLE_DEVICE";
 
         public ToggleDeviceViewModel(IToggleDevice device) : base(device)
         {
             automated = device.Automated;
-            timerValue = device.Timer == null ? 0 : device.Timer.RemainingSeconds;
+            timer = device.Timer == null ? null : DeviceTimerViewModel.FromToggleTimer(device.Timer);
+        }
+    }
+
+    public class DeviceTimerViewModel
+    {
+        public int timerValue { get; set; }
+
+        public bool stateToSet { get; set; }
+
+        public static DeviceTimerViewModel FromToggleTimer(ToggleTimer timer)
+        {
+            return new DeviceTimerViewModel()
+            {
+                timerValue = timer.RemainingSeconds,
+                stateToSet = timer.StateToToggle
+            };
         }
     }
 

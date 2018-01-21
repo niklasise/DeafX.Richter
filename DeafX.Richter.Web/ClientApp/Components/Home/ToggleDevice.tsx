@@ -16,7 +16,7 @@ const ToggleDevice: React.SFC<DeviceProps> = (props) => {
             <i className={"fa fa-lightbulb-o clickable" + ((props.device as ToggleDeviceModel).value ? "" : " off")} onClick={(e) => { props.onIconClick(props.device) }} />
         </div>
         <div className="tileBottomLeft">
-            {props.device.deviceType === "TOGGLE_DEVICE" && <DeviceTimer device={props.device} onTimerClick={props.onTimerClick} timerValue={(props.device as ToggleDeviceModel).timerValue} />}
+            {props.device.deviceType === "TOGGLE_DEVICE" && <DeviceTimer device={props.device as ToggleDeviceModel} onTimerClick={props.onTimerClick} onTimerAbortClick={props.onTimerAbortClick} />}
         </div>
         <div className="tileBottomRight">
             {props.device.deviceType === "TOGGLE_DEVICE" && <i className={(props.device as ToggleDeviceModel).automated ? "fa fa-refresh clickable" : "fa fa-refresh clickable off"} onClick={(e) => { e.stopPropagation(); props.onAutomatedClick(props.device) }} />}
