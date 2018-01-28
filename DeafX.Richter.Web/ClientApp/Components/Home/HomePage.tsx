@@ -14,10 +14,6 @@ interface DeviceContainerStateProps
     devices: DeviceState
 }
 
-interface DeviceContainerBlah {
-    history
-}
-
 interface DeviceContainerActions {
     setTimerDevice,
     abortTimerDevice,
@@ -141,4 +137,4 @@ function mapDispatchToProps(dispatch): DeviceContainerActions {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(HomePage));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage));

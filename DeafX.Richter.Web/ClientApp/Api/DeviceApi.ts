@@ -13,28 +13,28 @@ class DeviceApi {
 
     static toggleDevice(device: ToggleDevice, toggled: boolean) {
         return DeviceApi.performRequest(
-            'api/devices/toggle/' + device.id + '/' + toggled,
+            '/api/devices/toggle/' + device.id + '/' + toggled,
             'PUT'
         ); 
     }
 
     static setDeviceAutomated(device: ToggleDevice, automated: boolean) {
         return DeviceApi.performRequest(
-            'api/devices/setAutomated/' + device.id + '/' + automated,
+            '/api/devices/setAutomated/' + device.id + '/' + automated,
             'PUT'
         );
     }
 
     static setDeviceTimer(device: ToggleDevice, time: number, state: boolean) {
         return DeviceApi.performRequest(
-            'api/devices/setTimer/' + device.id + '/' + time + '/' + state,
+            '/api/devices/setTimer/' + device.id + '/' + time + '/' + state,
             'PUT'
         );
     }
 
     static abortDeviceTimer(device: ToggleDevice) {
         return DeviceApi.performRequest(
-            'api/devices/abortTimer/' + device.id,
+            '/api/devices/abortTimer/' + device.id,
             'PUT'
         );
     }
@@ -44,7 +44,7 @@ class DeviceApi {
         DeviceApi._onDevicesUpdatedListener = onDevicesUpdated;
 
         DeviceApi.performRequest(
-            'api/devices',
+            '/api/devices',
             'GET',
             data => {
                 DeviceApi.onAllDevices(data as UpdatedDevices);
@@ -59,7 +59,7 @@ class DeviceApi {
 
     private static fetchUpdatedDevices() {
         DeviceApi.performRequest(
-            'api/devices/' + DeviceApi._lastUpdated,
+            '/api/devices/' + DeviceApi._lastUpdated,
             'GET',
             data => DeviceApi.onDevicesUpdated(data as UpdatedDevices),
             () => {
