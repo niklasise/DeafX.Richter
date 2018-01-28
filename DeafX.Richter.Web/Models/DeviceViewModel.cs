@@ -1,9 +1,6 @@
 ﻿using DeafX.Richter.Business.Interfaces;
 using DeafX.Richter.Business.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using DeafX.Richter.Common.Extensions;
 
 namespace DeafX.Richter.Web.Models
 {
@@ -21,6 +18,7 @@ namespace DeafX.Richter.Web.Models
         public string valueType { get; set; }
         public object value { get; set; }
         public virtual string deviceType => "VALUE_DEVICE";
+        public long lastChanged { get; set; }
 
         protected DeviceViewModel(IDevice device)
         {
@@ -28,6 +26,7 @@ namespace DeafX.Richter.Web.Models
             title = device.Title;
             valueType = device.ValueType.ToString();
             value = device.Value;
+            lastChanged = device.LastChanged.ToUnixTimeStamp();
         }
 
         public static DeviceViewModel FromDevice(IDevice device)

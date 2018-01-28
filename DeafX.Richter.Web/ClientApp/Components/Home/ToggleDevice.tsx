@@ -12,6 +12,7 @@ const ToggleDevice: React.SFC<DeviceProps> = (props) => {
         <div className="tileTopRight clickable" onClick={(e) => { e.stopPropagation(); props.onConfigClick(props.device) }}>
             <div className="fa fa-gear"></div>
         </div>
+        <div className="tileTopCenter">{props.lastChanged}</div>
         <div className="tileCenter">
             <i className={"fa fa-lightbulb-o clickable" + ((props.device as ToggleDeviceModel).value ? "" : " off")} onClick={(e) => { props.onIconClick(props.device) }} />
         </div>

@@ -236,6 +236,27 @@ i {
     }
 }
 
+.tileTopCenter {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    line-height: 30px;
+    font-size: 12px;
+    opacity: 0.7;
+
+    @media screen and (max-width: $break-large) {
+        top: 15px;
+        line-height: 25px;
+        font-size: 10px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        top: 10px;
+        line-height: 15px;
+    }
+}
+
 .tileBottomRight {
     @extend .tileRight;
     bottom: 20px;

@@ -7,7 +7,7 @@
     value: string;
     valueType: string;
     isUpdating: boolean;
-    lastUpdated: number;
+    lastChanged: number;
 }
 
 export class ToggleDevice extends Device {
@@ -18,7 +18,6 @@ export class ToggleDevice extends Device {
         stateToSet: boolean
     };
     automated: boolean;
-
 }
 
 export interface UpdatedDevices {

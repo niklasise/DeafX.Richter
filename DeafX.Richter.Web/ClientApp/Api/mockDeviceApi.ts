@@ -68,7 +68,7 @@ class deviceApi {
                 let toggleDevice = (devices[deviceIndex] as ToggleDevice);
 
                 toggleDevice.toggled = toggled;
-                toggleDevice.lastUpdated = new Date().getTime();
+                toggleDevice.lastChanged = new Date().getTime();
 
                 deviceApi.alertDeviceListeners();
 
@@ -85,7 +85,7 @@ class deviceApi {
                 let toggleDevice = (devices[deviceIndex] as ToggleDevice);
 
                 toggleDevice.automated = !toggleDevice.automated;
-                toggleDevice.lastUpdated = new Date().getTime();
+                toggleDevice.lastChanged = new Date().getTime();
 
                 deviceApi.alertDeviceListeners();
 
@@ -105,7 +105,7 @@ class deviceApi {
                     timerValue: time,
                     stateToSet: state
                 };
-                toggleDevice.lastUpdated = new Date().getTime();
+                toggleDevice.lastChanged = new Date().getTime();
 
                 deviceApi.alertDeviceListeners();
 
@@ -122,7 +122,7 @@ class deviceApi {
                 let toggleDevice = (devices[deviceIndex] as ToggleDevice);
 
                 toggleDevice.timer = null;
-                toggleDevice.lastUpdated = new Date().getTime();
+                toggleDevice.lastChanged = new Date().getTime();
 
                 deviceApi.alertDeviceListeners();
 
@@ -142,7 +142,7 @@ class deviceApi {
 
     private static alertDeviceListeners() {
         deviceListeners.forEach(val => {
-            val(devices.filter(device => device.lastUpdated > lastUpdateSent));
+            val(devices.filter(device => device.lastChanged > lastUpdateSent));
         });
 
         lastUpdateSent = new Date().getTime();
@@ -157,7 +157,7 @@ class deviceApi {
                 }
 
                 val.value = "" + Math.round(20 + Math.random() * 5);
-                val.lastUpdated = new Date().getTime();
+                val.lastChanged = new Date().getTime();
             });
 
             deviceApi.alertDeviceListeners();

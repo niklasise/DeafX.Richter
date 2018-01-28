@@ -10,6 +10,7 @@ const ValueDevice: React.SFC<DeviceProps> = (props) => {
             <div className="tileTopRight clickable" onClick={(e) => { e.stopPropagation(); props.onConfigClick(props.device) }}>
                 <div className="fa fa-gear"></div>
             </div>
+            <div className="tileTopCenter">{props.lastChanged}</div>
             <div className="tileCenter">
                 <div>
                     <span>
