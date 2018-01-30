@@ -1,4 +1,5 @@
 ﻿using DeafX.Richter.Business.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,14 @@ namespace DeafX.Richter.Web.Models
         public ToggleAutomationRuleConfiguration[] ToggleAutomationRules { get; set; }
 
         public DeviceGroupConfiguration[] DeviceGroups { get; set; }
+
+        public LoggingConfiguration Logging { get; set; }
+    }
+
+    public class LoggingConfiguration
+    {
+        public string Directory { get; set; }
+
+        public LogLevel LogLevel { get; set; }
     }
 }

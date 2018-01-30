@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using DeafX.Richter.Common.DataStorage;
+using DeafX.Richter.Web.Models;
 
 namespace DeafX.Richter.Web
 {
@@ -30,9 +31,10 @@ namespace DeafX.Richter.Web
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
-                    logging.AddDatabase(new LiteDbDataStorage(@"C:\Temp\Richter\storage.db"), LogLevel.Debug);
-                    logging.AddFile(@"C:\Temp\Richter\Logs\log-{Date}.txt", 
-                        minimumLevel: LogLevel.Debug,
+                    var loggingConfig = hostingContext.Configuration.Get<AppConfiguration>().Logging;
+                    //logging.AddDatabase(new LiteDbDataStorage(@"C:\Temp\Richter\storage.db"), LogLevel.Debug);
+                    logging.AddFile($"{loggingConfig.Directory.TrimEnd('\\')}\\log-{{Date}}.txt", 
+                        minimumLevel: loggingConfig.LogLevel,
                         levelOverrides: new Dictionary<string, LogLevel> {
                             { "System", LogLevel.Error },
                             { "Microsoft", LogLevel.Error },
