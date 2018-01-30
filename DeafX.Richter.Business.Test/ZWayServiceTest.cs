@@ -84,7 +84,7 @@ namespace DeafX.Richter.Business.Test
 
             Assert.AreEqual(DeviceValueType.Toggle, devices[1].ValueType);
             Assert.AreEqual(true, devices[1].Value);
-            Assert.AreEqual("0", (devices[1] as ZWavePowerPlugDevice).Power);
+            Assert.AreEqual("0", (devices[1] as ZWavePowerPlugDevice).PowerConsumption);
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace DeafX.Richter.Business.Test
 
             Assert.AreEqual(1, updateDevices[1].Length);
             Assert.AreEqual("Device2", updateDevices[1][0].Id);
-            Assert.AreEqual("20", (updateDevices[1][0] as ZWavePowerPlugDevice).Power);
+            Assert.AreEqual("20", (updateDevices[1][0] as ZWavePowerPlugDevice).PowerConsumption);
 
             Assert.AreEqual(1, updateDevices[2].Length);
             Assert.AreEqual("Device2", updateDevices[2][0].Id);
@@ -149,7 +149,7 @@ namespace DeafX.Richter.Business.Test
             Assert.AreEqual(23.5, updatedDevices[0].Value);
 
             Assert.AreEqual("Device2", updatedDevices[1].Id);
-            Assert.AreEqual("20", (updatedDevices[1] as ZWavePowerPlugDevice).Power);
+            Assert.AreEqual("20", (updatedDevices[1] as ZWavePowerPlugDevice).PowerConsumption);
 
             Assert.AreEqual("Device2", updatedDevices[1].Id);
             Assert.AreEqual(false, updatedDevices[1].Value);

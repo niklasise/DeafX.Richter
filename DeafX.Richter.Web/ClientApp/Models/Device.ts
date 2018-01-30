@@ -18,6 +18,7 @@ export class ToggleDevice extends Device {
         stateToSet: boolean
     };
     automated: boolean;
+    powerConsumption: string;
 }
 
 export interface UpdatedDevices {

@@ -891,6 +891,8 @@ namespace DeafX.Richter.Business.Test
 
             public ToggleTimer Timer { get; internal set; }
 
+            public string PowerConsumption => null;
+
             ToggleTimer IToggleDevice.Timer
             {
                 get { return Timer; }

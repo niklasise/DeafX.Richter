@@ -68,6 +68,8 @@ namespace DeafX.Richter.Business.Models
             set { Timer = value; }
         }
 
+        public string PowerConsumption => null;
+
         public DeviceGroup(string id, string title, bool automated,IToggleDevice[] devices, IDeviceService parentService)
         {
             Id = id;

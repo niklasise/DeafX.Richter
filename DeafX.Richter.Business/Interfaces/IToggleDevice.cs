@@ -12,6 +12,8 @@ namespace DeafX.Richter.Business.Interfaces
         bool Automated { get; }
 
         ToggleTimer Timer { get; }
+
+        string PowerConsumption { get; }
     }
 
     internal interface IToggleDeviceTimerSet

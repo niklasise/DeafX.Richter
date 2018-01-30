@@ -15,7 +15,7 @@ namespace DeafX.Richter.Business.Models
 
         public override DeviceValueType ValueType => DeviceValueType.Toggle;
 
-        public string Power
+        public string PowerConsumption
         {
             get
             {

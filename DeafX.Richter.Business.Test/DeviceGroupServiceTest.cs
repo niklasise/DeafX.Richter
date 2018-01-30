@@ -225,6 +225,8 @@ namespace DeafX.Richter.Business.Test
             {
                 set { Timer = value; }
             }
+
+            public string PowerConsumption => null;
         }
     }
 }

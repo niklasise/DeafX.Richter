@@ -50,9 +50,12 @@ namespace DeafX.Richter.Web.Models
 
         public override string deviceType => "TOGGLE_DEVICE";
 
+        public string powerConsumption { get; set; }
+
         public ToggleDeviceViewModel(IToggleDevice device) : base(device)
         {
             automated = device.Automated;
+            powerConsumption = device.PowerConsumption;
             timer = device.Timer == null ? null : DeviceTimerViewModel.FromToggleTimer(device.Timer);
         }
     }
