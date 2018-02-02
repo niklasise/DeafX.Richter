@@ -27,7 +27,7 @@ namespace DeafX.Richter.Common.Logging
 
         private void LogItem(LogItem logItem)
         {
-            _dataStorage.Store(logItem, i => i.DateTime);
+            _dataStorage.Store("Log", logItem, i => i.DateTime);
         }
     }
 }

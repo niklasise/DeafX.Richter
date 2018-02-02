@@ -15,48 +15,58 @@ namespace DeafX.Richter.Common.DataStorage
             _storagePath = storagePath;
         }
 
-        public IEnumerable<T> RetreiveRecent<T>(int count)
+        public IEnumerable<DataTimeObject<T>> RetreiveRecent<T>(string name, int count)
         {
             using (var db = new LiteDatabase(_storagePath))
             {
-                var collection = db.GetCollection<DataTimeObject<T>>(nameof(T));
+                if (!db.CollectionExists(name))
+                {
+                    return null;
+                }
 
-                return collection.Find(Query.All(Query.Descending), limit: 100).Select(o => o.Data).ToArray();
+                var collection = db.GetCollection<LiteDbDataTimeObject<T>>(nameof(T));
+
+                return collection.Find(Query.All(Query.Descending), limit: 100).ToArray();
             }
         }
 
-        public IEnumerable<T> Retreive<T>(DateTime from)
+        public IEnumerable<DataTimeObject<T>> Retreive<T>(string name, DateTime from)
         {
-            return Retreive<T>(from, DateTime.MaxValue);
+            return Retreive<T>(name, from, DateTime.MaxValue);
         }
 
-        public IEnumerable<T> Retreive<T>(DateTime from, DateTime to)
+        public IEnumerable<DataTimeObject<T>> Retreive<T>(string name, DateTime from, DateTime to)
         {
             using (var db = new LiteDatabase(_storagePath))
             {
-                var collection = db.GetCollection<DataTimeObject<T>>(nameof(T));
+                if (!db.CollectionExists(name))
+                {
+                    return null;
+                }
 
-                return collection.Find(o => o.DateTime >= from && o.DateTime <= to).Select(o => o.Data).ToArray();
+                var collection = db.GetCollection<LiteDbDataTimeObject<T>>(nameof(T));
+
+                return collection.Find(o => o.DateTime >= from && o.DateTime <= to).ToArray();
             }
         }
 
-        public void Store<T>(T data)
+        public void Store<T>(string name, T data)
         {
-            StoreData(data, DateTime.Now);
+            StoreData(name, data, DateTime.Now);
         }
 
-        public void Store<T>(T data, Func<T, DateTime> dateTimeSelector)
+        public void Store<T>(string name, T data,  Func<T, DateTime> dateTimeSelector)
         {
-            StoreData(data, dateTimeSelector(data));
+            StoreData(name, data, dateTimeSelector(data));
         }
 
-        public void StoreData<T>(T data, DateTime dateTime)
+        public void StoreData<T>(string name, T data, DateTime dateTime)
         {
             using (var db = new LiteDatabase(_storagePath))
             {
-                var collection = db.GetCollection<DataTimeObject<T>>(nameof(T));
+                var collection = db.GetCollection<LiteDbDataTimeObject<T>>(name);
 
-                collection.Insert(new DataTimeObject<T>()
+                collection.Insert(new LiteDbDataTimeObject<T>()
                 {
                     Id = ObjectId.NewObjectId(),
                     Data = data,
@@ -67,13 +77,9 @@ namespace DeafX.Richter.Common.DataStorage
             }
         }
 
-        private class DataTimeObject<T>
+        private class LiteDbDataTimeObject<T> : DataTimeObject<T>
         {
             public ObjectId Id { get; set; }
-
-            public DateTime DateTime { get; set; }
-
-            public T Data { get; set; }
         }
 
     }
