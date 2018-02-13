@@ -20,8 +20,11 @@
     <None Remove="ClientApp\Components\Shared\ComfirmationModalComponent.tsx" />
     <None Remove="ClientApp\Components\Shared\Input\Button.tsx" />
     <None Remove="ClientApp\Components\Shared\Input\ComfirmationModalComponent.tsx" />
+    <None Remove="ClientApp\Components\Shared\Input\DropdownComponent.tsx" />
     <None Remove="ClientApp\Components\Shared\Input\ModalComponent.tsx" />
     <None Remove="ClientApp\Components\Shared\Input\TextInput.tsx" />
+    <None Remove="ClientApp\Components\Statistics\Chart.tsx" />
+    <None Remove="ClientApp\Components\Statistics\ChartComponent.tsx" />
     <None Remove="ClientApp\Models\Device.ts" />
     <None Remove="ClientApp\Models\Log\ClientLog.ts" />
     <None Remove="ClientApp\Models\Log\ServerLog.ts" />
@@ -62,9 +65,12 @@
     <TypeScriptCompile Include="ClientApp\Components\Login\LoginPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Input\Button.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\ConfirmationModalComponent.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\DropdownComponent.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\ModalComponent.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Input\TextInput.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\TimerModalComponent.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Statistics\Chart.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Statistics\StatisticsPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Index.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Configuration\ConfigurationPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Home\Device.tsx" />

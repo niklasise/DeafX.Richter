@@ -98,7 +98,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
     }
 
     public render() {
-        return <div className="tileContainer">
+        return <div className="pageContainer">
 
             {this.props.devices.deviceList.map(function (device, index) {
                 return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} onTimerClick={this.onTimerClick} onTimerAbortClick={this.onTimerAbortClick} onAutomatedClick={this.onAutomatedClick} />

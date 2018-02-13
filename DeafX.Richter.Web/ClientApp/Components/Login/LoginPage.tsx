@@ -1,6 +1,7 @@
 ﻿import * as React from 'react';
 import TextInput from '../Shared/Input/TextInput';
 import Button from '../Shared/Input/Button';
+import Dropdown from '../Shared/Input/DropdownComponent';
 import AccountApi from '../../Api/AccountApi'
 import ValidationErrors from '../../Models/Shared/ValidationErrors'
 
@@ -131,6 +132,8 @@ class LoginPage extends React.Component<any, LoginPageState> {
                 <TextInput value={this.state.fields.username.value} error={this.state.fields.username.error} icon="fa-user" onChange={this.onTextInputChanged} placeholder="Username" name="username" disabled={this.state.submitting} />
 
                 <TextInput value={this.state.fields.password.value} error={this.state.fields.password.error} icon="fa-lock" password={true} onChange={this.onTextInputChanged} placeholder="Password" name="password" disabled={this.state.submitting} />
+
+                <Dropdown placeholder="Login Type" disabled={this.state.submitting} className="mb20" />
 
                 {this.state.validationErrors.length != 0 &&
                     <div className="alert mb20">
