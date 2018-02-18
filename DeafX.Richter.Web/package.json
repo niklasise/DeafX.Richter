@@ -32,5 +32,8 @@
     "uglifyjs-webpack-plugin": "1.1.2",
     "webpack": "^3.5.5",
     "webpack-hot-middleware": "2.18.2"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5"
   }
 }

@@ -1,45 +1,70 @@
-﻿import * as React from "react";
-import * as Utils from "../Utils";
-import classNames from "classnames";
-import DropdownItem from "./DropdownItem";
-import DropdownPanel from "./DropdownPanel";
-
-interface DropdownState {
-    isOpen: boolean;
-}
+﻿import * as React from 'react';
+//import PropTypes from 'prop-types';
+//import DomHandler from '../utils/DomHandler';
+//import ObjectUtils from '../utils/ObjectUtils';
+//import classNames from 'classnames';
+//import { DropdownPanel } from './DropdownPanel';
+//import { DropdownItem } from './DropdownItem';
 
 interface DropdownProps {
     id: string,
-    inputId: string,
-    value?: string,
-    onChange?: (object:any) => void
-    name?: string;
-    placeholder?: string;
-    error?: string;
-    className?: string,
-    disabled?: boolean
-    options: any[]
+    value: any,
+    options: any[],
     optionLabel: string,
+    itemTemplate: () => void,
+    style: object,
+    className: string,
+    autoWidth: boolean,
+    scrollHeight: string,
+    filter: boolean,
+    filterPlaceholder: string,
+    editable: boolean,
+    placeholder: string,
+    required: boolean,
+    disabled: boolean,
+    appendTo: any,
     tabIndex: number,
     autoFocus: boolean,
-    filter: boolean,
+    lazy: boolean,
+    panelClassName: string,
+    panelstyle: object,
     dataKey: string,
-    autoWidth: boolean
-    scrollHeight: number;
-}
+    inputId: string,
+    onChange: () => void,
+    onMouseDown: () => void,
+    onContextMenu: () => void
+};
 
-export default class Dropdown extends React.Component<DropdownProps, any> {
+class Dropdown extends React.Component < DropdownProps, any > {
 
-    nativeSelect: any;
-    focusInput: any;
-    documentClickListener: any;
-    selfClick: boolean;
-    overlayClick: any;
-    //editableInputClick: any;
-    panel: any;
-    filterInput: any;
-    expeditableInputClick: any;
-    container: any;
+    //static defaultProps = {
+    //    id: null,
+    //    value: null,
+    //    options: null,
+    //    optionLabel: null,
+    //    itemTemplate: null,
+    //    style: null,
+    //    className: null,
+    //    autoWidth: true,
+    //    scrollHeight: '200px',
+    //    filter: false,
+    //    filterPlaceholder: null,
+    //    editable: false,
+    //    placeholder: null,
+    //    required: false,
+    //    disabled: false,
+    //    appendTo: null,
+    //    tabIndex: null,
+    //    autoFocus: false,
+    //    panelClassName: null,
+    //    panelStyle: null,
+    //    dataKey: null,
+    //    inputId: null,
+    //    onChange: null,
+    //    onMouseDown: null,
+    //    onContextMenu: null
+    //};
+
 
 
     constructor(props) {
@@ -52,24 +77,13 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
         this.onInputFocus = this.onInputFocus.bind(this);
         this.onInputBlur = this.onInputBlur.bind(this);
         this.onInputKeyDown = this.onInputKeyDown.bind(this);
+        this.onEditableInputClick = this.onEditableInputClick.bind(this);
+        this.onEditableInputChange = this.onEditableInputChange.bind(this);
+        this.onEditableInputFocus = this.onEditableInputFocus.bind(this);
         this.onOptionClick = this.onOptionClick.bind(this);
         this.onFilterInputChange = this.onFilterInputChange.bind(this);
         this.onFilterInputKeyDown = this.onFilterInputKeyDown.bind(this);
         this.panelClick = this.panelClick.bind(this);
-    }
-
-    addClass(element, className) {
-        if (element.classList)
-            element.classList.add(className);
-        else
-            element.className += ' ' + className;
-    }
-
-    removeClass(element, className) {
-        if (element.classList)
-            element.classList.remove(className);
-        else
-            element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
     }
 
     onClick(event) {
@@ -81,7 +95,7 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
             this.selfClick = true;
         }
 
-        if (!this.overlayClick) {
+        if (!this.overlayClick && !this.editableInputClick) {
             this.focusInput.focus();
 
             if (this.panel.element.offsetParent) {
@@ -97,6 +111,10 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
                 }
             }
         }
+
+        if (this.editableInputClick) {
+            this.expeditableInputClick = false;
+        }
     }
 
     panelClick() {
@@ -104,11 +122,11 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
     }
 
     onInputFocus(event) {
-        this.addClass(this.container, 'ui-state-focus');
+        DomHandler.addClass(this.container, 'ui-state-focus');
     }
 
     onInputBlur(event) {
-        this.removeClass(this.container, 'ui-state-focus');
+        DomHandler.removeClass(this.container, 'ui-state-focus');
     }
 
     onUpKey(event) {
@@ -192,6 +210,23 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
         }
     }
 
+    onEditableInputClick(event) {
+        this.editableInputClick = true;
+        this.bindDocumentClickListener();
+    }
+
+    onEditableInputChange(event) {
+        this.props.onChange({
+            originalEvent: event.originalEvent,
+            value: event.target.value
+        });
+    }
+
+    onEditableInputFocus(event) {
+        DomHandler.addClass(this.container, 'ui-state-focus');
+        this.hide();
+    }
+
     onOptionClick(event) {
         this.selectItem(event);
         this.focusInput.focus();
@@ -229,6 +264,7 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
         let selectedOption = this.findOption(this.props.value);
 
         if (selectedOption !== event.option) {
+            this.updateEditableLabel(event.option);
             this.props.onChange({
                 originalEvent: event.originalEvent,
                 value: this.props.optionLabel ? event.option : event.option.value
@@ -241,7 +277,7 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
         if (this.props.options) {
             for (let i = 0; i < this.props.options.length; i++) {
                 let optionValue = this.props.optionLabel ? this.props.options[i] : this.props.options[i].value;
-                if ((value === null && optionValue == null) || Utils.equals(value, optionValue, this.props.dataKey)) {
+                if ((value === null && optionValue == null) || ObjectUtils.equals(value, optionValue, this.props.dataKey)) {
                     index = i;
                     break;
                 }
@@ -257,8 +293,10 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
     }
 
     show() {
-        this.panel.element.style.zIndex = "999";
+        this.panel.element.style.zIndex = String(DomHandler.generateZIndex());
         this.panel.element.style.display = 'block';
+        this.alignPanel();
+        DomHandler.fadeIn(this.panel.element, 250);
         this.bindDocumentClickListener();
     }
 
@@ -266,6 +304,16 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
         this.panel.element.style.display = 'none';
         this.unbindDocumentClickListener();
         this.clearClickState();
+    }
+
+    alignPanel() {
+        if (this.props.appendTo) {
+            DomHandler.absolutePosition(this.panel.element, this.container);
+            this.panel.element.style.minWidth = DomHandler.getWidth(this.container) + 'px';
+        }
+        else {
+            DomHandler.relativePosition(this.panel.element, this.container);
+        }
     }
 
     bindDocumentClickListener() {
@@ -291,7 +339,14 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
 
     clearClickState() {
         this.selfClick = false;
+        this.editableInputClick = false;
         this.overlayClick = false;
+    }
+
+    updateEditableLabel(option) {
+        if (this.editableInput) {
+            this.editableInput.value = (option ? this.getOptionLabel(option) : this.props.value || '');
+        }
     }
 
     filter(option) {
@@ -312,7 +367,7 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
             });
 
             return (<div className="ui-helper-hidden-accessible">
-                <select ref={(el) => this.nativeSelect = el} tabIndex={-1} aria-hidden="true">
+                <select ref={(el) => this.nativeSelect = el} required={this.props.required} tabIndex="-1" aria-hidden="true">
                     {options}
                 </select>
             </div>);
@@ -331,13 +386,21 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
     }
 
     renderLabel(label) {
-        let className = classNames('ui-dropdown-label ui-inputtext ui-corner-all', {
-            'ui-placeholder': label === null && this.props.placeholder,
-            'ui-dropdown-label-empty': label === null && !this.props.placeholder
-        }
-        );
+        if (this.props.editable) {
+            let value = label || this.props.value || '';
 
-        return <label className={className}>{label || this.props.placeholder || 'empty'}</label>;
+            return <input ref={(el) => this.editableInput = el} type="text" defaultValue={value} className="ui-dropdown-label ui-inputtext ui-corner-all" disabled={this.props.disabled} placeholder={this.props.placeholder}
+                onClick={this.onEditableInputClick} onInput={this.onEditableInputChange} onFocus={this.onEditableInputFocus} onBlur={this.onInputBlur} />;
+        }
+        else {
+            let className = classNames('ui-dropdown-label ui-inputtext ui-corner-all', {
+                'ui-placeholder': label === null && this.props.placeholder,
+                'ui-dropdown-label-empty': label === null && !this.props.placeholder
+            }
+            );
+
+            return <label className={className}>{label || this.props.placeholder || 'empty'}</label>;
+        }
     }
 
     renderDropdownIcon() {
@@ -381,7 +444,15 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
     }
 
     getOptionLabel(option) {
-        return this.props.optionLabel ? Utils.retreiveObjectFieldData(option, this.props.optionLabel) : option.label;
+        return this.props.optionLabel ? ObjectUtils.resolveFieldData(option, this.props.optionLabel) : option.label;
+    }
+
+    componentDidMount() {
+        if (this.props.autoWidth) {
+            if (!this.props.style || (!this.props.style['width'] && !this.props.style['min-width'])) {
+                this.container.style.width = this.nativeSelect.offsetWidth + 30 + 'px';
+            }
+        }
     }
 
     componentWillUnmount() {
@@ -389,6 +460,10 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        if (this.props.filter) {
+            this.alignPanel();
+        }
+
         if (this.panel.element.offsetParent) {
             let highlightItem = DomHandler.findSingle(this.panel.element, 'li.ui-state-highlight');
             if (highlightItem) {
@@ -410,164 +485,18 @@ export default class Dropdown extends React.Component<DropdownProps, any> {
         let filterElement = this.renderFilter();
 
         return (
-            <div id={this.props.id} ref={(el) => this.container = el} className={className} onClick={this.onClick}>
+            <div id={this.props.id} ref={(el) => this.container = el} className={className} style={this.props.style} onClick={this.onClick}
+                onMouseDown={this.props.onMouseDown} onContextMenu={this.props.onContextMenu}>
                 {hiddenSelect}
                 {keyboardHelper}
                 {labelElement}
                 {dropdownIcon}
-                <DropdownPanel ref={(el) => this.panel = el}
+                <DropdownPanel ref={(el) => this.panel = el} appendTo={this.props.appendTo}
+                    panelStyle={this.props.panelStyle} panelClassName={this.props.panelClassName}
                     scrollHeight={this.props.scrollHeight} onClick={this.panelClick} filter={filterElement}>
                     {items}
                 </DropdownPanel>
             </div>
         );
     }
-
-
 }
-
-
-//constructor() {
-//    super();
-
-//    this.state = {
-//        isOpen: true
-//    }
-
-
-//}
-
-//onInputFocus(event) {
-//    DomHandler.addClass(this.container, 'ui-state-focus');
-//}
-
-//onInputBlur(event) {
-//    DomHandler.removeClass(this.container, 'ui-state-focus');
-//}
-
-//onUpKey(event) {
-//    if (!this.panel.element.offsetParent && event.altKey) {
-//        this.show();
-//    }
-//    else {
-//        let selectedItemIndex = this.findOptionIndex(this.props.value);
-
-//        if (selectedItemIndex !== -1) {
-//            let nextItemIndex = selectedItemIndex + 1;
-//            if (nextItemIndex !== (this.props.options.length)) {
-//                this.selectItem({
-//                    originalEvent: event,
-//                    option: this.props.options[nextItemIndex]
-//                });
-//            }
-//        }
-
-//        if (selectedItemIndex === -1) {
-//            this.selectItem({
-//                originalEvent: event,
-//                option: this.props.options[0]
-//            });
-//        }
-//    }
-
-//    event.preventDefault();
-//}
-
-//onDownKey(event) {
-//    let selectedItemIndex = this.findOptionIndex(this.props.value);
-
-//    if (selectedItemIndex > 0) {
-//        let prevItemIndex = selectedItemIndex - 1;
-//        this.selectItem({
-//            originalEvent: event,
-//            option: this.props.options[prevItemIndex]
-//        });
-//    }
-
-//    event.preventDefault();
-//}
-
-//onInputKeyDown(event) {
-//    switch (event.which) {
-//        //down
-//        case 40:
-//            this.onUpKey(event);
-//            break;
-
-//        //up
-//        case 38:
-//            this.onDownKey(event);
-//            break;
-
-//        //space
-//        case 32:
-//            if (!this.panel.element.offsetParent) {
-//                this.show();
-//                event.preventDefault();
-//            }
-//            break;
-
-//        //enter
-//        case 13:
-//            this.hide();
-//            this.unbindDocumentClickListener();
-//            event.preventDefault();
-//            break;
-
-//        //escape and tab
-//        case 27:
-//        case 9:
-//            this.hide();
-//            this.unbindDocumentClickListener();
-//            break;
-
-//        default:
-//            break;
-//    }
-//}
-
-//getOptionLabel(option: any): string {
-//    return this.props.optionLabel ? Utils.retreiveObjectFieldData(option, this.props.optionLabel) : option.label;
-//}
-
-//renderHiddenSelect() : JSX.Element {
-//    let options = this.props.options && this.props.options.map((option, i) => {
-//        return <option key={this.getOptionLabel(option)} value={option.value}>{this.getOptionLabel(option)}</option>;
-//    });
-
-//    return (<div className="ui-helper-hidden-accessible">
-//        <select ref={(el) => this.nativeSelect = el} tabIndex={-1} aria-hidden="true">
-//            {options}
-//        </select>
-//    </div>);
-//}
-
-//renderKeyboardHelper() {
-//    return <div className="ui-helper-hidden-accessible">
-//        <input ref={(el) => this.focusInput = el} id={this.props.inputId} type="text" role="listbox"
-//            onFocus={this.onInputFocus} onBlur={this.onInputBlur} onKeyDown={this.onInputKeyDown}
-//            disabled={this.props.disabled} tabIndex={this.props.tabIndex} autoFocus={this.props.autoFocus} />
-//    </div>;
-//}
-
-//    public render() {
-//    let hiddenSelect = this.renderHiddenSelect();
-//    let keyboardHelper = this.renderKeyboardHelper();
-
-//    return <div id={this.props.id} className={"dropdown " + this.props.className}>
-//        {hiddenSelect}
-//        {keyboardHelper}
-//        {/*<div className={this.state.isOpen ? "box open" : "box"}>
-//                {!this.props.value && <span className="placeholder">{this.props.placeholder}</span>}
-//                {!!this.props.value && <span className="value">{this.props.placeholder}</span>}
-//                <i className="fa fa-caret-down" />
-//            </div>*/}
-//        {/*this.state.isOpen &&
-//                <div className="options-container">
-//                    <div className="option">Windows Authentication</div>
-//                    <div className="option">Basic Auth</div>
-//                    <div className="option">Open Auth</div>
-//                </div>
-//            */}
-//    </div>
-//}
