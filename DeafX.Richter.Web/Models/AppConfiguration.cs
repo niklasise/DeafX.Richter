@@ -1,4 +1,5 @@
 ﻿using DeafX.Richter.Business.Models;
+using DeafX.Richter.Business.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace DeafX.Richter.Web.Models
         public DeviceGroupConfiguration[] DeviceGroups { get; set; }
 
         public LoggingConfiguration Logging { get; set; }
+
+        public StatisticsServiceConfiguration Statistics { get; set; }
     }
 
     public class LoggingConfiguration

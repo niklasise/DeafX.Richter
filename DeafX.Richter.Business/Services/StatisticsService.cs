@@ -96,7 +96,7 @@ namespace DeafX.Richter.Business.Services
 
                     if (device != null)
                     {
-                        _dataStorage.Store(deviceId, (double)device.Value);
+                        _dataStorage.Store(deviceId, Convert.ToDouble(device.Value));
                     }
                 }
 

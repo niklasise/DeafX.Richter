@@ -1,4 +1,7 @@
 /*$color-red: rgb(212, 63, 58);*/
+.p10 {
+  padding: 10px; }
+
 .m15 {
   margin: 15px; }
 
@@ -293,15 +296,15 @@ i.red {
 
 .pageContainer {
   max-width: 900px;
-  padding: 20px 0 0 20px;
+  padding: 20px 20px 0 20px;
   overflow: hidden;
   margin: 0 auto; }
   @media screen and (max-width: 700px) {
     .pageContainer {
-      padding: 15px 0 0 15px; } }
+      padding: 15px 15px 0 15px; } }
   @media screen and (max-width: 500px) {
     .pageContainer {
-      padding: 10px 0 0 10px; } }
+      padding: 10px 10px 0 10px; } }
 
 .sectionContainer {
   background-color: #19a2de;

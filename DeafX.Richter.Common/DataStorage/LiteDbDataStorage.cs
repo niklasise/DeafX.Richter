@@ -44,7 +44,7 @@ namespace DeafX.Richter.Common.DataStorage
                     return null;
                 }
 
-                var collection = db.GetCollection<LiteDbDataTimeObject<T>>(nameof(T));
+                var collection = db.GetCollection<LiteDbDataTimeObject<T>>(name);
 
                 return collection.Find(o => o.DateTime >= from && o.DateTime <= to).ToArray();
             }

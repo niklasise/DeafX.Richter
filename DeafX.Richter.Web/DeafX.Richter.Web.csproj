@@ -14,6 +14,7 @@
     <None Remove="ClientApp\Api\AccountApi.ts" />
     <None Remove="ClientApp\Api\deviceApi.ts" />
     <None Remove="ClientApp\Api\mockDeviceApi.ts" />
+    <None Remove="ClientApp\Components\Constants\Styles.ts" />
     <None Remove="ClientApp\Components\Home\ToggleDevice.tsx" />
     <None Remove="ClientApp\Components\Home\ValueDevice.tsx" />
     <None Remove="ClientApp\Components\Login\LoginPage.tsx" />
@@ -57,24 +58,23 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
     <TypeScriptCompile Include="ClientApp\Actions\LogActions.ts" />
+    <TypeScriptCompile Include="ClientApp\Api\StatisticsApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\AccountApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\DeviceWSApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\DeviceApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\IDeviceListener.ts" />
     <TypeScriptCompile Include="ClientApp\Api\MockDeviceApi.ts" />
+    <TypeScriptCompile Include="ClientApp\Components\Constants\Styles.ts" />
     <TypeScriptCompile Include="ClientApp\Components\Home\ToggleDevice.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Home\ValueDevice.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Login\LoginPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Input\Button.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\ConfirmationModalComponent.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\Dropdown.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\DropdownComponent.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\DropdownPanel.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\DropdownItem.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\ModalComponent.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Input\TextInput.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Utils.ts" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\TimerModalComponent.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Statistics\StatisticsBadge.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Statistics\Chart.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Statistics\StatisticsPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Index.tsx" />

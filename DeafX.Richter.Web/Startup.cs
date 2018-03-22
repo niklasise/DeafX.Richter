@@ -37,19 +37,24 @@ namespace DeafX.Richter.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var appConfiguration = Configuration.Get<AppConfiguration>();
+
             var httpClient = new HttpClient();
             var zWayService = new ZWayService(httpClient, LoggerFactory.CreateLogger<ZWayService>());
             var virtualService = new DeviceGroupService(zWayService);
             var aggregatedService = new AggregatedDeviceService(zWayService, virtualService);
+            var statisticsService = new StatisticsService(LoggerFactory.CreateLogger<StatisticsService>(), aggregatedService, appConfiguration.Statistics);
 
-            zWayService.InitAsync(Configuration.Get<AppConfiguration>().ZWay).Wait();
-            virtualService.Init(Configuration.Get<AppConfiguration>().DeviceGroups);
-            aggregatedService.Init(Configuration.Get<AppConfiguration>().ToggleAutomationRules);
+            zWayService.InitAsync(appConfiguration.ZWay).Wait();
+            virtualService.Init(appConfiguration.DeviceGroups);
+            aggregatedService.Init(appConfiguration.ToggleAutomationRules);
+            statisticsService.Init();
 
             services.AddMvc();
             services.AddSingleton<HttpClient>(new HttpClient());
             services.AddSingleton<IDeviceService>(aggregatedService);
             services.AddSingleton<VersionService>(new VersionService());
+            services.AddSingleton<StatisticsService>(statisticsService);
             //services.AddSignalR();
         }
 
@@ -61,7 +66,7 @@ namespace DeafX.Richter.Web
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions {
                     HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true,
+                    ReactHotModuleReplacement = true
                 });
             }
             else

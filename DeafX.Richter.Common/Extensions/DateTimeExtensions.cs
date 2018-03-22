@@ -12,6 +12,11 @@ namespace DeafX.Richter.Common.Extensions
             return dateTimeOffset.ToUnixTimeSeconds();
         }
 
+        public static DateTime ToDateTimeUnixTimeStamp(this long timeStamp)
+        {
+            return DateTimeOffset.FromUnixTimeSeconds(timeStamp).DateTime.ToLocalTime();
+        }
+
         public static DateTime FromUnixTimeStamp(long timeStamp)
         {
             return DateTimeOffset.FromUnixTimeSeconds(timeStamp).DateTime.ToLocalTime();
