@@ -14,6 +14,7 @@
     <None Remove="ClientApp\Api\AccountApi.ts" />
     <None Remove="ClientApp\Api\deviceApi.ts" />
     <None Remove="ClientApp\Api\mockDeviceApi.ts" />
+    <None Remove="ClientApp\Api\MockStatisticsApi.ts" />
     <None Remove="ClientApp\Components\Constants\Styles.ts" />
     <None Remove="ClientApp\Components\Home\ToggleDevice.tsx" />
     <None Remove="ClientApp\Components\Home\ValueDevice.tsx" />
@@ -25,13 +26,15 @@
     <None Remove="ClientApp\Components\Shared\Input\DropdownComponent.tsx" />
     <None Remove="ClientApp\Components\Shared\Input\DropdownItem.tsx" />
     <None Remove="ClientApp\Components\Shared\Input\ModalComponent.tsx" />
+    <None Remove="ClientApp\Components\Shared\Input\RadioButton.tsx" />
+    <None Remove="ClientApp\Components\Shared\Input\RadioButtonGroup.tsx" />
     <None Remove="ClientApp\Components\Shared\Input\TextInput.tsx" />
-    <None Remove="ClientApp\Components\Statistics\Chart.tsx" />
     <None Remove="ClientApp\Components\Statistics\ChartComponent.tsx" />
     <None Remove="ClientApp\Models\Device.ts" />
     <None Remove="ClientApp\Models\Log\ClientLog.ts" />
     <None Remove="ClientApp\Models\Log\ServerLog.ts" />
     <None Remove="ClientApp\Models\Shared\ValidationErrors.ts" />
+    <None Remove="ClientApp\Models\Statistics\StatisticsPoint.ts" />
     <None Remove="ClientApp\Reducers\LogReducer.ts" />
     <None Remove="ClientApp\Routes.tsx" />
     <None Remove="ClientApp\Store\ConfigureStore.ts" />
@@ -58,6 +61,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\Actions\DeviceActions.ts" />
     <TypeScriptCompile Include="ClientApp\Actions\LogActions.ts" />
+    <TypeScriptCompile Include="ClientApp\Api\MockStatisticsApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\StatisticsApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\AccountApi.ts" />
     <TypeScriptCompile Include="ClientApp\Api\DeviceWSApi.ts" />
@@ -70,12 +74,12 @@
     <TypeScriptCompile Include="ClientApp\Components\Login\LoginPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Input\Button.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\ConfirmationModalComponent.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\RadioButton.tsx" />
+    <TypeScriptCompile Include="ClientApp\Components\Shared\Input\RadioButtonGroup.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\ModalComponent.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Input\TextInput.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\Utils.ts" />
     <TypeScriptCompile Include="ClientApp\Components\Shared\TimerModalComponent.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\Statistics\StatisticsBadge.tsx" />
-    <TypeScriptCompile Include="ClientApp\Components\Statistics\Chart.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Statistics\StatisticsPage.tsx" />
     <TypeScriptCompile Include="ClientApp\Index.tsx" />
     <TypeScriptCompile Include="ClientApp\Components\Configuration\ConfigurationPage.tsx" />
@@ -85,6 +89,8 @@
     <TypeScriptCompile Include="ClientApp\Models\Log\ClientLog.ts" />
     <TypeScriptCompile Include="ClientApp\Models\Log\ServerLog.ts" />
     <TypeScriptCompile Include="ClientApp\Models\Shared\ValidationErrors.ts" />
+    <TypeScriptCompile Include="ClientApp\Models\Statistics\StatisticsTimeSpan.ts" />
+    <TypeScriptCompile Include="ClientApp\Models\Statistics\StatisticsPoint.ts" />
     <TypeScriptCompile Include="ClientApp\Reducers\DeviceReducer.ts" />
     <TypeScriptCompile Include="ClientApp\Reducers\LogReducer.ts" />
     <TypeScriptCompile Include="ClientApp\Routes.tsx" />
