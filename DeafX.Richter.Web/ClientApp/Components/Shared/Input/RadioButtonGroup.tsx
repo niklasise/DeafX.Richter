@@ -1,9 +1,22 @@
 ﻿import * as React from "react";
 import styled from "styled-components";
 import RadioButton from "./RadioButton";
+import { LightColor } from "../../Constants/Styles";
 
 const WrapperDiv = styled.div`
     display: flex;
+    position: relative;
+`;
+
+const DisabledOverlayDiv = styled.div`
+    position: absolute;
+    background: ${LightColor};
+    opacity: 0.4;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
 `;
 
 const StyledRadioButton = styled(RadioButton) `
@@ -18,12 +31,13 @@ export interface RadioButtonGroupProps {
     selectedValue: any,
     onValueChanged: (value: any) => void,
     className?: string,
-    loading?: boolean
+    loading?: boolean,
+    disabled: boolean,
 }
 
 const RadioButtonGroup: React.SFC<RadioButtonGroupProps> = (props) => {
-    let onChanged = (value: string) => {
-        if (value !== props.selectedValue)
+    let onChanged = (value: any) => {
+        if (!props.disabled && value !== props.selectedValue)
         {
             props.onValueChanged(value);
         }
@@ -36,6 +50,8 @@ const RadioButtonGroup: React.SFC<RadioButtonGroupProps> = (props) => {
 
             return <StyledRadioButton key={option.value} text={option.name} onClicked={onChanged} value={option.value} selected={selected} loading={selected && props.loading} />
         }, this)}
+
+        {props.disabled && <DisabledOverlayDiv/>}
 
     </WrapperDiv>
 }

@@ -4,6 +4,7 @@ import { Device } from '../../Models/Device'
 import Chart, { ChartComponentData } from './StatisticsChart';
 import StatisticsTimeSpan from "../../Models/Statistics/StatisticsTimeSpan"
 import StatisticApi from "../../Api/MockStatisticsApi";
+import DeviceApi from "../../Api/MockDeviceApi";
 //import StatisticsBadge from "./StatisticsBadge"
 import RadioButtonGroup from "../Shared/Input/RadioButtonGroup";
 import styled from "styled-components";
@@ -17,7 +18,7 @@ interface StatisticsPageProps {
 }
 
 interface StatisticsPageState {
-    device: Device,
+    deviceName: string,
     chartData: ChartComponentData,
     selectedTimeSpan: StatisticsTimeSpan,
     loading: boolean
@@ -65,21 +66,16 @@ const OverflowDiv = styled.div`
 
 class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPageState> {
 
+    private deviceNamePromise: Promise<string>;
+    private deviceId: string;
+
     constructor()
     {
         super();
 
         this.state = {
             selectedTimeSpan: StatisticsTimeSpan.Day,
-            device: {
-                id: "Device1",
-                title: "Gästrum - Fönster",
-                deviceType: "",
-                isUpdating: false,
-                lastChanged: null,
-                value: "",
-                valueType: ""
-            },
+            deviceName: "",
             chartData: {
                 dataSets: []
             },
@@ -94,37 +90,60 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
         this.setState({
             ...this.state,
+            selectedTimeSpan: timeSpan,
             loading: true
         });
 
         var currentTimestamp = Math.floor(Date.now() / 1000);
 
-        StatisticApi.getStatistics(
-            "abc123",
-            this.getFromTime(currentTimestamp, timeSpan),
-            currentTimestamp,
-            this.getMinumimInterval(timeSpan)).then((data) => {
+        Promise.all([
+            this.deviceNamePromise,
+            StatisticApi.getStatistics(
+                this.deviceId,
+                this.getFromTime(currentTimestamp, timeSpan),
+                currentTimestamp,
+                this.getMinumimInterval(timeSpan))
+        ]).then((data) => {
 
-                let chartData: ChartComponentData = {
-                    dataSets: [
-                        {
-                            label: "Harp Darp",
-                            data: data.map((d) => { return { x: d.timeStamp, y: d.data } })
-                        }
-                    ]
-                }; 
+            let chartData: ChartComponentData = {
+                dataSets: [
+                    {
+                        label: data[0],
+                        data: data[1].map((d) => { return { x: d.timeStamp, y: d.data } })
+                    }
+                ]
+            };
 
-                this.setState({
-                    ...this.state,
-                    loading: false,
-                    chartData: chartData,
-                    selectedTimeSpan: timeSpan
-                }
+            this.setState({
+                ...this.state,
+                loading: false,
+                chartData: chartData,
+            });
+        });
 
-            )
-            })
+        //StatisticApi.getStatistics(
+        //    this.deviceId,
+        //    this.getFromTime(currentTimestamp, timeSpan),
+        //    currentTimestamp,
+        //    this.getMinumimInterval(timeSpan)).then((data) => {
 
+        //        let chartData: ChartComponentData = {
+        //            dataSets: [
+        //                {
+        //                    label: "Harp Darp",
+        //                    data: data.map((d) => { return { x: d.timeStamp, y: d.data } })
+        //                }
+        //            ]
+        //        }; 
 
+        //        this.setState({
+        //            ...this.state,
+        //            loading: false,
+        //            chartData: chartData,
+        //        }
+
+        //    )
+        //    })
 
     }
 
@@ -180,7 +199,21 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
         this.loadData(value as StatisticsTimeSpan);
     }
 
+    private loadDeviceName() {
+
+        this.deviceNamePromise = DeviceApi.getDeviceName();
+
+        this.deviceNamePromise.then((data) => {
+            this.setState({
+                ...this.state,
+                deviceName: data
+            })
+        })
+
+    }
+
     public componentDidMount() {
+        this.loadDeviceName();
         this.loadData(StatisticsTimeSpan.Day);
     }
 
@@ -189,13 +222,13 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
             <div className="sectionContainer mb20">
 
-                <h1>{this.state.device.title}</h1>
+                <h1>{this.state.deviceName}</h1>
 
                 {this.state.loading && <LoaderImg src="/dist/img/loader.svg" />} 
 
                 {!this.state.loading && <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={this.state.selectedTimeSpan} />} 
 
-                <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} loading={this.state.loading} />
+                <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} disabled={this.state.loading} />
 
                 {/*
                 <OverflowDiv>

@@ -60,6 +60,14 @@ class deviceApi {
         });
     }
 
+    static getDeviceName(): Promise<string> {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve("Device #1");
+            }, delay);
+        });
+    }
+
     static toggleDevice(device: ToggleDevice, toggled: boolean) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {

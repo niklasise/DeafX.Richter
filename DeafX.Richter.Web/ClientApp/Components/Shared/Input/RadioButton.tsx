@@ -24,13 +24,13 @@ const StyledButton = styled.button`
         background-color: ${LightColor}
     }
 
-    :first-child {
+    :first-of-type {
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         
     }
 
-    :last-child {
+    :last-of-type {
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         border-right-width: 2px;
@@ -39,8 +39,8 @@ const StyledButton = styled.button`
 
 export interface RadioButtonProps {
     text: string,
-    value: string,
-    onClicked: (value: string) => void,
+    value: any,
+    onClicked: (value: any) => void,
     selected: boolean,
     className?: string,
     loading?: boolean
