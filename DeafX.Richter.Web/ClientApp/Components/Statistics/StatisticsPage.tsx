@@ -5,6 +5,7 @@ import Chart, { ChartComponentData } from './StatisticsChart';
 import StatisticsTimeSpan from "../../Models/Statistics/StatisticsTimeSpan"
 import StatisticApi from "../../Api/MockStatisticsApi";
 //import StatisticsBadge from "./StatisticsBadge"
+import RadioButtonGroup from "../Shared/Input/RadioButtonGroup";
 import styled from "styled-components";
 
 interface StatisticsPageParams {
@@ -18,12 +19,35 @@ interface StatisticsPageProps {
 interface StatisticsPageState {
     device: Device,
     chartData: ChartComponentData,
-    selectedTimeSpan: StatisticsTimeSpan
+    selectedTimeSpan: StatisticsTimeSpan,
+    loading: boolean
 }
 
 //const StatisticsBadgeMargin = styled(StatisticsBadge) `
 //    margin-bottom: 20px;
 //`
+
+const TimespanOptions = [
+    {
+        name: "Dag", value: StatisticsTimeSpan.Day
+    },
+    {
+        name: "Vecka", value: StatisticsTimeSpan.Week
+    },
+    {
+        name: "Månad", value: StatisticsTimeSpan.Month
+    },
+    {
+        name: "År", value: StatisticsTimeSpan.Year
+    }
+]
+
+const LoaderImg = styled.img`
+    display: block;
+    margin: 150px auto;
+    height: 35px;
+    width: 35px;
+`
 
 const LeftSpan = styled.div`
     float: left;
@@ -57,84 +81,48 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
                 valueType: ""
             },
             chartData: {
-                dataSets: [
-                {
-                    label: "kök - fönster",
-                    data: [
-                        { x: 1543626000 + 3600 * 0, y: 17 },
-                        { x: 1543626000 + 3600 * 1, y: 21.5 },
-                        { x: 1543626000 + 3600 * 2, y: 19 },
-                        { x: 1543626000 + 3600 * 3, y: 17 },
-                        { x: 1543626000 + 3600 * 4, y: 21 },
-                        { x: 1543626000 + 3600 * 5, y: 24 },
-                        { x: 1543626000 + 3600 * 6, y: 22 },
-                        { x: 1543626000 + 3600 * 7, y: 21 },
-                        { x: 1543626000 + 3600 * 8, y: 21.5 },
-                        { x: 1543626000 + 3600 * 9, y: 19 },
-                        { x: 1543626000 + 3600 * 10, y: 17 },
-                        { x: 1543626000 + 3600 * 11, y: 21 },
-                        { x: 1543626000 + 3600 * 12, y: 23 },
-                        { x: 1543626000 + 3600 * 13, y: 24 },
-                        { x: 1543626000 + 3600 * 14, y: 22 },
-                        { x: 1543626000 + 3600 * 15, y: 21.5 },
-                        { x: 1543626000 + 3600 * 16, y: 19 },
-                        { x: 1543626000 + 3600 * 17, y: 17 },
-                        { x: 1543626000 + 3600 * 18, y: 21 },
-                        { x: 1543626000 + 3600 * 19, y: 24 },
-                        { x: 1543626000 + 3600 * 20, y: 22 },
-                        { x: 1543626000 + 3600 * 21, y: 21 },
-                        { x: 1543626000 + 3600 * 22, y: 17 },
-                        { x: 1543626000 + 3600 * 23, y: 15 },
-                    ]
-                    },
-                    {
-                        label: "kök - fönster",
-                        data: [
-                            { x: 1543625231 + 3600 * 0, y: 15 },
-                            { x: 1543625231 + 3600 * 1, y: 20.5 },
-                            { x: 1543625231 + 3600 * 2, y: 16 },
-                            { x: 1543625231 + 3600 * 3, y: 16 },
-                            { x: 1543625231 + 3600 * 4, y: 20.3 },
-                            { x: 1543625231 + 3600 * 5, y: 22 },
-                            { x: 1543625231 + 3600 * 6, y: 21.5 },
-                            { x: 1543625231 + 3600 * 7, y: 20 },
-                            { x: 1543625231 + 3600 * 8, y: 21 },
-                            { x: 1543625231 + 3600 * 9, y: 18 },
-                            { x: 1543625231 + 3600 * 10, y: 17 },
-                            { x: 1543625231 + 3600 * 11, y: 19 },
-                            { x: 1543625231 + 3600 * 12, y: 22 },
-                            { x: 1543625231 + 3600 * 13, y: 23 },
-                            { x: 1543625231 + 3600 * 14, y: 19 },
-                            { x: 1543625231 + 3600 * 15, y: 21 },
-                            { x: 1543625231 + 3600 * 16, y: 18.5 },
-                            { x: 1543625231 + 3600 * 17, y: 16 },
-                            { x: 1543625231 + 3600 * 18, y: 20 },
-                            { x: 1543625231 + 3600 * 19, y: 23 },
-                            { x: 1543625231 + 3600 * 20, y: 20 },
-                            { x: 1543625231 + 3600 * 21, y: 19 },
-                            { x: 1543625231 + 3600 * 22, y: 15 },
-                            { x: 1543625231 + 3600 * 23, y: 13 },
-                        ]
-                    }]
-            }
+                dataSets: []
+            },
+            loading: false
         }
+
+        this.onRadioValueChanged = this.onRadioValueChanged.bind(this);
+        this.loadData = this.loadData.bind(this);
     }
 
-    private loadData() {
+    private loadData(timeSpan: StatisticsTimeSpan) {
+
+        this.setState({
+            ...this.state,
+            loading: true
+        });
 
         var currentTimestamp = Math.floor(Date.now() / 1000);
 
-        //StatisticApi.getStatistics(
-        //    "abc123",
-        //    currentTimestamp,
-        //    this.getFromTime(currentTimestamp, this.state.selectedTimeSpan),
-        //    this.getMinumimInterval(this.state.selectedTimeSpan)).then((data) => {
-        //        this.setState({
-        //            ...this.state,
-        //            chartData: data
-        //        }
-        //    )
-        //    })
+        StatisticApi.getStatistics(
+            "abc123",
+            this.getFromTime(currentTimestamp, timeSpan),
+            currentTimestamp,
+            this.getMinumimInterval(timeSpan)).then((data) => {
+
+                let chartData: ChartComponentData = {
+                    dataSets: [
+                        {
+                            label: "Harp Darp",
+                            data: data.map((d) => { return { x: d.timeStamp, y: d.data } })
+                        }
+                    ]
+                }; 
+
+                this.setState({
+                    ...this.state,
+                    loading: false,
+                    chartData: chartData,
+                    selectedTimeSpan: timeSpan
+                }
+
+            )
+            })
 
 
 
@@ -176,9 +164,24 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
         }
     }
 
+    private onRadioValueChanged(value: any) {
+        //this.setState({
+        //    ...this.state,
+        //    selectedTimeSpan: value as StatisticsTimeSpan
+        //})
 
-    public componentWillMount() {
-        //loadData();
+        //this.setState((prevState, props) => {
+        //    return {
+        //        ...prevState,
+        //        selectedTimeSpan: value as StatisticsTimeSpan
+        //    }
+        //});
+
+        this.loadData(value as StatisticsTimeSpan);
+    }
+
+    public componentDidMount() {
+        this.loadData(StatisticsTimeSpan.Day);
     }
 
     public render() {
@@ -188,8 +191,13 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
                 <h1>{this.state.device.title}</h1>
 
-                <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={StatisticsTimeSpan.Day} />
+                {this.state.loading && <LoaderImg src="/dist/img/loader.svg" />} 
 
+                {!this.state.loading && <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={this.state.selectedTimeSpan} />} 
+
+                <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} loading={this.state.loading} />
+
+                {/*
                 <OverflowDiv>
                     <LeftSpan>Max</LeftSpan>
                     <RightSpan>23</RightSpan>
@@ -204,7 +212,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
                     <LeftSpan>Medelvärde</LeftSpan>
                     <RightSpan>23</RightSpan>
                 </OverflowDiv>
-
+                */}
             </div>
 
         </div>;

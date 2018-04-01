@@ -13,11 +13,12 @@ const StyledRadioButton = styled(RadioButton) `
 export interface RadioButtonGroupProps {
     options: {
         name: string,
-        value: string
+        value: any
     }[],
-    selectedValue: string,
-    onValueChanged: (value) => void,
-    className?: string
+    selectedValue: any,
+    onValueChanged: (value: any) => void,
+    className?: string,
+    loading?: boolean
 }
 
 const RadioButtonGroup: React.SFC<RadioButtonGroupProps> = (props) => {
@@ -31,7 +32,9 @@ const RadioButtonGroup: React.SFC<RadioButtonGroupProps> = (props) => {
     return <WrapperDiv className={props.className} >
 
         {props.options.map(function (option, index) {
-            return <RadioButton key={option.value} text={option.name} onClicked={onChanged} value={option.value} />
+            let selected = props.selectedValue === option.value;
+
+            return <StyledRadioButton key={option.value} text={option.name} onClicked={onChanged} value={option.value} selected={selected} loading={selected && props.loading} />
         }, this)}
 
     </WrapperDiv>

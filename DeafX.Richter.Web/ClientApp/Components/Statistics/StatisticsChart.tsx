@@ -91,7 +91,7 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
         switch (dateFormat)
         {
             case DateFormat.DateOnly:
-                return formatedDate;
+                return `${month.substr(-2)}/${day.substr(-2)}`;
             case DateFormat.TimeOnly:
                 return formatedTime;
             case DateFormat.HoursAndMinutes:
@@ -101,7 +101,27 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
         }
     }
 
+    public shouldComponentUpdate(nextProps: ChartComponentProps, nextState: ChartComponentData) {
+
+        if (nextProps.data === this.props.data &&
+            nextProps.timeSpan === this.props.timeSpan &&
+            nextProps.className === this.props.className)
+        {
+            return false
+        }
+
+        return true;
+    }
+
     public componentDidMount() {
+        this.renderChart();
+    }
+
+    public componentDidUpdate() {
+        this.renderChart();
+    }
+
+    private renderChart() {
 
         let ctx = (document.getElementById(this.props.id) as HTMLCanvasElement).getContext('2d');
         let chartData : any[] = new Array;
@@ -140,8 +160,8 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
                     callbacks: {
                         label: (item, data) =>
                         {
-                            let dateTime = this.getDateStringFromTimestamp((data.datasets[item.datasetIndex].data[item.index] as any).x); 
-                            let value = (data.datasets[item.datasetIndex].data[item.index] as any).y
+                            let dateTime = this.getDateStringFromTimestamp((data.datasets[item.datasetIndex].data[item.index] as any).x);
+                            let value = Math.round((data.datasets[item.datasetIndex].data[item.index] as any).y * 100) / 100;
 
                             return `${dateTime}: ${value}`;
                         }
@@ -185,30 +205,3 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
 }
 
 export default StatisticsChartComponent;
-
-//[{
-//    label: "Gästrum - Fönster",
-//    data: [
-//        21,
-//        21.5,
-//        23,
-//        19,
-//        null,
-//        24,
-//    ],
-//    fill: true,
-//    spanGaps: true
-//},
-//{
-//    label: "Kök - Fönster",
-//    data: [
-//        19,
-//        20.5,
-//        -25,
-//        18,
-//        23,
-//        22,
-//    ],
-//    fill: true,
-//    spanGaps: true
-//}]
