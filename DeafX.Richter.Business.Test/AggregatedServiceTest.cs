@@ -169,6 +169,21 @@ namespace DeafX.Richter.Business.Test
         }
 
         [TestMethod]
+        public void GetDevice()
+        {
+            var data = new MockData();
+            var container = GetMockContainer(data);
+
+            container.Service.Init(data.RuleConfigurations.ToArray());
+
+            var device = container.Service.GetDevice("TestDevice1");
+
+            Assert.AreEqual("TestDevice1", device.Id);
+            Assert.AreEqual("Test Device #1", device.Title);
+            Assert.AreEqual(21, device.Value);
+        }
+
+        [TestMethod]
         public async void GetUpdatedDevices()
         {
             var data = new MockData();

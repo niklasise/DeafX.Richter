@@ -7,6 +7,7 @@ namespace DeafX.Richter.Business.Interfaces
 
     public interface IDeviceService
     {
+        IDevice GetDevice(string id);
         IDevice[] GetAllDevices();
         IDevice[] GetUpdatedDevices(DateTime since);
         Task ToggleDeviceAsync(string deviceId, bool toggled);

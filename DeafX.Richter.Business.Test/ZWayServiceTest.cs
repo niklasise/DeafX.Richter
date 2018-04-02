@@ -88,6 +88,26 @@ namespace DeafX.Richter.Business.Test
         }
 
         [TestMethod]
+        public async Task GetDevice()
+        {
+            var data = new MockData();
+            var container = GetMockContainer(data);
+
+            await container.Service.InitAsync(new Models.ZWayConfiguration()
+            {
+                Adress = data.BaseAdress,
+                Password = data.Password,
+                Username = data.Username,
+                Devices = data.DeviceConfiguration
+            });
+
+            var device = container.Service.GetDevice("Device1");
+
+            Assert.AreEqual(DeviceValueType.Temperature, device.ValueType);
+            Assert.AreEqual(22.3, device.Value);
+        }
+
+        [TestMethod]
         public async Task OnUpdateDevices()
         {
             var data = new MockData() { PerformDeviceUpdates = true };

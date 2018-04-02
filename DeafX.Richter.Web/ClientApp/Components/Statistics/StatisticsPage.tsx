@@ -1,10 +1,11 @@
 ﻿import * as React from 'react';
-import { match } from 'react-router-dom';
+import { match, withRouter } from 'react-router-dom';
 import { Device } from '../../Models/Device'
 import Chart, { ChartComponentData } from './StatisticsChart';
 import StatisticsTimeSpan from "../../Models/Statistics/StatisticsTimeSpan"
 import StatisticApi from "../../Api/MockStatisticsApi";
-import DeviceApi from "../../Api/MockDeviceApi";
+//import DeviceApi from "../../Api/MockDeviceApi";
+import DeviceApi from "../../Api/DeviceApi";
 //import StatisticsBadge from "./StatisticsBadge"
 import RadioButtonGroup from "../Shared/Input/RadioButtonGroup";
 import styled from "styled-components";
@@ -18,10 +19,11 @@ interface StatisticsPageProps {
 }
 
 interface StatisticsPageState {
-    deviceName: string,
+    device: Device,
     chartData: ChartComponentData,
     selectedTimeSpan: StatisticsTimeSpan,
-    loading: boolean
+    loading: boolean,
+    error: boolean
 }
 
 //const StatisticsBadgeMargin = styled(StatisticsBadge) `
@@ -49,6 +51,13 @@ const LoaderImg = styled.img`
     height: 35px;
     width: 35px;
 `
+const ErrorDiv = styled.div`
+    text-align: center;
+    margin-top: 150px;
+    margin-bottom: 150px;
+    font-size: 20px;
+    font-weight: bold;    
+`
 
 const LeftSpan = styled.div`
     float: left;
@@ -61,26 +70,29 @@ const RightSpan = styled.div`
 const OverflowDiv = styled.div`
     overflow: hidden;
     line-height: 42px;
-    
 `
 
 class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPageState> {
 
-    private deviceNamePromise: Promise<string>;
+    private devicePromise: Promise<Device>;
+    private device: Device;
     private deviceId: string;
 
-    constructor()
+    constructor(props: StatisticsPageProps)
     {
         super();
 
         this.state = {
+            error: false,
             selectedTimeSpan: StatisticsTimeSpan.Day,
-            deviceName: "",
+            device: { id: "", title: "", deviceType: "", value: "", valueType: "", isUpdating: false, lastChanged: 0 },
             chartData: {
                 dataSets: []
             },
             loading: false
         }
+
+        this.deviceId = props.match.params.id;
 
         this.onRadioValueChanged = this.onRadioValueChanged.bind(this);
         this.loadData = this.loadData.bind(this);
@@ -97,7 +109,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
         var currentTimestamp = Math.floor(Date.now() / 1000);
 
         Promise.all([
-            this.deviceNamePromise,
+            this.devicePromise,
             StatisticApi.getStatistics(
                 this.deviceId,
                 this.getFromTime(currentTimestamp, timeSpan),
@@ -108,7 +120,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
             let chartData: ChartComponentData = {
                 dataSets: [
                     {
-                        label: data[0],
+                        label: data[0].title,
                         data: data[1].map((d) => { return { x: d.timeStamp, y: d.data } })
                     }
                 ]
@@ -119,32 +131,12 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
                 loading: false,
                 chartData: chartData,
             });
+        }).catch(() => {
+            this.setState({
+                ...this.state,
+                error: true
+            })
         });
-
-        //StatisticApi.getStatistics(
-        //    this.deviceId,
-        //    this.getFromTime(currentTimestamp, timeSpan),
-        //    currentTimestamp,
-        //    this.getMinumimInterval(timeSpan)).then((data) => {
-
-        //        let chartData: ChartComponentData = {
-        //            dataSets: [
-        //                {
-        //                    label: "Harp Darp",
-        //                    data: data.map((d) => { return { x: d.timeStamp, y: d.data } })
-        //                }
-        //            ]
-        //        }; 
-
-        //        this.setState({
-        //            ...this.state,
-        //            loading: false,
-        //            chartData: chartData,
-        //        }
-
-        //    )
-        //    })
-
     }
 
     private getFromTime(timeStamp: number, timeSpan: StatisticsTimeSpan) : number {
@@ -184,29 +176,22 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
     }
 
     private onRadioValueChanged(value: any) {
-        //this.setState({
-        //    ...this.state,
-        //    selectedTimeSpan: value as StatisticsTimeSpan
-        //})
-
-        //this.setState((prevState, props) => {
-        //    return {
-        //        ...prevState,
-        //        selectedTimeSpan: value as StatisticsTimeSpan
-        //    }
-        //});
-
         this.loadData(value as StatisticsTimeSpan);
     }
 
     private loadDeviceName() {
 
-        this.deviceNamePromise = DeviceApi.getDeviceName();
+        this.devicePromise = DeviceApi.getDevice(this.deviceId);
 
-        this.deviceNamePromise.then((data) => {
+        this.devicePromise.then((data) => {
             this.setState({
                 ...this.state,
-                deviceName: data
+                device: data
+            })
+        }).catch(() => {
+            this.setState({
+                ...this.state,
+                error: true
             })
         })
 
@@ -222,30 +207,19 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
             <div className="sectionContainer mb20">
 
-                <h1>{this.state.deviceName}</h1>
+                {this.state.error && <ErrorDiv>Ett fel har uppstått</ErrorDiv>}
 
-                {this.state.loading && <LoaderImg src="/dist/img/loader.svg" />} 
+                {!this.state.error &&
+                    <div>
+                        <h1> { this.state.device.title }</h1>
 
-                {!this.state.loading && <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={this.state.selectedTimeSpan} />} 
+                        {this.state.loading && <LoaderImg src="/dist/img/loader.svg" />} 
 
-                <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} disabled={this.state.loading} />
+                        {!this.state.loading && <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={this.state.selectedTimeSpan} />} 
 
-                {/*
-                <OverflowDiv>
-                    <LeftSpan>Max</LeftSpan>
-                    <RightSpan>23</RightSpan>
-                </OverflowDiv>
-
-                <OverflowDiv>
-                    <LeftSpan>Min</LeftSpan>
-                    <RightSpan>23</RightSpan>
-                </OverflowDiv>
-
-                <OverflowDiv>
-                    <LeftSpan>Medelvärde</LeftSpan>
-                    <RightSpan>23</RightSpan>
-                </OverflowDiv>
-                */}
+                        <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} disabled={this.state.loading} />
+                    </div>
+                }
             </div>
 
         </div>;
@@ -253,4 +227,4 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 }
 
 
-export default StatisticsPage;
+export default withRouter(StatisticsPage);

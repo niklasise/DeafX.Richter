@@ -22,27 +22,39 @@ namespace DeafX.Richter.Web.Controllers
         }
 
         [HttpGet]
-        public DeviceViewModelCollection GetAllDevices()
+        public DeviceViewModelCollection GetAllDevices([FromQuery]long since)
         {
             var timeStamp = DateTime.Now.ToUnixTimeStamp();
-
-            return new DeviceViewModelCollection()
+            
+            if (since > 0)
             {
-                Devices = _deviceService.GetAllDevices().Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
-                LastUpdated = timeStamp
-            };
+                return new DeviceViewModelCollection()
+                {
+                    Devices = _deviceService.GetUpdatedDevices(DateTimeExtensions.FromUnixTimeStamp(since)).Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
+                    LastUpdated = timeStamp
+                };
+            }
+            else
+            {
+                return new DeviceViewModelCollection()
+                {
+                    Devices = _deviceService.GetAllDevices().Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
+                    LastUpdated = timeStamp
+                };
+            }
         }
 
-        [HttpGet("{since:int}")]
-        public DeviceViewModelCollection GetUpdatedDevices(long since)
+        [HttpGet("{id}")]
+        public IActionResult GetDevice(string id)
         {
-            var timeStamp = DateTime.Now.ToUnixTimeStamp();
-
-            return new DeviceViewModelCollection()
+            var device = _deviceService.GetDevice(id);
+            
+            if(device == null)
             {
-                Devices = _deviceService.GetUpdatedDevices(DateTimeExtensions.FromUnixTimeStamp(since)).Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
-                LastUpdated = timeStamp
-            };
+                return NotFound();
+            }
+
+            return new JsonResult(DeviceViewModel.FromDevice(device));
         }
 
         [HttpPut("toggle/{deviceId}/{toggled:bool}")]

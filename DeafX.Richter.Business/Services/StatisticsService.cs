@@ -51,6 +51,11 @@ namespace DeafX.Richter.Business.Services
         {
             var orginalData = _dataStorage.Retreive<double>(deviceId, from, to).ToList();
 
+            if(orginalData == null)
+            {
+                return null;
+            }
+
             if(orginalData.Count < 2)
             {
                 return orginalData;

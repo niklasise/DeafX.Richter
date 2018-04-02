@@ -133,6 +133,16 @@ namespace DeafX.Richter.Business.Services
 
         }
 
+        public IDevice GetDevice(string deviceId)
+        {
+            if (!_zWaveDeviceDictonary.ContainsKey(deviceId))
+            {
+                return null;
+            }
+
+            return _zWaveDeviceDictonary[deviceId];
+        }
+
         public IDevice[] GetAllDevices()
         {
             return _zWaveDeviceDictonary.Values.ToArray();

@@ -198,6 +198,16 @@ namespace DeafX.Richter.Business.Services
             return _allDevices.Values.ToArray();
         }
 
+        public IDevice GetDevice(string deviceId)
+        {
+            if (!_allDevices.ContainsKey(deviceId))
+            {
+                return null;
+            }
+
+            return _allDevices[deviceId];
+        }
+
         public async Task ToggleDeviceAsync(string deviceId, bool toggled)
         {
             if (!_allDevices.ContainsKey(deviceId))

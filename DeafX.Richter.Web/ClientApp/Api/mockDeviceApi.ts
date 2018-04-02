@@ -60,10 +60,21 @@ class deviceApi {
         });
     }
 
-    static getDeviceName(): Promise<string> {
-        return new Promise((resolve, reject) => {
+    static getDevice(deviceId: string): Promise<DeviceModel> {
+        return new Promise<DeviceModel>((resolve, reject) => {
             setTimeout(() => {
-                resolve("Device #1");
+                if (deviceId === "def456")
+                {
+                    reject();
+                }
+                else {
+                    resolve({
+                        id: deviceId,
+                        title: deviceId + " name",
+                        value: "21",
+                        deviceType: "VALUE_DEVICE"
+                    } as DeviceModel);
+                }
             }, delay);
         });
     }

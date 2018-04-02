@@ -18,6 +18,25 @@ class DeviceApi {
         ); 
     }
 
+    static getDevice(deviceId: string) : Promise<DeviceModel> {
+        //return DeviceApi.performRequest(
+        //    `/api/devices/${deviceId}`,
+        //    'PUT'
+        //);
+
+        return fetch(`/api/devices/${deviceId}`, {
+            credentials: 'same-origin',
+            method: "GET"
+        }).then(response => new Promise<DeviceModel>((resolve, reject) => {
+            if (response.ok) {
+                response.json().then(data => { resolve(data); }).catch(error => { reject(error) });
+            }
+            else {
+                reject("server request responded with status code" + response.status);
+            }
+        }));
+    }
+
     static setDeviceAutomated(device: ToggleDevice, automated: boolean) {
         return DeviceApi.performRequest(
             '/api/devices/setAutomated/' + device.id + '/' + automated,
@@ -59,7 +78,7 @@ class DeviceApi {
 
     private static fetchUpdatedDevices() {
         DeviceApi.performRequest(
-            '/api/devices/' + DeviceApi._lastUpdated,
+            '/api/devices/?since=' + DeviceApi._lastUpdated,
             'GET',
             data => DeviceApi.onDevicesUpdated(data as UpdatedDevices),
             () => {

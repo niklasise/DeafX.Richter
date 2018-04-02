@@ -68,7 +68,7 @@ namespace DeafX.Richter.Business.Test
         }
 
         [TestMethod]
-        public async Task GetAllDevices()
+        public void GetAllDevices()
         {
             var data = new MockData();
             var container = GetContainerAndInitService(data);
@@ -85,6 +85,18 @@ namespace DeafX.Richter.Business.Test
             Assert.AreEqual("TestDevice1", deviceGroup.Devices[0].Id);
             Assert.AreEqual("TestDevice2", deviceGroup.Devices[1].Id);
             Assert.IsFalse(deviceGroup.Toggled);
+        }
+
+        [TestMethod]
+        public void GetDevice()
+        {
+            var data = new MockData();
+            var container = GetContainerAndInitService(data);
+
+            var device = container.Service.GetDevice("DeviceGroup1");
+
+            Assert.AreEqual("DeviceGroup1", device.Id);
+            Assert.AreEqual("Device Group #1", device.Title);
         }
 
         [TestMethod]

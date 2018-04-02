@@ -22,22 +22,22 @@ namespace DeafX.Richter.Web.Controllers
             _service = service;
         }
 
-
-        //[HttpGet("{deviceId}")]
-        //public StatisticsViewModel GetAllStatistics(string deviceId)
-        //{
-        //    return new StatisticsViewModel(_service.GetStatistics(deviceId).ToDictionary(kvp => kvp.DateTime.ToUnixTimeStamp(), kvp => kvp.Data));
-        //}
-
         [HttpGet("{deviceId}")]
-        public StatisticsViewModel GetStatistics(string deviceId, [FromQuery]long to = 0, [FromQuery]long from = 0, [FromQuery]int minimumDataInterval = 0)
+        public IActionResult GetStatistics(string deviceId, [FromQuery]long to = 0, [FromQuery]long from = 0, [FromQuery]int minimumDataInterval = 0)
         {
             var toDateTime = to > 0 ? to.ToDateTimeUnixTimeStamp() : DateTime.MaxValue;
             var fromDateTime = from > 0 ? from.ToDateTimeUnixTimeStamp() : DateTime.MinValue;
 
-            return new StatisticsViewModel(
-                _service.GetStatistics(deviceId, fromDateTime, toDateTime, TimeSpan.FromSeconds(minimumDataInterval))
-                .ToDictionary(kvp => kvp.DateTime.ToUnixTimeStamp(), kvp => kvp.Data));
+            var statistics = _service.GetStatistics(deviceId, fromDateTime, toDateTime, TimeSpan.FromSeconds(minimumDataInterval));
+
+            if(statistics == null)
+            {
+                return NotFound();
+            }
+
+            return new JsonResult(
+                new StatisticsViewModel(statistics.ToDictionary(kvp => kvp.DateTime.ToUnixTimeStamp(), kvp => kvp.Data))
+            );
         }
 
     }
