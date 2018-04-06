@@ -30,6 +30,34 @@ namespace DeafX.Richter.Business.Services
         public void Init()
         {
             CaptureDevices();
+
+            PrimeTestData();
+        }
+
+        private void PrimeTestData()
+        {
+            if (_dataStorage.Retreive<double>("Device1", DateTime.MinValue).Count() > 200)
+            {
+                return;
+            }
+
+            var value = 22.0;
+            var rand = new Random();
+
+            var data = new Dictionary<DateTime, double>();
+
+            for (var dateTime = DateTime.UtcNow - TimeSpan.FromDays(370); dateTime < DateTime.UtcNow; dateTime += TimeSpan.FromMinutes(15))
+            {
+                var delta = rand.Next(-50, 50) / 10.0;
+
+                value = value + delta > 27 || value + delta < 15 ? value + delta * -1 : value + delta;
+
+                value = Math.Round(value, 2);
+
+                data.Add(dateTime, value);
+            }
+
+            _dataStorage.StoreAll("Device1", data);
         }
 
         public IEnumerable<DataTimeObject<double>> GetStatistics(string deviceId)

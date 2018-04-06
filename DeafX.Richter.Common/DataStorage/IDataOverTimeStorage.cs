@@ -11,6 +11,10 @@ namespace DeafX.Richter.Common.DataStorage
 
         void Store<T>(string name, T data, Func<T, DateTime> dateTimeSelector);
 
+        void Store<T>(string name, T data, DateTime dateTime);
+
+        void StoreAll<T>(string name, Dictionary<DateTime, T> data);
+
         IEnumerable<DataTimeObject<T>> RetreiveRecent<T>(string name, int count);
 
         IEnumerable<DataTimeObject<T>> Retreive<T>(string name, DateTime from);

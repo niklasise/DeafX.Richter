@@ -3,9 +3,10 @@ import { match, withRouter } from 'react-router-dom';
 import { Device } from '../../Models/Device'
 import Chart, { ChartComponentData } from './StatisticsChart';
 import StatisticsTimeSpan from "../../Models/Statistics/StatisticsTimeSpan"
-import StatisticApi from "../../Api/MockStatisticsApi";
+//import StatisticApi from "../../Api/MockStatisticsApi";
 //import DeviceApi from "../../Api/MockDeviceApi";
 import DeviceApi from "../../Api/DeviceApi";
+import StatisticApi from "../../Api/StatisticsApi";
 //import StatisticsBadge from "./StatisticsBadge"
 import RadioButtonGroup from "../Shared/Input/RadioButtonGroup";
 import styled from "styled-components";

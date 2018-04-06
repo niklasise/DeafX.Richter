@@ -36,7 +36,7 @@ namespace DeafX.Richter.Web.Controllers
             }
 
             return new JsonResult(
-                new StatisticsViewModel(statistics.ToDictionary(kvp => kvp.DateTime.ToUnixTimeStamp(), kvp => kvp.Data))
+                statistics.Select(d => new StatisticsViewModel() { timeStamp = d.DateTime.ToUnixTimeStamp(), data = d.Data })
             );
         }
 

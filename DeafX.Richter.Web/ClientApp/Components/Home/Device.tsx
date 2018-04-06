@@ -11,14 +11,15 @@ export interface DeviceProps {
     onTimerClick(source: DeviceModel): void;
     onTimerAbortClick(source: DeviceModel): void;
     onAutomatedClick(source: DeviceModel): void;
+    onStatisticsClick(source: DeviceModel): void
     lastChanged?: string;
 }
 
 const Device: React.SFC<DeviceProps> = (props) => {
     return <div className="tile">
         <div>
-            {props.device.deviceType === "TOGGLE_DEVICE" && <ToggleDevice device={props.device} lastChanged={FormatDate(props.device.lastChanged)} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} onTimerAbortClick={props.onTimerAbortClick} />}
-            {props.device.deviceType === "VALUE_DEVICE" && <ValueDevice device={props.device} lastChanged={FormatDate(props.device.lastChanged)} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} onTimerAbortClick={props.onTimerAbortClick} />}
+            {props.device.deviceType === "TOGGLE_DEVICE" && <ToggleDevice device={props.device} lastChanged={FormatDate(props.device.lastChanged)} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} onTimerAbortClick={props.onTimerAbortClick} onStatisticsClick={props.onStatisticsClick} />}
+            {props.device.deviceType === "VALUE_DEVICE" && <ValueDevice device={props.device} lastChanged={FormatDate(props.device.lastChanged)} onAutomatedClick={props.onAutomatedClick} onConfigClick={props.onConfigClick} onIconClick={props.onIconClick} onTimerClick={props.onTimerClick} onTimerAbortClick={props.onTimerAbortClick} onStatisticsClick={props.onStatisticsClick} />}
         </div>
     </div>
 }

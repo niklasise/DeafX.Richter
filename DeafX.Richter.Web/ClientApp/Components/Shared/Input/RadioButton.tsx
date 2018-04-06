@@ -14,6 +14,7 @@ const StyledButton = styled.button`
     cursor: pointer;
     padding: 0 20px;
     outline: 0;
+    margin: 0;
 
     img {
         margin-top: 5px;

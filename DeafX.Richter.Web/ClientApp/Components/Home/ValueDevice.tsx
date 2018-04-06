@@ -3,14 +3,15 @@ import { DeviceProps } from "./Device"
 
 const ValueDevice: React.SFC<DeviceProps> = (props) => {
     return <div>
+            <div className="tileTopCenter">{props.lastChanged}</div>
             <div className="tileTopLeft">
                 {props.device.isUpdating && <img src="dist/img/loader.svg" />}
-                {!props.device.isUpdating && <i className="fa fa-thermometer-empty" />}
+                {/*!props.device.isUpdating && <i className="fa fa-thermometer-empty" />*/}
             </div>
-            <div className="tileTopRight clickable" onClick={(e) => { e.stopPropagation(); props.onConfigClick(props.device) }}>
-                <div className="fa fa-gear"></div>
+            <div className="tileTopRight clickable" onClick={(e) => { e.stopPropagation(); props.onStatisticsClick(props.device) }}>
+                <div className="fa fa-bar-chart"></div>
             </div>
-            <div className="tileTopCenter">{props.lastChanged}</div>
+            
             <div className="tileCenter">
                 <div>
                     <span>

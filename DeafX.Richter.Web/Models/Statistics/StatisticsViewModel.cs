@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace DeafX.Richter.Web.Models.Statistics
 {
-    public class StatisticsViewModel : Dictionary<long, double>
+    public class StatisticsViewModel
     {
-        public StatisticsViewModel(Dictionary<long, double> values)
-            : base(values)
-        {
+        public long timeStamp { get; set; }
 
-        }
+        public double data { get; set; }
     }
 }

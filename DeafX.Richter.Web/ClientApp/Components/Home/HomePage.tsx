@@ -47,6 +47,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         this.onTimerAbortClick = this.onTimerAbortClick.bind(this);
         this.onTimerAbortOk = this.onTimerAbortOk.bind(this);
         this.onTimerAbortCancel = this.onTimerAbortCancel.bind(this);
+        this.onStatisticsClick = this.onStatisticsClick.bind(this);
 
         this.state = {
             abortTimerModalObject: null,
@@ -60,6 +61,10 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
 
     onConfigClick(device: DeviceModel): void {
         this.props.history.push("/config/" + device.id);
+    }
+
+    onStatisticsClick(device: DeviceModel): void {
+        this.props.history.push("/statistics/" + device.id);
     }
 
     onAutomatedClick(device: ToggleDevice): void {
@@ -101,7 +106,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         return <div className="pageContainer">
 
             {this.props.devices.deviceList.map(function (device, index) {
-                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} onTimerClick={this.onTimerClick} onTimerAbortClick={this.onTimerAbortClick} onAutomatedClick={this.onAutomatedClick} />
+                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} onTimerClick={this.onTimerClick} onTimerAbortClick={this.onTimerAbortClick} onAutomatedClick={this.onAutomatedClick} onStatisticsClick={this.onStatisticsClick} />
             }, this)}
 
             {!!this.state.timerModalObject && <TimerModal onOkClick={this.onTimerOk} onCancelClick={this.onTimerCancel} />}

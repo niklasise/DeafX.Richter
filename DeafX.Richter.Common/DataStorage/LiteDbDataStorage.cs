@@ -46,21 +46,23 @@ namespace DeafX.Richter.Common.DataStorage
 
                 var collection = db.GetCollection<LiteDbDataTimeObject<T>>(name);
 
+                var cnt = collection.Count();//
+
                 return collection.Find(o => o.DateTime >= from && o.DateTime <= to).ToArray();
             }
         }
 
         public void Store<T>(string name, T data)
         {
-            StoreData(name, data, DateTime.Now);
+            Store(name, data, DateTime.UtcNow);
         }
 
         public void Store<T>(string name, T data,  Func<T, DateTime> dateTimeSelector)
         {
-            StoreData(name, data, dateTimeSelector(data));
+            Store(name, data, dateTimeSelector(data));
         }
 
-        public void StoreData<T>(string name, T data, DateTime dateTime)
+        public void Store<T>(string name, T data, DateTime dateTime)
         {
             using (var db = new LiteDatabase(_storagePath))
             {
@@ -72,6 +74,23 @@ namespace DeafX.Richter.Common.DataStorage
                     Data = data,
                     DateTime = dateTime
                 });
+
+                collection.EnsureIndex(o => o.DateTime);
+            }
+        }
+
+        public void StoreAll<T>(string name, Dictionary<DateTime,T> data)
+        {
+            using (var db = new LiteDatabase(_storagePath))
+            {
+                var collection = db.GetCollection<LiteDbDataTimeObject<T>>(name);
+
+                collection.InsertBulk(data.Select(d => new LiteDbDataTimeObject<T>()
+                {
+                    Id = ObjectId.NewObjectId(),
+                    Data = d.Value,
+                    DateTime = d.Key
+                }));
 
                 collection.EnsureIndex(o => o.DateTime);
             }
