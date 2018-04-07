@@ -19,7 +19,9 @@ export interface ChartComponentProps
     id: string,
     data?: ChartComponentData,
     className?: string
-    timeSpan: StatisticsTimeSpan
+    timeSpan: StatisticsTimeSpan,
+    startTime: number,
+    endTime: number
 }
 
 export interface ChartComponentData {
@@ -85,7 +87,7 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
         var minutes = "0" + date.getMinutes();
         var seconds = "0" + date.getSeconds();
 
-        var formatedTime = `${hours.substr(-2)}:${minutes.substr(-2)}:${seconds.substr(-2)}`;
+        var formatedTime = `${hours.substr(-2)}:${minutes.substr(-2)}`;
         var formatedDate = `${year}-${month.substr(-2)}-${day.substr(-2)}`;
 
         switch (dateFormat)
@@ -126,15 +128,15 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
         let ctx = (document.getElementById(this.props.id) as HTMLCanvasElement).getContext('2d');
         let chartData : any[] = new Array;
 
-        let maxXVal = -Infinity;
-        let minXVal = Infinity;
+        //let maxXVal = -Infinity;
+        //let minXVal = Infinity;
         let maxYVal = -Infinity;
         let minYVal = Infinity;
 
         this.props.data.dataSets.forEach((dataSet) => {
             dataSet.data.forEach((dataPoint) => {
-                maxXVal = Math.max(maxXVal, dataPoint.x);
-                minXVal = Math.min(minXVal, dataPoint.x);
+                //maxXVal = Math.max(maxXVal, dataPoint.x);
+                //minXVal = Math.min(minXVal, dataPoint.x);
                 maxYVal = Math.max(maxYVal, dataPoint.y);
                 minYVal = Math.min(minYVal, dataPoint.y);
             })
@@ -163,7 +165,7 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
                             let dateTime = this.getDateStringFromTimestamp((data.datasets[item.datasetIndex].data[item.index] as any).x);
                             let value = Math.round((data.datasets[item.datasetIndex].data[item.index] as any).y * 100) / 100;
 
-                            return `${dateTime}: ${value}`;
+                            return `${dateTime} ~~~ ${value}`;
                         }
                     }
                 },
@@ -176,8 +178,8 @@ class StatisticsChartComponent extends React.Component<ChartComponentProps, any>
                             callback: (value, index, values) => {
                                 return this.getDateStringFromTimestamp(value, this.getDateFormat(this.props.timeSpan));
                             },
-                            min: minXVal,
-                            max: maxXVal,
+                            min: this.props.startTime,
+                            max: this.props.endTime,
                             stepSize: this.getStepSize(this.props.timeSpan)
                         } as any,
                     }],

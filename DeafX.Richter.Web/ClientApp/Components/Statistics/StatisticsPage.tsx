@@ -22,6 +22,8 @@ interface StatisticsPageProps {
 interface StatisticsPageState {
     device: Device,
     chartData: ChartComponentData,
+    chartStartTime: number,
+    chartEndTime: number,
     selectedTimeSpan: StatisticsTimeSpan,
     loading: boolean,
     error: boolean
@@ -90,7 +92,9 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
             chartData: {
                 dataSets: []
             },
-            loading: false
+            loading: false,
+            chartStartTime: 0,
+            chartEndTime: 0
         }
 
         this.deviceId = props.match.params.id;
@@ -108,12 +112,13 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
         });
 
         var currentTimestamp = Math.floor(Date.now() / 1000);
+        var fromTimeStamp = this.getFromTime(currentTimestamp, timeSpan);
 
         Promise.all([
             this.devicePromise,
             StatisticApi.getStatistics(
                 this.deviceId,
-                this.getFromTime(currentTimestamp, timeSpan),
+                fromTimeStamp - 60 * 60, // Get one hour more of data to "fill out" chart
                 currentTimestamp,
                 this.getMinumimInterval(timeSpan))
         ]).then((data) => {
@@ -131,6 +136,8 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
                 ...this.state,
                 loading: false,
                 chartData: chartData,
+                chartStartTime: fromTimeStamp,
+                chartEndTime: currentTimestamp,
             });
         }).catch(() => {
             this.setState({
@@ -164,7 +171,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
     private getMinumimInterval(timeSpan: StatisticsTimeSpan) : number {
         switch (timeSpan) {
             case StatisticsTimeSpan.Day:
-                return 60 * 15; // 15 minutes
+                return 60 * 30; // 15 minutes
             case StatisticsTimeSpan.Week:
                 return 60 * 60 * 6; // 6 hours
             case StatisticsTimeSpan.Month:
@@ -216,7 +223,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
                         {this.state.loading && <LoaderImg src="/dist/img/loader.svg" />} 
 
-                        {!this.state.loading && <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={this.state.selectedTimeSpan} />} 
+                        {!this.state.loading && <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={this.state.selectedTimeSpan} startTime={this.state.chartStartTime} endTime={this.state.chartEndTime} />} 
 
                         <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} disabled={this.state.loading} />
                     </div>
