@@ -16,7 +16,6 @@ namespace DeafX.Richter.Web.Controllers
             _versionService = versionService;
         }
 
-        // GET: /<controller>/
         public IActionResult Index()
         {
             return View(_versionService.Version as object);

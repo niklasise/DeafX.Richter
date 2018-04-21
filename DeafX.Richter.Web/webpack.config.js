@@ -11,7 +11,7 @@ module.exports = (env) => {
     // Configuration in common to both client-side and server-side bundles
     return {
         entry: {
-            app: "./ClientApp/Index.tsx",
+            app: ["whatwg-fetch", "./ClientApp/Index.tsx"],
             css: "./ClientApp/Styles/Main.scss"
         },
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss', '.css'] },
