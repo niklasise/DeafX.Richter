@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "baseUrl": "src",
+    "rootDir": "src",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "target": "es5",
+    "module": "commonjs",
+    "jsx": "react",
+    "strictNullChecks": false,
+    "lib": [ "es5", "es6", "es2017", "dom" ]
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot",
+    "bin"
+  ]
+}

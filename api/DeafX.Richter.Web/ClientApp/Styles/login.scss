@@ -1,0 +1,25 @@
+﻿@import 'constants.scss';
+
+.loginPage {
+    padding: 0 20px;
+    overflow: hidden;
+    margin: 0 auto;
+    display: table;
+    height: 100%;
+
+    @media screen and (max-width: $break-large) {
+        padding: 0 15px;
+    }
+
+    @media screen and (max-width: $break-medium) {
+        padding: 0 10px;
+    }
+}
+
+.loginContainer {
+    display: table-cell;
+    vertical-align: middle;
+    width: 350px;
+    margin: 0 auto;
+    color: #FFF;
+}
