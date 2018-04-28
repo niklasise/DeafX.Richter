@@ -33,13 +33,13 @@ module.exports = (env) => {
                 filename: '../css/app.css',
                 allChunks: true,
                 
-            }),
-            new webpack.DllReferencePlugin({
-                context: __dirname,
-                manifest: require('./wwwroot/dist/vendor-manifest.json')
             })
         ].concat(isDevBuild ?
             [
+                new webpack.DllReferencePlugin({
+                    context: __dirname,
+                    manifest: require('./wwwroot/dist/vendor-manifest.json')
+                }),
                 // Plugins that apply in development builds only
                 new webpack.SourceMapDevToolPlugin({
                     filename: '[file].map', // Remove this line if you prefer inline source maps

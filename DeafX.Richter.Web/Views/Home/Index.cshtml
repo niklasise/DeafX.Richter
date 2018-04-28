@@ -5,14 +5,21 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Richter</title>
+    <script type="text/javascript">
+        window.onerror = function (message, source, lineno, colno, error)
+        {
+            document.getElementById("errordiv").innerHTML = message;
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="~/dist/css/font-awesome.css" rel="stylesheet" type="text/css" />
     <link href="~/dist/css/app.css" rel="stylesheet" type="text/css" asp-append-version="true"/>
 </head>
 <body>
+    <div id="errordiv"></div>
     <div id="react-app" class="h100"></div>
     
-    <script src="~/dist/js/vendor.js" type="text/javascript" asp-append-version="true"></script>
+    <!--<script src="~/dist/js/vendor.js" type="text/javascript" asp-append-version="true"></script>-->
     <script src="~/dist/js/app.js" type="text/javascript" asp-append-version="true"></script>
     <footer>@Model</footer>
 </body>
