@@ -1,8 +1,11 @@
 ﻿import * as React from 'react';
 import TextInput from 'components/shared/input/TextInput';
 import Button from 'components/shared/input/Button';
+import ErrorSummary from "components/shared/ErrorSummary"
 import AccountApi from 'api/AccountApi'
 import ValidationErrors from 'models/Shared/ValidationErrors'
+import styled from "styled-components";
+import styles from "constants/styles" ;
 
 interface FieldState {
     value: string,
@@ -124,30 +127,57 @@ class LoginPage extends React.Component<any, LoginPageState> {
     }
 
     public render() {
-        return <div className="loginPage">
+        return <PageDiv>
 
-            <div className="loginContainer">
+            <ContainerDiv>
 
                 <TextInput value={this.state.fields.username.value} error={this.state.fields.username.error} icon="fa-user" onChange={this.onTextInputChanged} placeholder="Username" name="username" disabled={this.state.submitting} />
 
                 <TextInput value={this.state.fields.password.value} error={this.state.fields.password.error} icon="fa-lock" password={true} onChange={this.onTextInputChanged} placeholder="Password" name="password" disabled={this.state.submitting} />
 
                 {this.state.validationErrors.length != 0 &&
-                    <div className="alert mb20">
-                        <ul>
-                            {this.state.validationErrors.map((e, index) => <li key={index}> { e }</li>)} 
-                        </ul>
-                    </div>
+                    <StyledErrorSummary errors={this.state.validationErrors}/>
                 }
 
-                <Button text="Log in" color="green" additionalClasses="w100" loading={this.state.submitting} onClicked={this.onSubmit} />
+                <FullWidthButton text="Log in" color="green" loading={this.state.submitting} onClicked={this.onSubmit} />
 
-            </div>
+            </ContainerDiv>
 
-        </div>;
+        </PageDiv>;
     }
-    //<div className="alert mb20">The is a form validation error message</div>
 }
+
+const StyledErrorSummary = styled(ErrorSummary)`
+    margin-bottom: 20px;
+`
+
+const FullWidthButton = styled(Button)`
+    width: 100%;
+`
+
+const PageDiv = styled.div`
+    padding: 0 20px;
+    overflow: hidden;
+    margin: 0 auto;
+    display: table;
+    height: 100%;
+
+    @media screen and (max-width: ${styles.breakpoints.large}) {
+        padding: 0 15px;
+    }
+
+    @media screen and (max-width: ${styles.breakpoints.medium}) {
+        padding: 0 10px;
+    }
+`
+
+const ContainerDiv = styled.div`
+    display: table-cell;
+    vertical-align: middle;
+    width: 350px;
+    margin: 0 auto;
+    color: #FFF;
+`
 
 
 export default LoginPage;

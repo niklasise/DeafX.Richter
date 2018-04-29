@@ -16,8 +16,11 @@ export default {
         small: "400px"
     },
     colors: {
+        fontPrimary: "#FFFFFF",
+        green: "#28A745",
+        light: "#6BC2E8",
         primary: "#19A2DE",
-        fontPrimary: "#FFFFFF"
+        red: "#DC3545"
     }
 
 }

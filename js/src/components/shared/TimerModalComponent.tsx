@@ -116,13 +116,13 @@ export default class TimerModal extends React.Component<TimerModalProps, TimerMo
                     {this.isIos && <input type="time"/>}
                 </div>
                 <div className="stateSelectorContainer">
-                    <Button additionalClasses="w100px" color={this.state.selectedState ? "green" : "red"} text={this.state.selectedState ? "På" : "Av"} onClicked={this.onSelectedStateToggle} />
+                    <Button className="w100px" color={this.state.selectedState ? "green" : "red"} text={this.state.selectedState ? "På" : "Av"} onClicked={this.onSelectedStateToggle} />
                 </div>
             </div>
 
             <div className="fr mr15 mb15">
-                <Button text="Ok" additionalClasses="w80px mr15" onClicked={() => { this.props.onOkClick(this.state.selectedTime, this.state.selectedState); }} />
-                <Button text="Avbryt" additionalClasses="w80px" onClicked={this.props.onCancelClick}/>
+                <Button text="Ok" className="w80px mr15" onClicked={() => { this.props.onOkClick(this.state.selectedTime, this.state.selectedState); }} />
+                <Button text="Avbryt" className="w80px" onClicked={this.props.onCancelClick}/>
             </div>
 
         </Modal>

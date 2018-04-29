@@ -183,10 +183,6 @@ function mapDispatchToProps(dispatch): DeviceContainerActions {
         disconnectFromDeviceApi: () => dispatch(disconnectFromDeviceApi()),
         setDeviceAutomated: (device: ToggleDeviceModel, automated: boolean) => dispatch(setDeviceAutomated(device, automated))
     }
-
-     //
-        // 
-        // 
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage));

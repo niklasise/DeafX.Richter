@@ -17,8 +17,8 @@ const ConfirmationModalComponent: React.SFC<ConfirmationModalComponentProps> = (
         </div>
 
         <div className="fr mr15 mb15">
-            <Button text="Ok" additionalClasses="w80px mr15" onClicked={() => { props.onOkClick(); }} />
-            <Button text="Avbryt" additionalClasses="w80px" onClicked={props.onCancelClick} />
+            <Button text="Ok" className="w80px mr15" onClicked={() => { props.onOkClick(); }} />
+            <Button text="Avbryt" className="w80px" onClicked={props.onCancelClick} />
         </div>
     </Modal>;
 }
