@@ -1,4 +1,4 @@
-﻿import { Device as DeviceModel, ToggleDevice, UpdatedDevices } from "models/Device"
+﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices } from "models/Device"
 import { IDeviceListener as DeviceListener } from "./IDeviceListener"
 
 let delay : number = 1000;
@@ -17,14 +17,14 @@ let devices : DeviceModel[] = [
             stateToSet: true
         },
         automated: true
-    } as ToggleDevice,
+    } as ToggleDeviceModel,
     {
         id: "2",
         title: "Gästrum",
         toggled: false,
         deviceType: "TOGGLE_DEVICE",
         automated: false
-    } as ToggleDevice,
+    } as ToggleDeviceModel,
     {
         id: "3",
         title: "Hall Nedervåning",
@@ -79,12 +79,12 @@ class deviceApi {
         });
     }
 
-    static toggleDevice(device: ToggleDevice, toggled: boolean) {
+    static toggleDevice(device: ToggleDeviceModel, toggled: boolean) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
 
-                let toggleDevice = (devices[deviceIndex] as ToggleDevice);
+                let toggleDevice = (devices[deviceIndex] as ToggleDeviceModel);
 
                 toggleDevice.toggled = toggled;
                 toggleDevice.lastChanged = new Date().getTime();
@@ -96,12 +96,12 @@ class deviceApi {
         });
     }
 
-    static setDeviceAutomated(device: ToggleDevice, automated: boolean) {
+    static setDeviceAutomated(device: ToggleDeviceModel, automated: boolean) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
 
-                let toggleDevice = (devices[deviceIndex] as ToggleDevice);
+                let toggleDevice = (devices[deviceIndex] as ToggleDeviceModel);
 
                 toggleDevice.automated = !toggleDevice.automated;
                 toggleDevice.lastChanged = new Date().getTime();
@@ -113,12 +113,12 @@ class deviceApi {
         });
     }
 
-    static setDeviceTimer(device: ToggleDevice, time: number, state: boolean) {
+    static setDeviceTimer(device: ToggleDeviceModel, time: number, state: boolean) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
 
-                let toggleDevice = (devices[deviceIndex] as ToggleDevice);
+                let toggleDevice = (devices[deviceIndex] as ToggleDeviceModel);
 
                 toggleDevice.timer = {
                     timerValue: time,
@@ -133,12 +133,12 @@ class deviceApi {
         });
     }
 
-    static abortDeviceTimer(device: ToggleDevice) {
+    static abortDeviceTimer(device: ToggleDeviceModel) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 const deviceIndex = devices.findIndex(i => i.id === device.id);
 
-                let toggleDevice = (devices[deviceIndex] as ToggleDevice);
+                let toggleDevice = (devices[deviceIndex] as ToggleDeviceModel);
 
                 toggleDevice.timer = null;
                 toggleDevice.lastChanged = new Date().getTime();

@@ -1,4 +1,4 @@
-﻿import { Device as DeviceModel, ToggleDevice, UpdatedDevices } from "models/device"
+﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices } from "models/device"
 import { IDeviceListener as DeviceListener } from "./IDeviceListener"
 
 const TIMEOUT: number = 1000; 
@@ -11,7 +11,7 @@ class DeviceApi {
     private static _timeoutId: number;
      
 
-    static toggleDevice(device: ToggleDevice, toggled: boolean) {
+    static toggleDevice(device: ToggleDeviceModel, toggled: boolean) {
         return DeviceApi.performRequest(
             '/api/devices/toggle/' + device.id + '/' + toggled,
             'PUT'
@@ -37,21 +37,21 @@ class DeviceApi {
         }));
     }
 
-    static setDeviceAutomated(device: ToggleDevice, automated: boolean) {
+    static setDeviceAutomated(device: ToggleDeviceModel, automated: boolean) {
         return DeviceApi.performRequest(
             '/api/devices/setAutomated/' + device.id + '/' + automated,
             'PUT'
         );
     }
 
-    static setDeviceTimer(device: ToggleDevice, time: number, state: boolean) {
+    static setDeviceTimer(device: ToggleDeviceModel, time: number, state: boolean) {
         return DeviceApi.performRequest(
             '/api/devices/setTimer/' + device.id + '/' + time + '/' + state,
             'PUT'
         );
     }
 
-    static abortDeviceTimer(device: ToggleDevice) {
+    static abortDeviceTimer(device: ToggleDeviceModel) {
         return DeviceApi.performRequest(
             '/api/devices/abortTimer/' + device.id,
             'PUT'

@@ -21,6 +21,11 @@ module.exports = (env) => {
             filename: '[name].js',
             publicPath: 'dist/js/'
         },
+        devServer: {
+            contentBase: path.join(__dirname, "wwwroot"),
+            compress: true,
+            port: 9000
+        },
         module: {
             rules: [
                 { test: /\.tsx?$/, include: /src/, use: ['babel-loader', 'awesome-typescript-loader?silent=true'] }

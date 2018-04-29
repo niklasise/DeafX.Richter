@@ -1,0 +1,34 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    background-image: url(/dist/img/bg7.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-color: #464646;
+    margin: 0;
+    height: 100%;
+}
+
+footer {
+    position: fixed;
+    bottom: 5px;
+    right: 0;
+    left: 0;
+    text-align: center;
+    font-size: 9px;
+    color: #FFF;
+    opacity: .7;
+}
+
+#react-app{
+    height: 100%;
+}

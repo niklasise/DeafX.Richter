@@ -7,6 +7,11 @@ import { ApplicationState } from "../Store/ConfigureStore";
 import { LogState } from "../Reducers/LogReducer";
 import { ClientLog } from "../Models/Log/ClientLog";
 import { addClientError } from "../Actions/LogActions";
+import styled from "styled-components";
+
+const StyledDiv = styled.div`
+    height: 100%;
+`
 
 
 interface AppState{
@@ -49,10 +54,10 @@ class App extends React.Component<AppProps, any> {
 
 
     public render() {
-        return <div className="h100">
+        return <StyledDiv>
             {this.props.children}
             <div className={!!this.props.logs.currentErrorMessage ? "errorToaster show" : "errorToaster hide"}>{this.props.logs.currentErrorMessage}</div>
-        </div>;
+        </StyledDiv>;
     }
 
 }

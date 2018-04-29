@@ -1,6 +1,7 @@
 ﻿import * as React from 'react';
-import Device from "./Device";
-import { Device as DeviceModel, ToggleDevice } from "models/device";
+import ToggleDevice from "./devices/ToggleDevice";
+import ValueDevice from "./devices/ValueDevice";
+import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel } from "models/device";
 import { connect, Dispatch } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "store/ConfigureStore";
@@ -8,6 +9,23 @@ import { DeviceState } from "reducers/DeviceReducer";
 import { toggleDevice, setTimerDevice, abortTimerDevice, setDeviceAutomated, ToggleDeviceAction, connectToDeviceApi, disconnectFromDeviceApi } from "../../Actions/DeviceActions"
 import TimerModal from "components/shared/TimerModalComponent";
 import ConfirmationModal from "components/shared/ConfirmationModalComponent";
+import styled from "styled-components";
+import styles from "constants/styles";
+
+const ContainerDiv = styled.div`
+    max-width: 900px;
+    padding: 20px 20px 0 20px;
+    overflow: hidden;
+    margin: 0 auto;
+
+    @media screen and (max-width: ${styles.breakpoints.large}) {
+        padding: 15px 15px 0 15px;
+    }
+
+    @media screen and (max-width: ${styles.breakpoints.medium}) {
+        padding: 10px 10px 0 10px;
+    }
+`
 
 interface DeviceContainerStateProps
 {
@@ -24,8 +42,8 @@ interface DeviceContainerActions {
 }
 
 interface DeviceContainerState {
-    timerModalObject: ToggleDevice,
-    abortTimerModalObject: ToggleDevice,
+    timerModalObject: ToggleDeviceModel,
+    abortTimerModalObject: ToggleDeviceModel,
 }
 
 type DeviceContainerProps =
@@ -55,7 +73,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         };
     }
 
-    onIconClick(device: ToggleDevice): void {
+    onIconClick(device: ToggleDeviceModel): void {
         this.props.toggleDevice(device, !device.value);
     }
 
@@ -67,15 +85,15 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         this.props.history.push("/statistics/" + device.id);
     }
 
-    onAutomatedClick(device: ToggleDevice): void {
+    onAutomatedClick(device: ToggleDeviceModel): void {
         this.props.setDeviceAutomated(device, !device.automated);
     }
 
-    onTimerClick(device: ToggleDevice): void {
+    onTimerClick(device: ToggleDeviceModel): void {
         this.setState({ ...this.state, timerModalObject: device });
     }
 
-    onTimerAbortClick(device: ToggleDevice): void {
+    onTimerAbortClick(device: ToggleDeviceModel): void {
         this.setState({ ...this.state, abortTimerModalObject: device });
     }
 
@@ -102,17 +120,42 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         this.setState({ ...this.state, timerModalObject: null });
     }
 
-    public render() {
-        return <div className="pageContainer">
+    renderDevice(device: DeviceModel): JSX.Element {
+        if(device.deviceType === "TOGGLE_DEVICE")
+        {
+            return (
+                <ToggleDevice
+                    device={device}
+                    onAutomatedClick={this.onAutomatedClick}
+                    onIconClick={this.onIconClick}
+                    onTimerAbortClick={this.onTimerAbortClick}
+                    onTimerClick={this.onTimerClick}
+                />
+            )
+        }
+        else if(device.deviceType === "VALUE_DEVICE")
+        {
+            return (
+                <ValueDevice
+                    device={device}
+                    onStatisticsClick={this.onStatisticsClick}
+                />
+            )
+        }
 
+        return null;
+    }
+
+    public render() {
+        return <ContainerDiv>
             {this.props.devices.deviceList.map(function (device, index) {
-                return <Device key={device.id} device={device as DeviceModel} onIconClick={this.onIconClick} onConfigClick={this.onConfigClick} onTimerClick={this.onTimerClick} onTimerAbortClick={this.onTimerAbortClick} onAutomatedClick={this.onAutomatedClick} onStatisticsClick={this.onStatisticsClick} />
+                return this.renderDevice(device);
             }, this)}
 
             {!!this.state.timerModalObject && <TimerModal onOkClick={this.onTimerOk} onCancelClick={this.onTimerCancel} />}
             {!!this.state.abortTimerModalObject && <ConfirmationModal onOkClick={this.onTimerAbortOk} onCancelClick={this.onTimerAbortCancel} title="Avbryt timer" message="Är du säker på att du vill avbryta timern?" />}
 
-        </div>;
+        </ContainerDiv>;
     }
 
     public componentWillMount() {
@@ -133,13 +176,17 @@ function mapStateToProps(state: ApplicationState, ownProps): DeviceContainerStat
 
 function mapDispatchToProps(dispatch): DeviceContainerActions {
     return {
-        setTimerDevice: (device: ToggleDevice, time: number, state: boolean) => dispatch(setTimerDevice(device, time, state)),
-        abortTimerDevice: (device: ToggleDevice) => dispatch(abortTimerDevice(device)),
-        toggleDevice: (device: ToggleDevice, toggled: boolean) => dispatch(toggleDevice(device, toggled)),
+        setTimerDevice: (device: ToggleDeviceModel, time: number, state: boolean) => dispatch(setTimerDevice(device, time, state)),
+        abortTimerDevice: (device: ToggleDeviceModel) => dispatch(abortTimerDevice(device)),
+        toggleDevice: (device: ToggleDeviceModel, toggled: boolean) => dispatch(toggleDevice(device, toggled)),
         connectToDeviceApi: () => dispatch(connectToDeviceApi()),
         disconnectFromDeviceApi: () => dispatch(disconnectFromDeviceApi()),
-        setDeviceAutomated: (device: ToggleDevice, automated: boolean) => dispatch(setDeviceAutomated(device, automated))
+        setDeviceAutomated: (device: ToggleDeviceModel, automated: boolean) => dispatch(setDeviceAutomated(device, automated))
     }
+
+     //
+        // 
+        // 
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage));

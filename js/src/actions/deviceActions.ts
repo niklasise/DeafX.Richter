@@ -1,7 +1,7 @@
-﻿import { Device as DeviceModel, ToggleDevice } from "models/device";
+﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel } from "models/device";
 import { Action } from "redux";
-//import deviceApi from "../Api/MockDeviceApi";
-import deviceApi from "api/deviceApi";
+import deviceApi from "api/mockDeviceApi";
+//import deviceApi from "api/deviceApi";
 
 export interface ToggleDeviceAction extends Action {
     device: DeviceModel;
@@ -39,7 +39,7 @@ export function loadDevicesSuccess(devices: DeviceModel[]): LoadDevicesSuccessAc
     return { type: "LOAD_DEVICES_SUCCESS", devices: devices };
 }
 
-export function abortTimerDevice(device: ToggleDevice) {
+export function abortTimerDevice(device: ToggleDeviceModel) {
     return function (dispatch) {
         return Promise.all([
             dispatch(abortTimerDeviceStarted(device)),
@@ -48,7 +48,7 @@ export function abortTimerDevice(device: ToggleDevice) {
     }
 }
 
-export function setTimerDevice(device: ToggleDevice, time: number, state: boolean) {
+export function setTimerDevice(device: ToggleDeviceModel, time: number, state: boolean) {
     return function (dispatch) {
         return Promise.all([
             dispatch(setTimerDeviceStarted(device)),
@@ -57,7 +57,7 @@ export function setTimerDevice(device: ToggleDevice, time: number, state: boolea
     }
 }
 
-export function toggleDevice(device: ToggleDevice, toggled: boolean) {
+export function toggleDevice(device: ToggleDeviceModel, toggled: boolean) {
     return function (dispatch) {
         return Promise.all([
             dispatch(toggleDeviceStarted(device)),
@@ -66,7 +66,7 @@ export function toggleDevice(device: ToggleDevice, toggled: boolean) {
     }
 }
 
-export function setDeviceAutomated(device: ToggleDevice, automated: boolean) {
+export function setDeviceAutomated(device: ToggleDeviceModel, automated: boolean) {
     return function (dispatch) {
         return Promise.all([
             dispatch(setDeviceAutomatedStarted(device)),

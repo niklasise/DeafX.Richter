@@ -1,5 +1,5 @@
 ﻿import { Reducer, Action } from "redux";
-import { Device as DeviceModel, ToggleDevice } from "models/device";
+import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel } from "models/device";
 import { ToggleDeviceAction, LoadDevicesSuccessAction, DevicesUpdatedAction } from "actions/deviceActions";
 
 export interface DeviceState {
@@ -13,7 +13,7 @@ const deviceReducer: Reducer<DeviceState> = (state = { deviceList: [] }, action:
         case "SET_DEVICE_AUTOMATED_STARTED":
         case "TOGGLE_DEVICE_STARTED":
         case "ABORT_TIMER_DEVICE_STARTED":
-            return setDeviceIsUpdating((action as ToggleDeviceAction).device as ToggleDevice, state);
+            return setDeviceIsUpdating((action as ToggleDeviceAction).device as ToggleDeviceModel, state);
         case "LOAD_DEVICES_SUCCESS":
             return updateDevices((action as LoadDevicesSuccessAction).devices, state);
         case "DEVICES_UPDATED":
