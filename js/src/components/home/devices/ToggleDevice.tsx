@@ -10,7 +10,7 @@ const ClickableIcon = styled.i`
     cursor: pointer;
 
     &.toggle-off {
-
+        opacity: 0.3;
     }
 `;
 
@@ -44,7 +44,7 @@ function renderBottomLeft(props: ToggleDeviceProps) : JSX.Element {
 }
 
 function renderBottomRight(props: ToggleDeviceProps) : JSX.Element {  
-    let className = classnames("fa fa-refresh-o", {"off": (props.device as ToggleDeviceModel).automated})
+    let className = classnames("fa fa-refresh", {"toggle-off": (props.device as ToggleDeviceModel).automated})
 
     return (
         <ClickableIcon

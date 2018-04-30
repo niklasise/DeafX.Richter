@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import styled from "styled-components";
 import { LightColor } from "constants/styles";
-import classNames from "classnames";
+import * as classnames from "classnames";
 
 const StyledButton = styled.button`
     height: 42px;
@@ -48,7 +48,9 @@ export interface RadioButtonProps {
 }
 
 const RadioButton: React.SFC<RadioButtonProps> = (props) => {
-    return <StyledButton className={classNames(props.className, { "selected": props.selected })} onClick={(e) => { props.onClicked(props.value) }}>
+    let className = classnames(props.className, { "selected": props.selected });
+    
+    return <StyledButton className={className} onClick={(e) => { props.onClicked(props.value) }}>
         {props.loading && <img src="/dist/img/loader.svg" />}
         {!props.loading && <span>{props.text}</span>}
     </StyledButton>

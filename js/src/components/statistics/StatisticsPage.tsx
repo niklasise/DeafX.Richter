@@ -3,20 +3,17 @@ import { match, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Device } from 'models/device'
 import Chart, { ChartComponentData } from './StatisticsChart';
 import StatisticsTimeSpan from "models/statistics/statisticsTimeSpan"
-//import StatisticApi from "../../Api/MockStatisticsApi";
-//import DeviceApi from "../../Api/MockDeviceApi";
-import DeviceApi from "api/deviceApi";
-import StatisticApi from "api/statisticsApi";
+import StatisticApi from "api/mockStatisticsApi";
+import DeviceApi from "api/mockDeviceApi";
+//import DeviceApi from "api/deviceApi";
+//import StatisticApi from "api/statisticsApi";
 import RadioButtonGroup from "components/shared/input/RadioButtonGroup";
 import styled from "styled-components";
+import styles from "constants/styles";
 
 interface StatisticsPageParams {
     id: string
 }
-
-// interface StatisticsPageProps {
-//     match?: match<StatisticsPageParams>
-// }
 
 interface StatisticsPageState {
     device: Device,
@@ -32,10 +29,6 @@ type StatisticsPageProps =
     StatisticsPageParams &
     RouteComponentProps<any>;
 
-//const StatisticsBadgeMargin = styled(StatisticsBadge) `
-//    margin-bottom: 20px;
-//`
-
 const TimespanOptions = [
     {
         name: "Dag", value: StatisticsTimeSpan.Day
@@ -50,33 +43,6 @@ const TimespanOptions = [
         name: "År", value: StatisticsTimeSpan.Year
     }
 ]
-
-const LoaderImg = styled.img`
-    display: block;
-    margin: 150px auto;
-    height: 35px;
-    width: 35px;
-`
-const ErrorDiv = styled.div`
-    text-align: center;
-    margin-top: 150px;
-    margin-bottom: 150px;
-    font-size: 20px;
-    font-weight: bold;    
-`
-
-const LeftSpan = styled.div`
-    float: left;
-    width: 200px;
-`
-const RightSpan = styled.div`
-    float: left;
-`
-
-const OverflowDiv = styled.div`
-    overflow: hidden;
-    line-height: 42px;
-`
 
 class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPageState> {
 
@@ -214,27 +180,95 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
     }
 
     public render() {
-        return <div className="pageContainer">
+        return ( 
+            <ContainerDiv>
+                <SectionDiv>
 
-            <div className="sectionContainer mb20">
+                    {this.state.error && <ErrorDiv>Ett fel har uppstått</ErrorDiv>}
 
-                {this.state.error && <ErrorDiv>Ett fel har uppstått</ErrorDiv>}
+                    {!this.state.error &&
+                        <div>
+                            <StyledH1> { this.state.device.title }</StyledH1>
 
-                {!this.state.error &&
-                    <div>
-                        <h1> { this.state.device.title }</h1>
+                            {this.state.loading && <LoaderImg src="/dist/img/loader.svg" />} 
 
-                        {this.state.loading && <LoaderImg src="/dist/img/loader.svg" />} 
+                            {!this.state.loading && <StyledChart id="Chart1" data={this.state.chartData} timeSpan={this.state.selectedTimeSpan} startTime={this.state.chartStartTime} endTime={this.state.chartEndTime} />} 
 
-                        {!this.state.loading && <Chart id="Chart1" data={this.state.chartData} className="mb20" timeSpan={this.state.selectedTimeSpan} startTime={this.state.chartStartTime} endTime={this.state.chartEndTime} />} 
-
-                        <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} disabled={this.state.loading} />
-                    </div>
-                }
-            </div>
-
-        </div>;
+                            <RadioButtonGroup options={TimespanOptions} selectedValue={this.state.selectedTimeSpan} onValueChanged={this.onRadioValueChanged} disabled={this.state.loading} />
+                        </div>
+                    }
+                </SectionDiv>
+            </ContainerDiv>
+        );
     }
 }
+
+const StyledChart = styled(Chart)`
+    margin-bottom: 20px;
+`
+
+const StyledH1 = styled.h1`
+    font-size: 30px;
+    margin: 0;
+`
+
+const ContainerDiv = styled.div`
+    max-width: 900px;
+    padding: 20px 20px 0 20px;
+    overflow: hidden;
+    margin: 0 auto;
+
+    @media screen and (max-width: ${styles.breakpoints.large}) {
+        padding: 15px 15px 0 15px;
+    }
+
+    @media screen and (max-width: ${styles.breakpoints.medium}) {
+        padding: 10px 10px 0 10px;
+    }
+`
+
+const SectionDiv = styled.div`
+    background-color: #19a2de;
+    color: #FFFFFF;
+    border-radius: 5px;
+    opacity: 0.7;
+    padding: 20px;
+
+    @media screen and (max-width: ${styles.breakpoints.large}) {
+        padding: 15px;
+    }
+
+    @media screen and (max-width: ${styles.breakpoints.medium}) {
+        padding: 10px;
+    }
+`
+
+const LoaderImg = styled.img`
+    display: block;
+    margin: 150px auto;
+    height: 35px;
+    width: 35px;
+`
+const ErrorDiv = styled.div`
+    text-align: center;
+    margin-top: 150px;
+    margin-bottom: 150px;
+    font-size: 20px;
+    font-weight: bold;    
+`
+
+const LeftSpan = styled.div`
+    float: left;
+    width: 200px;
+`
+
+const RightSpan = styled.div`
+    float: left;
+`
+
+const OverflowDiv = styled.div`
+    overflow: hidden;
+    line-height: 42px;
+`
 
 export default withRouter(StatisticsPage);

@@ -1,5 +1,6 @@
 ﻿import * as React from "react";
 import { Device as DeviceModel, ToggleDevice } from "models/device";
+import styled from "styled-components";
 
 export interface DeviceTimerProps {
     device: ToggleDevice;
@@ -115,14 +116,20 @@ export default class DeviceTimer extends React.Component<DeviceTimerProps, Devic
     }
 
     public render() {
-        return <div
-            className="clickable"
-            onClick={!!this.state.timeLeft ? this.onTimerAbortClick : this.onTimerClick}>
-            <i className={"fa fa-clock-o " + this.getIconColor()} />
+        return (
+            <StyledDiv
+                onClick={!!this.state.timeLeft ? this.onTimerAbortClick : this.onTimerClick}
+            >
+                <i className={"fa fa-clock-o " + this.getIconColor()} />
                 {!!this.state.timeLeft && <span>{this.formatTimerValue(this.state.timeLeft)}</span>}
-        </div>;
+            </StyledDiv>
+        );
     }
-
+    
 }
+
+const StyledDiv = styled.div`
+    cursor: pointer;
+`
 
 

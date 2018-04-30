@@ -9,18 +9,9 @@ export interface ValueDeviceProps {
     onStatisticsClick(source: DeviceModel): void
 }
 
-const UnitDiv = styled.div`
-    position: absolute;
-    margin-left: -10px;
-
-    @media screen and (max-width: ${styles.breakpoints.medium}) {
-        margin-left: -5px;
-    }
-`
-
 function renderTopRight(props: ValueDeviceProps) : JSX.Element {
     return (
-        <i 
+        <ClickableIcon 
             className="fa fa-bar-chart"
             onClick={(e) => { e.stopPropagation(); props.onStatisticsClick(props.device) }}
         />
@@ -47,5 +38,18 @@ const ValueDevice: React.SFC<ValueDeviceProps> = (props) => {
         />
     )
 }
+
+const UnitDiv = styled.div`
+    position: absolute;
+    margin-left: -10px;
+
+    @media screen and (max-width: ${styles.breakpoints.medium}) {
+        margin-left: -5px;
+    }
+`
+
+const ClickableIcon = styled.i`
+    cursor: pointer;
+`
 
 export default ValueDevice;

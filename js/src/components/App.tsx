@@ -8,11 +8,8 @@ import { LogState } from "../Reducers/LogReducer";
 import { ClientLog } from "../Models/Log/ClientLog";
 import { addClientError } from "../Actions/LogActions";
 import styled from "styled-components";
-
-const StyledDiv = styled.div`
-    height: 100%;
-`
-
+import styles from "constants/styles";
+import classnames from "classnames";
 
 interface AppState{
     logs: LogState
@@ -54,10 +51,14 @@ class App extends React.Component<AppProps, any> {
 
 
     public render() {
-        return <StyledDiv>
-            {this.props.children}
-            <div className={!!this.props.logs.currentErrorMessage ? "errorToaster show" : "errorToaster hide"}>{this.props.logs.currentErrorMessage}</div>
-        </StyledDiv>;
+        let className = !!this.props.logs.currentErrorMessage ? "show" : "hide";
+
+        return (
+            <StyledDiv>
+                {this.props.children}
+                <div className={className}>{this.props.logs.currentErrorMessage}</div>
+            </StyledDiv>
+        );
     }
 
 }
@@ -73,5 +74,30 @@ function mapDispatchToProps(dispatch): AppActions {
         addClientError: (data: ClientLog) => dispatch(addClientError(data))
     }
 }
+
+const StyledDiv = styled.div`
+    height: 100%;
+`
+
+const ErrorToaserDiv = styled.div`
+    background: #FF0000;
+    text-align: center;
+    font-weight: 600;
+    position: absolute;
+    padding: 10px 0;
+    top: 0;
+    width: 100%;
+    color: ${styles.colors.fontPrimary};
+    transition: top 1s;
+    opacity: 0.9;
+
+    &.hide {
+        top: -50px;
+    }
+
+    &.show {
+        top: 0;
+    }
+`
 
 export default hot(module)(withRouter(connect(mapStateToProps, mapDispatchToProps)(App)));

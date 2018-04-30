@@ -6,6 +6,51 @@ import ValueDevice from "./ValueDevice";
 import styled from "styled-components";
 import styles from "constants/styles";
 
+export interface DeviceProps {
+    device: DeviceModel,
+    lastChanged?: string,
+    topLeftContent?: object,
+    topRightContent?: object,
+    centerContent?: object,
+    bottomLeftContent?: object,
+    bottomRightContent?: object,
+    
+}
+
+const Device: React.SFC<DeviceProps> = (props) => {
+    return (
+        <TileDiv>
+            <div>
+                <div>
+                    <TopLeftDiv>
+                        {props.device.isUpdating && <img src="dist/img/loader.svg" />}
+                        {!props.device.isUpdating && props.topLeftContent}
+                    </TopLeftDiv>
+                    <TopRightDiv>
+                        {props.topRightContent}
+                    </TopRightDiv>
+                    <TopCenterDiv>
+                        {props.lastChanged}
+                    </TopCenterDiv>
+                    <CenterDiv>
+                        {props.centerContent}
+                    </CenterDiv>
+                    <BottomLeftDiv>
+                        {props.bottomLeftContent}
+                    </BottomLeftDiv>
+                    <BottomRightDiv>
+                        {props.bottomRightContent}
+                    </BottomRightDiv>
+                    <LabelDiv>
+                        {props.device.title}
+                    </LabelDiv>
+                    {props.device.isUpdating && <div className="loadingPanel"></div>}
+                </div>
+            </div>
+        </TileDiv>
+    );
+}
+
 const TileDiv = styled.div`
     position: relative;
     float: left;
@@ -235,51 +280,6 @@ const LabelDiv = styled.div`
         font-size: 12px;
     }
 `
-
-export interface DeviceProps {
-    device: DeviceModel,
-    lastChanged?: string,
-    topLeftContent?: object,
-    topRightContent?: object,
-    centerContent?: object,
-    bottomLeftContent?: object,
-    bottomRightContent?: object,
-    
-}
-
-const Device: React.SFC<DeviceProps> = (props) => {
-    return (
-        <TileDiv>
-            <div>
-                <div>
-                    <TopLeftDiv>
-                        {props.device.isUpdating && <img src="dist/img/loader.svg" />}
-                        {!props.device.isUpdating && props.topLeftContent}
-                    </TopLeftDiv>
-                    <TopRightDiv className="tileTopRight">
-                        {props.topRightContent}
-                    </TopRightDiv>
-                    <TopCenterDiv className="tileTopCenter">
-                        {props.lastChanged}
-                    </TopCenterDiv>
-                    <CenterDiv className="tileCenter">
-                        {props.centerContent}
-                    </CenterDiv>
-                    <BottomLeftDiv className="tileBottomLeft">
-                        {props.bottomLeftContent}
-                    </BottomLeftDiv>
-                    <BottomRightDiv className="tileBottomRight">
-                        {props.bottomRightContent}
-                    </BottomRightDiv>
-                    <LabelDiv>
-                        {props.device.title}
-                    </LabelDiv>
-                    {props.device.isUpdating && <div className="loadingPanel"></div>}
-                </div>
-            </div>
-        </TileDiv>
-    );
-}
 
 export function FormatDate(unixTimestamp: number): string {
     var date = new Date(unixTimestamp * 1000);
