@@ -100,4 +100,4 @@ const ErrorToaserDiv = styled.div`
     }
 `
 
-export default hot(module)(withRouter(connect(mapStateToProps, mapDispatchToProps)(App)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(hot(module)(App)));

@@ -125,6 +125,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         {
             return (
                 <ToggleDevice
+                    key={device.id}
                     device={device}
                     onAutomatedClick={this.onAutomatedClick}
                     onIconClick={this.onIconClick}
@@ -137,6 +138,7 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
         {
             return (
                 <ValueDevice
+                    key={device.id}
                     device={device}
                     onStatisticsClick={this.onStatisticsClick}
                 />

@@ -7,7 +7,7 @@
     "rootDir": "src",
     "moduleResolution": "node",
     "sourceMap": true,
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "jsx": "react",
     "strictNullChecks": false,

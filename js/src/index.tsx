@@ -1,6 +1,5 @@
 ﻿import * as React from "react";
 import * as ReactDOM from "react-dom"
-import { AppContainer } from 'react-hot-loader';
 import configureStore from "./store/ConfigureStore";
 import { Provider } from "react-redux";
 import { BrowserRouter } from 'react-router-dom'
