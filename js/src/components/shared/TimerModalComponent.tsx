@@ -1,6 +1,8 @@
 ﻿import * as React from "react";
 import Modal from "./ModalComponent";
 import Button from "./input/Button";
+import styled from "styled-components";
+import styles from "constants/styles" ;
 
 interface TimerModalState {
     selectedTime: number;
@@ -95,39 +97,92 @@ export default class TimerModal extends React.Component<TimerModalProps, TimerMo
         m = m >= 10 ? m : '0' + m;
         s = s >= 10 ? s : '0' + s;
 
-        return <Modal title="Välj tid" onCancelClick={this.props.onCancelClick}>
-            <div className="timerModalContainer">
+        return (
+            <Modal title="Välj tid" onCancelClick={this.props.onCancelClick}>
+                <ContainerDiv>
 
-                <div className="timerSelectorContainer">
-                    <div className="timerSelector">
-                        <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('h', false); }} onMouseUp={this.stopClick} />
-                        <span>{h}</span>
-                        <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('h', true); }} onMouseUp={this.stopClick}/>
-                    </div>
+                    <SelectorContainerDiv>
+                        <SelectorDiv>
+                            <ClickableIcon className="fa fa-chevron-up" onMouseDown={() => { this.startClick('h', false); }} onMouseUp={this.stopClick} />
+                            <span>{h}</span>
+                            <ClickableIcon className="fa fa-chevron-down" onMouseDown={() => { this.startClick('h', true); }} onMouseUp={this.stopClick}/>
+                        </SelectorDiv>
 
-                    <span>:</span>
+                        <span>:</span>
 
-                    <div className="timerSelector">
-                        <i className="fa fa-chevron-up clickable" onMouseDown={() => { this.startClick('m', false); }} onMouseUp={this.stopClick}/>
-                        <span>{m}</span>
-                        <i className="fa fa-chevron-down clickable" onMouseDown={() => { this.startClick('m', true); }} onMouseUp={this.stopClick}/>
-                    </div>
+                        <SelectorDiv>
+                            <ClickableIcon className="fa fa-chevron-up" onMouseDown={() => { this.startClick('m', false); }} onMouseUp={this.stopClick}/>
+                            <span>{m}</span>
+                            <ClickableIcon className="fa fa-chevron-down" onMouseDown={() => { this.startClick('m', true); }} onMouseUp={this.stopClick}/>
+                        </SelectorDiv>
 
-                    {this.isIos && <input type="time"/>}
-                </div>
-                <div className="stateSelectorContainer">
-                    <Button className="w100px" color={this.state.selectedState ? "green" : "red"} text={this.state.selectedState ? "På" : "Av"} onClicked={this.onSelectedStateToggle} />
-                </div>
-            </div>
+                        {this.isIos && <input type="time"/>}
+                    </SelectorContainerDiv>
+                    <span>
+                        <StateButton className="w100px" color={this.state.selectedState ? "green" : "red"} text={this.state.selectedState ? "På" : "Av"} onClicked={this.onSelectedStateToggle} />
+                    </span>
+                </ContainerDiv>
 
-            <div className="fr mr15 mb15">
-                <Button text="Ok" className="w80px mr15" onClicked={() => { this.props.onOkClick(this.state.selectedTime, this.state.selectedState); }} />
-                <Button text="Avbryt" className="w80px" onClicked={this.props.onCancelClick}/>
-            </div>
+                <ButtonDiv>
+                    <OkButton text="Ok" className="w80px mr15" onClicked={() => { this.props.onOkClick(this.state.selectedTime, this.state.selectedState); }} />
+                    <AbortButton text="Avbryt" className="w80px" onClicked={this.props.onCancelClick}/>
+                </ButtonDiv>
 
-        </Modal>
+            </Modal>
+        );
     }
 
 }
+
+const ButtonDiv = styled.div`
+    float:right;
+    margin-right: 15px;
+    margin-bottom: 15px;
+`
+
+const StateButton = styled(Button)`
+    width: 100px;
+`
+
+const OkButton = styled(Button)`
+    width: 80px;
+    margin-right: 15px;
+`
+
+const AbortButton = styled(Button)`
+    width: 80px;
+`
+
+const SelectorDiv = styled.div`
+    position: relative;
+    display: inline;
+    margin: 0 auto;
+
+    i:nth-of-type(1) {
+        position: absolute;
+        top: -20px;
+        left: 1px;
+    }
+
+    i:nth-of-type(2) {
+        position: absolute;
+        bottom: -20px;
+        left: 1px;
+    }
+`
+
+const SelectorContainerDiv = styled.div`
+    position: relative;
+    display: inline;
+    margin-right: 20px;
+`
+
+const ClickableIcon = styled.i`
+    cursor: pointer;
+`
+
+const ContainerDiv = styled.div`
+    margin: 50px 0;
+`
 
 
