@@ -1,0 +1,10 @@
+﻿{
+  "presets": [
+    "env",
+    "react"
+  ],
+  "plugins": [
+    "react-hot-loader/babel"
+    // Enables React code to work with HMR.
+  ]
+}
