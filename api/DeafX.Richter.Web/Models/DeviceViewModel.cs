@@ -1,5 +1,6 @@
 ﻿using DeafX.Richter.Business.Interfaces;
 using DeafX.Richter.Business.Models;
+using DeafX.Richter.Business.Models.Weather;
 using DeafX.Richter.Common.Extensions;
 
 namespace DeafX.Richter.Web.Models
@@ -31,7 +32,19 @@ namespace DeafX.Richter.Web.Models
 
         public static DeviceViewModel FromDevice(IDevice device)
         {
-            if (device is IToggleDevice)
+            if(device is WeatherAirDevice)
+            {
+                return new WeatherAirDeviceViewModel(device as WeatherAirDevice);
+            }
+            if (device is WeatherPercipitationDevice)
+            {
+                return new WeatherPercipitationDeviceViewModel(device as WeatherPercipitationDevice);
+            }
+            if (device is WeatherWindDevice)
+            {
+                return new WeatherWindDeviceViewModel(device as WeatherWindDevice);
+            }
+            else if (device is IToggleDevice)
             {
                 return new ToggleDeviceViewModel(device as IToggleDevice);
             }
@@ -57,6 +70,51 @@ namespace DeafX.Richter.Web.Models
             automated = device.Automated;
             powerConsumption = device.PowerConsumption;
             timer = device.Timer == null ? null : DeviceTimerViewModel.FromToggleTimer(device.Timer);
+        }
+    }
+
+    public class WeatherAirDeviceViewModel : DeviceViewModel
+    {
+        public double relativeHumidity { get; set; }
+
+        public override string deviceType => "WEATHER_AIR_DEVICE";
+
+        public WeatherAirDeviceViewModel(WeatherAirDevice device) : base(device)
+        {
+            relativeHumidity = device.RealtiveHumidity;
+        }
+    }
+
+    public class WeatherPercipitationDeviceViewModel : DeviceViewModel
+    {
+        public string amountTextual { get; set; }
+
+        public string type { get; set; }
+
+        public override string deviceType => "WEATHER_PRECIP_DEVICE";
+
+        public WeatherPercipitationDeviceViewModel(WeatherPercipitationDevice device) : base(device)
+        {
+            amountTextual = device.AmountTextual;
+            type = device.Type;
+        }
+    }
+
+    public class WeatherWindDeviceViewModel : DeviceViewModel
+    {
+        public double maxValue { get; set; }
+
+        public double direction { get; set; }
+
+        public string directionTextual { get; set; }
+
+        public override string deviceType => "WEATHER_WIND_DEVICE";
+
+        public WeatherWindDeviceViewModel(WeatherWindDevice device) : base(device)
+        {
+            maxValue = device.MaxValue;
+            direction = device.Direction;
+            directionTextual = device.DirectionTextual;
         }
     }
 

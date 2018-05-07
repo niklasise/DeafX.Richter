@@ -41,17 +41,17 @@ namespace DeafX.Richter.Web
 
             var httpClient = new HttpClient();
             var zWayService = new ZWayService(httpClient, LoggerFactory.CreateLogger<ZWayService>());
-            var virtualService = new DeviceGroupService(zWayService);
-            var aggregatedService = new AggregatedDeviceService(zWayService, virtualService);
-            var statisticsService = new StatisticsService(LoggerFactory.CreateLogger<StatisticsService>(), aggregatedService, appConfiguration.Statistics);
             var weatherService = new WeatherService(httpClient, LoggerFactory.CreateLogger<WeatherService>());
-
+            var virtualService = new DeviceGroupService(zWayService);
+            var aggregatedService = new AggregatedDeviceService(zWayService, virtualService, weatherService);
+            var statisticsService = new StatisticsService(LoggerFactory.CreateLogger<StatisticsService>(), aggregatedService, appConfiguration.Statistics);
+            
             zWayService.InitAsync(appConfiguration.ZWay).Wait();
+            weatherService.InitAsync(appConfiguration.Weather).Wait();
             virtualService.Init(appConfiguration.DeviceGroups);
             aggregatedService.Init(appConfiguration.ToggleAutomationRules);
             statisticsService.Init();
-            weatherService.InitAsync(appConfiguration.Weather).Wait();
-
+            
             services.AddMvc();
             services.AddSingleton<HttpClient>(new HttpClient());
             services.AddSingleton<IDeviceService>(aggregatedService);
@@ -66,10 +66,6 @@ namespace DeafX.Richter.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions {
-                    HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true
-                });
             }
             else
             {

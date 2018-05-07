@@ -7,7 +7,7 @@ namespace DeafX.Richter.Business.Models.Weather
 {
     public class WeatherWindDevice : WeatherDevice
     {
-        public object MaxValue { get; private set; }
+        public double MaxValue { get; private set; }
 
         public double Direction { get; private set; }
 
@@ -18,7 +18,7 @@ namespace DeafX.Richter.Business.Models.Weather
         public WeatherWindDevice(string id, string title, IDeviceService parentService)
             : base(id, title, parentService) { }
 
-        internal void SetValue(object value, object maxValue, double direction, string directionTextual)
+        internal void SetValue(object value, double maxValue, double direction, string directionTextual)
         {
             bool changed = false;
 
@@ -29,8 +29,7 @@ namespace DeafX.Richter.Business.Models.Weather
                 changed = true;
             }
 
-            if ((MaxValue == null && maxValue != null) ||
-                (MaxValue != null && !MaxValue.Equals(maxValue)))
+            if (!MaxValue.Equals(maxValue))
             {
                 MaxValue = maxValue;
                 changed = true;
