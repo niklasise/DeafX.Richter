@@ -44,11 +44,13 @@ namespace DeafX.Richter.Web
             var virtualService = new DeviceGroupService(zWayService);
             var aggregatedService = new AggregatedDeviceService(zWayService, virtualService);
             var statisticsService = new StatisticsService(LoggerFactory.CreateLogger<StatisticsService>(), aggregatedService, appConfiguration.Statistics);
+            var weatherService = new WeatherService(httpClient, LoggerFactory.CreateLogger<WeatherService>());
 
             zWayService.InitAsync(appConfiguration.ZWay).Wait();
             virtualService.Init(appConfiguration.DeviceGroups);
             aggregatedService.Init(appConfiguration.ToggleAutomationRules);
             statisticsService.Init();
+            weatherService.InitAsync(appConfiguration.Weather).Wait();
 
             services.AddMvc();
             services.AddSingleton<HttpClient>(new HttpClient());

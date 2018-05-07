@@ -33,7 +33,9 @@ namespace DeafX.Richter.Business.Interfaces
         Toggle,
         GroupToggle,
         Temperature,
-        Luminosity
+        Luminosity,
+        Percipitation,
+        Wind
     }
 
     public delegate void DeviceValueChangedHandler(object sender);

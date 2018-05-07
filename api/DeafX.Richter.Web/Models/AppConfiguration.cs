@@ -1,4 +1,5 @@
 ﻿using DeafX.Richter.Business.Models;
+using DeafX.Richter.Business.Models.Weather;
 using DeafX.Richter.Business.Services;
 using Microsoft.Extensions.Logging;
 using System;
@@ -19,6 +20,8 @@ namespace DeafX.Richter.Web.Models
         public LoggingConfiguration Logging { get; set; }
 
         public StatisticsServiceConfiguration Statistics { get; set; }
+
+        public WeatherConfiguration Weather { get; set; }
     }
 
     public class LoggingConfiguration
