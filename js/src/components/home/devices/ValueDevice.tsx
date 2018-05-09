@@ -39,15 +39,6 @@ const ValueDevice: React.SFC<ValueDeviceProps> = (props) => {
     )
 }
 
-const UnitDiv = styled.div`
-    position: absolute;
-    margin-left: -10px;
-
-    @media screen and (max-width: ${styles.breakpoints.medium}) {
-        margin-left: -5px;
-    }
-`
-
 const ClickableIcon = styled.i`
     cursor: pointer;
 `

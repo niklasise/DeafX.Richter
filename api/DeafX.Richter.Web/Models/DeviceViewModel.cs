@@ -91,7 +91,7 @@ namespace DeafX.Richter.Web.Models
 
         public string type { get; set; }
 
-        public override string deviceType => "WEATHER_PRECIP_DEVICE";
+        public override string deviceType => "WEATHER_PERCIP_DEVICE";
 
         public WeatherPercipitationDeviceViewModel(WeatherPercipitationDevice device) : base(device)
         {

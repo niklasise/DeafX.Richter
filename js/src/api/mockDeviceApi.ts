@@ -1,4 +1,4 @@
-﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices } from "models/Device"
+﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices, WeatherAirDevice, WeatherPercipitationDevice, WeatherWindDevice } from "models/Device"
 import { IDeviceListener as DeviceListener } from "./IDeviceListener"
 
 let delay : number = 1000;
@@ -37,6 +37,28 @@ let devices : DeviceModel[] = [
         value: "23",
         deviceType: "VALUE_DEVICE",
     } as DeviceModel,
+    {
+        id: "5",
+        title: "Lufttemperatur",
+        value: "2.3",
+        deviceType: "WEATHER_AIR_DEVICE",
+        relativeHumidity: 48.5
+    } as WeatherAirDevice,
+    {
+        id: "6",
+        title: "Nederbörd",
+        value: "2.2",
+        deviceType: "WEATHER_PERCIP_DEVICE",
+        type: "Regn"
+    } as WeatherPercipitationDevice,
+    {
+        id: "7",
+        title: "Vind",
+        value: "3.4",
+        deviceType: "WEATHER_WIND_DEVICE",
+        direction: 180,
+        maxValue: 4.8
+    } as WeatherWindDevice,
 ];
 
 let deviceListeners: DeviceListener[] = [];
@@ -171,11 +193,20 @@ class deviceApi {
     {
         setTimeout(function () {
             devices.forEach((val, index, arr) => {
-                if (val.deviceType !== "VALUE_DEVICE") {
+                if (val.deviceType === "TOGGLE_DEVICE") {
                     return;
                 }
 
-                val.value = "" + Math.round(20 + Math.random() * 5);
+                if(val.deviceType === "WEATHER_AIR_DEVICE") {
+                    deviceApi.randomizeAirDevice(val as WeatherAirDevice);
+                }
+                else if(val.deviceType === "WEATHER_WIND_DEVICE"){
+                    deviceApi.randomizeWindDevice(val as WeatherWindDevice);
+                }
+                else{
+                    deviceApi.randomizeValueDevice(val);
+                }
+                
                 val.lastChanged = new Date().getTime();
             });
 
@@ -183,6 +214,21 @@ class deviceApi {
 
             deviceApi.randomizeValueDevices();
         }, 5000);
+    }
+
+    static randomizeValueDevice(device: DeviceModel){
+        device.value = "" + Math.round(20 + Math.random() * 5)
+    }
+
+    static randomizeAirDevice(device: WeatherAirDevice){
+        device.value = "" + Math.round(20 + Math.random() * 5);
+        device.relativeHumidity = Math.round(50 + Math.random() * 5);
+    }
+
+    static randomizeWindDevice(device: WeatherWindDevice){
+        device.value = "" + Math.round(2 + Math.random() * 5);
+        device.maxValue = Math.round(3 + Math.random() * 5);
+        device.direction = Math.round(180 + Math.random() * 5);
     }
 
 }

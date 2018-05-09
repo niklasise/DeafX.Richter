@@ -21,6 +21,21 @@ export class ToggleDevice extends Device {
     powerConsumption: string;
 }
 
+export class WeatherAirDevice extends Device {
+    relativeHumidity: number
+}
+
+export class WeatherPercipitationDevice extends Device {
+    amountTextual: string;
+    type: string;
+}
+
+export class WeatherWindDevice extends Device {
+    maxValue: number;
+    direction: number;
+    directionTextual: string;
+}
+
 export interface UpdatedDevices {
     devices: Device[],
     lastUpdated: number

@@ -1,7 +1,9 @@
 ﻿import * as React from 'react';
 import ToggleDevice from "./devices/ToggleDevice";
 import ValueDevice from "./devices/ValueDevice";
-import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel } from "models/device";
+import WeatherAir from "./devices/WeatherAirDevice";
+import WeatherWindDevice from "./devices/WeatherWindDevice";
+import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, WeatherAirDevice as WeatherAirDeviceModel, WeatherWindDevice as WeatherWindDeviceModel } from "models/device";
 import { connect, Dispatch } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "store/ConfigureStore";
@@ -140,6 +142,24 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
                 <ValueDevice
                     key={device.id}
                     device={device}
+                    onStatisticsClick={this.onStatisticsClick}
+                />
+            )
+        }
+        else if(device.deviceType === "WEATHER_AIR_DEVICE"){
+            return (
+                <WeatherAir
+                    key={device.id}
+                    device={device as WeatherAirDeviceModel}
+                    onStatisticsClick={this.onStatisticsClick}
+                />
+            )
+        }
+        else if(device.deviceType === "WEATHER_WIND_DEVICE"){
+            return (
+                <WeatherWindDevice
+                    key={device.id}
+                    device={device as WeatherWindDeviceModel}
                     onStatisticsClick={this.onStatisticsClick}
                 />
             )
