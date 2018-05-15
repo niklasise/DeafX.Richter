@@ -5,6 +5,9 @@
     "removeComments": false,
     "baseUrl": "src",
     "rootDir": "src",
+    "paths": {
+      "@api/*": ["api/*"]
+    },
     "moduleResolution": "node",
     "sourceMap": true,
     "target": "es6",

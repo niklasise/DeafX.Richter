@@ -1,5 +1,5 @@
 ﻿import { Device as DeviceModel } from "models/Device"
 
-export interface IDeviceListener {
+export default interface IDeviceListener {
     (devices: DeviceModel[]): any
 }

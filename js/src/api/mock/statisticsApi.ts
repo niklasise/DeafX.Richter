@@ -1,19 +1,19 @@
 ﻿import StatisticsPoint from "models/Statistics/StatisticsPoint";
+import IStatisticsApi from "../interfaces/IStatisticsApi"
 
-let delay: number = 1000;
+const DELAY: number = 1000;
 
-class StatisticsApi {
+class StatisticsApi implements IStatisticsApi {
 
-
-    static getStatistics(id: string, from: number, to: number, minimumDataInterval: number): Promise<StatisticsPoint[]> {
+    public getStatistics(id: string, from: number, to: number, minimumDataInterval: number): Promise<StatisticsPoint[]> {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                resolve(StatisticsApi.getRandomizedData(from, to, minimumDataInterval));
-            }, delay);
+                resolve(this.getRandomizedData(from, to, minimumDataInterval));
+            }, DELAY);
         });
     }
 
-    private static getRandomizedData(from: number, to: number, interval: number): StatisticsPoint[] {
+    private getRandomizedData(from: number, to: number, interval: number): StatisticsPoint[] {
 
         let data: StatisticsPoint[] = [];
         let value = Math.random() * 5 + 15;

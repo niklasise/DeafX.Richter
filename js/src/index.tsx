@@ -4,7 +4,6 @@ import configureStore from "./store/ConfigureStore";
 import { Provider } from "react-redux";
 import { BrowserRouter } from 'react-router-dom'
 import { routes } from "./Routes";
-import mockApi from "./Api/mockDeviceApi";
 
 const store = configureStore({
     devices: {

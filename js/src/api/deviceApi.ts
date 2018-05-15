@@ -1,29 +1,25 @@
 ﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices } from "models/device"
-import { IDeviceListener as DeviceListener } from "./IDeviceListener"
+import IDeviceListener from "./interfaces/IDeviceListener"
+import IDeviceApi from "./interfaces/IDeviceApi"
 
 const TIMEOUT: number = 1000; 
 
-class DeviceApi {
+class DeviceApi implements IDeviceApi {
 
-    private static _onAllDevicesListener: DeviceListener;
-    private static _onDevicesUpdatedListener: DeviceListener;
-    private static _lastUpdated: number;
-    private static _timeoutId: number;
+    private _onAllDevicesListener: IDeviceListener;
+    private _onDevicesUpdatedListener: IDeviceListener;
+    private _lastUpdated: number;
+    private _timeoutId: number;
      
 
-    static toggleDevice(device: ToggleDeviceModel, toggled: boolean) {
-        return DeviceApi.performRequest(
+    public toggleDevice(device: ToggleDeviceModel, toggled: boolean) {
+        return this.performRequest(
             '/api/devices/toggle/' + device.id + '/' + toggled,
             'PUT'
         ); 
     }
 
-    static getDevice(deviceId: string) : Promise<DeviceModel> {
-        //return DeviceApi.performRequest(
-        //    `/api/devices/${deviceId}`,
-        //    'PUT'
-        //);
-
+    public getDevice(deviceId: string) : Promise<DeviceModel> {
         return fetch(`/api/devices/${deviceId}`, {
             credentials: 'same-origin',
             method: "GET"
@@ -37,57 +33,57 @@ class DeviceApi {
         }));
     }
 
-    static setDeviceAutomated(device: ToggleDeviceModel, automated: boolean) {
-        return DeviceApi.performRequest(
+    public setDeviceAutomated(device: ToggleDeviceModel, automated: boolean) {
+        return this.performRequest(
             '/api/devices/setAutomated/' + device.id + '/' + automated,
             'PUT'
         );
     }
 
-    static setDeviceTimer(device: ToggleDeviceModel, time: number, state: boolean) {
-        return DeviceApi.performRequest(
+    public setDeviceTimer(device: ToggleDeviceModel, time: number, state: boolean) {
+        return this.performRequest(
             '/api/devices/setTimer/' + device.id + '/' + time + '/' + state,
             'PUT'
         );
     }
 
-    static abortDeviceTimer(device: ToggleDeviceModel) {
-        return DeviceApi.performRequest(
+    public abortDeviceTimer(device: ToggleDeviceModel) {
+        return this.performRequest(
             '/api/devices/abortTimer/' + device.id,
             'PUT'
         );
     }
 
-    static connect(onAllDevices: DeviceListener, onDevicesUpdated: DeviceListener) {
-        DeviceApi._onAllDevicesListener = onAllDevices;
-        DeviceApi._onDevicesUpdatedListener = onDevicesUpdated;
+    public connect(onAllDevices: IDeviceListener, onDevicesUpdated: IDeviceListener) {
+        this._onAllDevicesListener = onAllDevices;
+        this._onDevicesUpdatedListener = onDevicesUpdated;
 
-        DeviceApi.performRequest(
+        this.performRequest(
             '/api/devices',
             'GET',
             data => {
-                DeviceApi.onAllDevices(data as UpdatedDevices);
-                DeviceApi._timeoutId = window.setTimeout(DeviceApi.fetchUpdatedDevices, TIMEOUT);
+                this.onAllDevices(data as UpdatedDevices);
+                this._timeoutId = window.setTimeout(this.fetchUpdatedDevices, TIMEOUT);
             }
         );        
     }
 
-    static disconnect() {
-        clearTimeout(DeviceApi._timeoutId);
+    public disconnect() {
+        clearTimeout(this._timeoutId);
     }
 
-    private static fetchUpdatedDevices() {
-        DeviceApi.performRequest(
-            '/api/devices/?since=' + DeviceApi._lastUpdated,
+    private fetchUpdatedDevices() {
+        this.performRequest(
+            '/api/devices/?since=' + this._lastUpdated,
             'GET',
-            data => DeviceApi.onDevicesUpdated(data as UpdatedDevices),
+            data => this.onDevicesUpdated(data as UpdatedDevices),
             () => {
-                DeviceApi._timeoutId = window.setTimeout(DeviceApi.fetchUpdatedDevices, TIMEOUT)
+                this._timeoutId = window.setTimeout(this.fetchUpdatedDevices, TIMEOUT)
             }
         );
     }
 
-    private static performRequest(
+    private performRequest(
         url: string,
         method: string = 'GET',
         onPostJson: (data: any) => void = null,
@@ -116,14 +112,14 @@ class DeviceApi {
         });
     }
 
-    private static onAllDevices(data: UpdatedDevices) {
-        DeviceApi._lastUpdated = data.lastUpdated;
-        DeviceApi._onAllDevicesListener(data.devices);
+    private onAllDevices(data: UpdatedDevices) {
+        this._lastUpdated = data.lastUpdated;
+        this._onAllDevicesListener(data.devices);
     }
 
-    private static onDevicesUpdated(data: UpdatedDevices) {
-        DeviceApi._lastUpdated = data.lastUpdated;
-        DeviceApi._onDevicesUpdatedListener(data.devices);
+    private onDevicesUpdated(data: UpdatedDevices) {
+        this._lastUpdated = data.lastUpdated;
+        this._onDevicesUpdatedListener(data.devices);
     }
 
 }

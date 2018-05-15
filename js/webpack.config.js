@@ -1,11 +1,12 @@
 ﻿const path = require('path');
 const webpack = require('webpack');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
     const clientBundleOutputDir = './wwwroot/dist/js';
+
+    const apiDir = isDevBuild ? "src/api/mock" : "src/api"
 
     // Configuration in common to both client-side and server-side bundles
     return {
@@ -14,7 +15,10 @@ module.exports = (env) => {
         },
         resolve: { 
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
-            modules: [path.resolve(__dirname, "src"), "node_modules"]
+            modules: [path.resolve(__dirname, "src"), "node_modules"],
+            alias: {
+                "@api": path.resolve(__dirname, apiDir)
+            }
         },
         output: {
             path: path.join(__dirname, clientBundleOutputDir),
@@ -46,8 +50,7 @@ module.exports = (env) => {
                     moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
                 })]
             : [
-                // Plugins that apply in production builds only
-                new UglifyJSPlugin()
+
             ])
     };
 

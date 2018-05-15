@@ -3,10 +3,8 @@ import { match, withRouter, RouteComponentProps } from 'react-router-dom';
 import { Device } from 'models/device'
 import Chart, { ChartComponentData } from './StatisticsChart';
 import StatisticsTimeSpan from "models/statistics/statisticsTimeSpan"
-import StatisticApi from "api/mockStatisticsApi";
-import DeviceApi from "api/mockDeviceApi";
-//import DeviceApi from "api/deviceApi";
-//import StatisticApi from "api/statisticsApi";
+import StatisticApi from "@api/statisticsApi";
+import DeviceApi from "@api/deviceApi";
 import RadioButtonGroup from "components/shared/input/RadioButtonGroup";
 import styled from "styled-components";
 import styles from "constants/styles";
@@ -49,6 +47,8 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
     private devicePromise: Promise<Device>;
     private device: Device;
     private deviceId: string;
+    private stasticsApi : StatisticApi;
+    private deviceApi : DeviceApi;
 
     constructor(props: StatisticsPageProps)
     {
@@ -68,6 +68,9 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
         this.deviceId = props.match.params.id;
 
+        this.deviceApi = new DeviceApi();
+        this.stasticsApi = new StatisticApi();
+
         this.onRadioValueChanged = this.onRadioValueChanged.bind(this);
         this.loadData = this.loadData.bind(this);
     }
@@ -85,7 +88,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
         Promise.all([
             this.devicePromise,
-            StatisticApi.getStatistics(
+            this.stasticsApi.getStatistics(
                 this.deviceId,
                 fromTimeStamp - 60 * 60, // Get one hour more of data to "fill out" chart
                 currentTimestamp,
@@ -158,7 +161,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
 
     private loadDeviceName() {
 
-        this.devicePromise = DeviceApi.getDevice(this.deviceId);
+        this.devicePromise = this.deviceApi.getDevice(this.deviceId);
 
         this.devicePromise.then((data) => {
             this.setState({

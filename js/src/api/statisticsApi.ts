@@ -1,8 +1,9 @@
 ﻿import StatisticsPoint from "models/Statistics/StatisticsPoint";
+import IStatisticsApi from "./interfaces/IStatisticsApi";
 
-class StatisticsApi {
+class StatisticsApi implements IStatisticsApi{
 
-    static getStatistics(deviceId: string, from: number, to: number, minimumDataInterval: number): Promise<StatisticsPoint[]> {
+    public getStatistics(deviceId: string, from: number, to: number, minimumDataInterval: number): Promise<StatisticsPoint[]> {
         return new Promise<StatisticsPoint[]>((resolve, reject) => {
             fetch(`/api/statistics/${deviceId}?from=${from}&to=${to}&minimumDataInterval=${minimumDataInterval}`, {
                 method: 'GET',
