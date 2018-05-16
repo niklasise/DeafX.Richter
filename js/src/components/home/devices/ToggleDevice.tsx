@@ -23,7 +23,7 @@ export interface ToggleDeviceProps {
 }
 
 function renderCenter(props: ToggleDeviceProps) : JSX.Element {
-    let className = classnames("fa fa-lightbulb-o", {"off": (props.device as ToggleDeviceModel).value})
+    let className = classnames("fa fa-lightbulb-o", {"toggle-off": !(props.device as ToggleDeviceModel).value})
     
     return (
         <ClickableIcon 
@@ -44,7 +44,7 @@ function renderBottomLeft(props: ToggleDeviceProps) : JSX.Element {
 }
 
 function renderBottomRight(props: ToggleDeviceProps) : JSX.Element {  
-    let className = classnames("fa fa-refresh", {"toggle-off": (props.device as ToggleDeviceModel).automated})
+    let className = classnames("fa fa-refresh", {"toggle-off": !(props.device as ToggleDeviceModel).automated})
 
     return (
         <ClickableIcon

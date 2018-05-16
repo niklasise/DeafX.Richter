@@ -1,6 +1,7 @@
 ﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices } from "models/device"
 import IDeviceListener from "./interfaces/IDeviceListener"
 import IDeviceApi from "./interfaces/IDeviceApi"
+import ConfigurationUtility from "utilities/configurationUtility";
 
 const TIMEOUT: number = 1000; 
 
@@ -10,17 +11,23 @@ class DeviceApi implements IDeviceApi {
     private _onDevicesUpdatedListener: IDeviceListener;
     private _lastUpdated: number;
     private _timeoutId: number;
-     
+    private _apiBaseUrl;
+
+    constructor() {
+        this._apiBaseUrl = ConfigurationUtility.getConfiguration().apiUrl;
+
+        this.fetchUpdatedDevices = this.fetchUpdatedDevices.bind(this);
+    }
 
     public toggleDevice(device: ToggleDeviceModel, toggled: boolean) {
         return this.performRequest(
-            '/api/devices/toggle/' + device.id + '/' + toggled,
+            this._apiBaseUrl + '/devices/toggle/' + device.id + '/' + toggled,
             'PUT'
         ); 
     }
 
     public getDevice(deviceId: string) : Promise<DeviceModel> {
-        return fetch(`/api/devices/${deviceId}`, {
+        return fetch(`${this._apiBaseUrl}/devices/${deviceId}`, {
             credentials: 'same-origin',
             method: "GET"
         }).then(response => new Promise<DeviceModel>((resolve, reject) => {
@@ -35,21 +42,21 @@ class DeviceApi implements IDeviceApi {
 
     public setDeviceAutomated(device: ToggleDeviceModel, automated: boolean) {
         return this.performRequest(
-            '/api/devices/setAutomated/' + device.id + '/' + automated,
+            this._apiBaseUrl + '/devices/setAutomated/' + device.id + '/' + automated,
             'PUT'
         );
     }
 
     public setDeviceTimer(device: ToggleDeviceModel, time: number, state: boolean) {
         return this.performRequest(
-            '/api/devices/setTimer/' + device.id + '/' + time + '/' + state,
+            this._apiBaseUrl + '/devices/setTimer/' + device.id + '/' + time + '/' + state,
             'PUT'
         );
     }
 
     public abortDeviceTimer(device: ToggleDeviceModel) {
         return this.performRequest(
-            '/api/devices/abortTimer/' + device.id,
+            this._apiBaseUrl + '/devices/abortTimer/' + device.id,
             'PUT'
         );
     }
@@ -59,7 +66,7 @@ class DeviceApi implements IDeviceApi {
         this._onDevicesUpdatedListener = onDevicesUpdated;
 
         this.performRequest(
-            '/api/devices',
+            this._apiBaseUrl + '/devices',
             'GET',
             data => {
                 this.onAllDevices(data as UpdatedDevices);
@@ -74,7 +81,7 @@ class DeviceApi implements IDeviceApi {
 
     private fetchUpdatedDevices() {
         this.performRequest(
-            '/api/devices/?since=' + this._lastUpdated,
+            this._apiBaseUrl + '/devices/?since=' + this._lastUpdated,
             'GET',
             data => this.onDevicesUpdated(data as UpdatedDevices),
             () => {

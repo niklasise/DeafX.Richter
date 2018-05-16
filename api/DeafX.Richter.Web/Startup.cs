@@ -74,6 +74,11 @@ namespace DeafX.Richter.Web
 
             app.UseStaticFiles();
 
+            app.UseCors(builder =>
+                builder.WithOrigins("http://localhost:9000")
+                       .AllowAnyMethod()
+            );
+
             //app.UseSignalR(routes =>
             //{
             //    routes.MapHub<DevicesHub>("devices");
