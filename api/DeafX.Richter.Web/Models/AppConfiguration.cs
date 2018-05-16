@@ -22,6 +22,8 @@ namespace DeafX.Richter.Web.Models
         public StatisticsServiceConfiguration Statistics { get; set; }
 
         public WeatherConfiguration Weather { get; set; }
+
+        public string[] DevicesToShow { get; set; }
     }
 
     public class LoggingConfiguration

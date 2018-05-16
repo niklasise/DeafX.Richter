@@ -87,25 +87,25 @@ namespace DeafX.Richter.Business.Services
         private void GenerateDevices()
         {
             _airTempDevice = new WeatherAirDevice(
-                id: "WeatherDevice_Air",
+                id: "Weather_Air_Device",
                 title: "Lufttemperatur",
                 parentService: this
             );
 
             _roadTempDevice = new WeatherRoadDevice(
-                id: "WeatherDevice_Road",
+                id: "Weather_Road_Device",
                 title: "Vägtemperatur",
                 parentService:  this
             );
 
             _precipitationDevice = new WeatherPercipitationDevice(
-                id: "WeatherDevice_Precipitation",
+                id: "Weather_Precipitation_Device",
                 title: "Nederbörd",
                 parentService:  this
             );
 
             _windDevice = new WeatherWindDevice(
-                id: "WeatherDevice_Wind",
+                id: "Weather_Wind_Device",
                 title: "Vind",
                 parentService:  this
             );

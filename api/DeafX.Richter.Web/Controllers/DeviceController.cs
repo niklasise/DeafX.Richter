@@ -3,6 +3,7 @@ using DeafX.Richter.Common.Extensions;
 using DeafX.Richter.Web.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -14,34 +15,32 @@ namespace DeafX.Richter.Web.Controllers
     {
         private ILogger<DevicesController> _logger;
         private IDeviceService _deviceService;
+        private IConfiguration _configuration;
 
-        public DevicesController(ILogger<DevicesController> logger, IDeviceService deviceService)
+        public DevicesController(ILogger<DevicesController> logger, IDeviceService deviceService, IConfiguration configuration)
         {
             _logger = logger;
             _deviceService = deviceService;
+            _configuration = configuration;
         }
 
         [HttpGet]
         public DeviceViewModelCollection GetAllDevices([FromQuery]long since)
         {
             var timeStamp = DateTime.Now.ToUnixTimeStamp();
-            
-            if (since > 0)
+            var devicesToShow = _configuration.Get<AppConfiguration>().DevicesToShow;
+
+            var devices = since > 0 ? 
+                _deviceService.GetUpdatedDevices(DateTimeExtensions.FromUnixTimeStamp(since)) : 
+                _deviceService.GetAllDevices();
+
+            var filteredDevices = devices.Where(d => devicesToShow.Contains(d.Id));
+
+            return new DeviceViewModelCollection()
             {
-                return new DeviceViewModelCollection()
-                {
-                    Devices = _deviceService.GetUpdatedDevices(DateTimeExtensions.FromUnixTimeStamp(since)).Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
-                    LastUpdated = timeStamp
-                };
-            }
-            else
-            {
-                return new DeviceViewModelCollection()
-                {
-                    Devices = _deviceService.GetAllDevices().Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
-                    LastUpdated = timeStamp
-                };
-            }
+                Devices = filteredDevices.Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
+                LastUpdated = timeStamp
+            };        
         }
 
         [HttpGet("{id}")]
