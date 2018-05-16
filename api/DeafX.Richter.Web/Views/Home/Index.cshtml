@@ -1,4 +1,6 @@
-﻿@model string;
+﻿@using DeafX.Richter.Web.Models.Home
+
+@model HomeViewModel
 
 <!DOCTYPE html>
 <html>
@@ -14,6 +16,12 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link href="~/dist/css/font-awesome.css" rel="stylesheet" type="text/css" />
     <link href="~/dist/css/app.css" rel="stylesheet" type="text/css" asp-append-version="true"/>
+
+    <script>
+        window.ReactAppConfiguration = {
+            apiUrl = @Model.ApiUrl
+        }
+    </script>
 </head>
 <body>
     <div id="errordiv"></div>
@@ -21,6 +29,6 @@
     
     <!--<script src="~/dist/js/vendor.js" type="text/javascript" asp-append-version="true"></script>-->
     <script src="~/dist/js/app.js" type="text/javascript" asp-append-version="true"></script>
-    <footer>@Model</footer>
+    <footer>@Model.Version</footer>
 </body>
 </html>

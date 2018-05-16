@@ -1,4 +1,5 @@
-﻿using DeafX.Richter.Web.Services;
+﻿using DeafX.Richter.Web.Models.Home;
+using DeafX.Richter.Web.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,11 @@ namespace DeafX.Richter.Web.Controllers
 
         public IActionResult Index()
         {
-            return View(_versionService.Version as object);
+            return View(new HomeViewModel()
+            {
+                ApiUrl = $"{Request.Scheme}://{Request.Host}/api",
+                Version = _versionService.Version
+            });
         }
 
         public IActionResult Error()
