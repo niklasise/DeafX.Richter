@@ -35,7 +35,8 @@ namespace DeafX.Richter.Business.Interfaces
         Temperature,
         Luminosity,
         Percipitation,
-        Wind
+        Wind,
+        Sun
     }
 
     public delegate void DeviceValueChangedHandler(object sender);

@@ -1,4 +1,5 @@
 ﻿using DeafX.Richter.Business.Models;
+using DeafX.Richter.Business.Models.Sun;
 using DeafX.Richter.Business.Models.Weather;
 using DeafX.Richter.Business.Services;
 using Microsoft.Extensions.Logging;
@@ -22,6 +23,8 @@ namespace DeafX.Richter.Web.Models
         public StatisticsServiceConfiguration Statistics { get; set; }
 
         public WeatherConfiguration Weather { get; set; }
+
+        public SunConfiguration Sun { get; set; }
 
         public string[] DevicesToShow { get; set; }
     }
