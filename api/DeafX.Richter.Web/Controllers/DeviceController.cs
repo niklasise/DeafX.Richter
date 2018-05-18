@@ -28,19 +28,28 @@ namespace DeafX.Richter.Web.Controllers
         public DeviceViewModelCollection GetAllDevices([FromQuery]long since)
         {
             var timeStamp = DateTime.Now.ToUnixTimeStamp();
-            var devicesToShow = _configuration.Get<AppConfiguration>().DevicesToShow;
 
-            var devices = since > 0 ? 
-                _deviceService.GetUpdatedDevices(DateTimeExtensions.FromUnixTimeStamp(since)) : 
-                _deviceService.GetAllDevices();
-
-            var filteredDevices = devices.Where(d => devicesToShow.Contains(d.Id));
-
-            return new DeviceViewModelCollection()
+            if(since > 0)
             {
-                Devices = filteredDevices.Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
-                LastUpdated = timeStamp
-            };        
+                return new DeviceViewModelCollection()
+                {
+                    Devices = _deviceService.GetUpdatedDevices(DateTimeExtensions.FromUnixTimeStamp(since))
+                                    .Select(d => DeviceViewModel.FromDevice(d)).ToArray(),
+                    LastUpdated = timeStamp
+                };
+            }
+            else
+            {
+                var devices = _deviceService.GetAllDevices();
+                var devicesToShow = _configuration.Get<AppConfiguration>().DevicesToShow;
+
+                return new DeviceViewModelCollection()
+                {
+                    Devices = devicesToShow.Select(id => DeviceViewModel.FromDevice(devices.FirstOrDefault(d => d.Id == id))).ToArray(),
+                    LastUpdated = timeStamp
+                };
+            }
+     
         }
 
         [HttpGet("{id}")]
