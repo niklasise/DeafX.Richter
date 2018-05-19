@@ -24,6 +24,14 @@ function renderBottomRight(props: WeatherWindDeviceProps) : JSX.Element {
     );
 }
 
+function renderBottomLeft(props: WeatherWindDeviceProps) : JSX.Element {
+    return (
+            <div>
+                {props.device.maxValue}
+            </div>
+    );
+}
+
 function renderCenter(props: WeatherWindDeviceProps) : JSX.Element {
     return (
         <div>
@@ -41,6 +49,7 @@ const WeatherWindDevice: React.SFC<WeatherWindDeviceProps> = (props) => {
             device={props.device}
             topRightContent={renderTopRight(props)}
             bottomRightContent={renderBottomRight(props)}
+            bottomLeftContent={renderBottomLeft(props)}
             centerContent={renderCenter(props)}
         />
     )

@@ -22,7 +22,7 @@ function renderTopLeft(props: WeatherAirDeviceProps) : JSX.Element {
     return (
         <div>
             <i className="fa fa-tint"/>
-            <IconTextSpan>{props.device.relativeHumidity}%</IconTextSpan>
+            <IconTextSpan>{props.device.relativeHumidity}%</IconTextSpan>       
         </div>
     );
 }

@@ -2,11 +2,15 @@
 const webpack = require('webpack');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 
-module.exports = (env) => {
-    const isDevBuild = !(env && env.prod);
+module.exports = () => {
+    const env = process.env.NODE_ENV
+
+    const config = {
+        isDevBuild: !env || env !== 'production'
+    }
     const clientBundleOutputDir = './wwwroot/dist/js';
 
-    const apiDir = isDevBuild ? "src/api/mock" : "src/api"
+    const apiDir = config.isDevBuild ? "src/api/mock" : "src/api"
 
     // Configuration in common to both client-side and server-side bundles
     return {
@@ -38,7 +42,7 @@ module.exports = (env) => {
         },
         plugins: [
             new CheckerPlugin()
-        ].concat(isDevBuild ?
+        ].concat(config.isDevBuild ?
             [
                 // new webpack.DllReferencePlugin({
                 //     context: __dirname,

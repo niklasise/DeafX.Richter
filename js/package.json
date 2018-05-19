@@ -3,7 +3,8 @@
   "name": "asp.net",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --hot --open --mode=development"
+    "start": "webpack-dev-server --hot --open --mode=development",
+    "build": "webpack --mode=production"
   },
   "devDependencies": {
     "@types/chart.js": "2.7.14",

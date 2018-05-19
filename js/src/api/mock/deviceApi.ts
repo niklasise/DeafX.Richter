@@ -185,28 +185,30 @@ class deviceApi implements IDeviceApi {
 
     private randomizeValueDevices()
     {
+        var self = this;
+
         setTimeout(function () {
-            this.devices.forEach((val, index, arr) => {
+            self.devices.forEach((val, index, arr) => {
                 if (val.deviceType === "TOGGLE_DEVICE") {
                     return;
                 }
 
                 if(val.deviceType === "WEATHER_AIR_DEVICE") {
-                    this.randomizeAirDevice(val as WeatherAirDevice);
+                    self.randomizeAirDevice(val as WeatherAirDevice);
                 }
                 else if(val.deviceType === "WEATHER_WIND_DEVICE"){
-                    this.randomizeWindDevice(val as WeatherWindDevice);
+                    self.randomizeWindDevice(val as WeatherWindDevice);
                 }
                 else{
-                    this.randomizeValueDevice(val);
+                    self.randomizeValueDevice(val);
                 }
                 
                 val.lastChanged = new Date().getTime();
             });
 
-            this.alertDeviceListeners();
+            self.alertDeviceListeners();
 
-            this.randomizeValueDevices();
+            self.randomizeValueDevices();
         }, 5000);
     }
 
