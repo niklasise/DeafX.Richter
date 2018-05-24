@@ -26,9 +26,10 @@ function renderBottomRight(props: WeatherWindDeviceProps) : JSX.Element {
 
 function renderBottomLeft(props: WeatherWindDeviceProps) : JSX.Element {
     return (
-            <span>
-                {props.device.maxValue}
-            </span>
+            <>
+                <i className="fa fa-arrow-circle-up"/>
+                <span>{props.device.maxValue} M/S</span>
+            </>
     );
 }
 
