@@ -26,9 +26,9 @@ function renderBottomRight(props: WeatherWindDeviceProps) : JSX.Element {
 
 function renderBottomLeft(props: WeatherWindDeviceProps) : JSX.Element {
     return (
-            <div>
+            <span>
                 {props.device.maxValue}
-            </div>
+            </span>
     );
 }
 

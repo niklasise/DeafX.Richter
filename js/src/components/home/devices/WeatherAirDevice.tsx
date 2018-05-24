@@ -18,12 +18,12 @@ function renderTopRight(props: WeatherAirDeviceProps) : JSX.Element {
     );
 }
 
-function renderTopLeft(props: WeatherAirDeviceProps) : JSX.Element {
+function renderBottomLeft(props: WeatherAirDeviceProps) : JSX.Element {
     return (
-        <div>
+        <>
             <i className="fa fa-tint"/>
-            <IconTextSpan>{props.device.relativeHumidity}%</IconTextSpan>       
-        </div>
+            <span>{props.device.relativeHumidity}%</span>       
+        </>
     );
 }
 
@@ -43,7 +43,7 @@ const WeatherAirDevice: React.SFC<WeatherAirDeviceProps> = (props) => {
         <Device 
             device={props.device}
             topRightContent={renderTopRight(props)}
-            bottomLeftContent={renderTopLeft(props)}
+            bottomLeftContent={renderBottomLeft(props)}
             centerContent={renderCenter(props)}
         />
     )
@@ -51,25 +51,6 @@ const WeatherAirDevice: React.SFC<WeatherAirDeviceProps> = (props) => {
 
 const ClickableIcon = styled.i`
     cursor: pointer;
-`
-
-const IconTextSpan = styled.span`
-    font-size: 15px;
-    font-weight: bold;
-    margin-left: 10px;
-    position: relative;
-    bottom: 6px;
-
-    @media screen and (max-width: ${styles.breakpoints.large}) {
-        font-size: 13px;
-        bottom: 5px;
-    }
-
-    @media screen and (max-width: ${styles.breakpoints.medium}) {
-        font-size: 10px;
-        bottom: 2px;
-        margin-left: 5px;
-    }
 `
 
 export default WeatherAirDevice;

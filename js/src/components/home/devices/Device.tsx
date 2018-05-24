@@ -109,48 +109,74 @@ const TileDiv = styled.div`
     }
 `
 
-const LeftDiv = styled.div`
+const CornerDiv = styled.div`
     position: absolute;
+
+    * {
+        vertical-align: middle;
+    }
+
+    img {
+        width: 30px;
+
+        @media screen and (max-width: ${styles.breakpoints.large}) {
+            width: 25px;
+        }
+
+        @media screen and (max-width: ${styles.breakpoints.medium}) {
+            width: 20px;
+        }
+    }
+
+    i {
+        font-size: 30px;
+
+        @media screen and (max-width: ${styles.breakpoints.large}) {
+            font-size: 25px;
+        }
+
+        @media screen and (max-width: ${styles.breakpoints.medium}) {
+            font-size: 20px;
+        }
+    }
+
+    span {
+        margin-left: 10px;
+        margin-right: 10px;
+        font-size: 16px;
+
+        @media screen and (max-width: ${styles.breakpoints.large}) {
+            font-size: 13px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        @media screen and (max-width: ${styles.breakpoints.medium}) {
+            font-size: 11px;
+        }
+    }
+`
+
+const LeftDiv = CornerDiv.extend`
     left: 20px;
-    font-size: 30px;
-    line-height: 30px;
 
     @media screen and (max-width: ${styles.breakpoints.large}) {
-        font-size: 25px;
-        line-height: 25px;
         left: 15px;
     }
 
     @media screen and (max-width: ${styles.breakpoints.medium}) {
-        font-size: 15px;
-        line-height: 15px;
         left: 10px;
     }
 `
 const TopLeftDiv = LeftDiv.extend`
     top: 20px;
 
-    img {
-        width: 30px;
-        height: 30px;
-    }
-
     @media screen and (max-width: ${styles.breakpoints.large}) {
         top: 15px;
-
-        img {
-            width: 25px;
-            height: 25px;
-        }
     }
 
     @media screen and (max-width: ${styles.breakpoints.medium}) {
         top: 10px;
-
-        img {
-            width: 15px;
-            height: 15px;
-        }
     }
 `;
 
@@ -166,21 +192,14 @@ const BottomLeftDiv = LeftDiv.extend`
     }
 `
 
-const RightDiv = styled.div`
-    position: absolute;
+const RightDiv = CornerDiv.extend`
     right: 20px;
-    font-size: 30px;
-    line-height: 30px;
 
     @media screen and (max-width: ${styles.breakpoints.large}) {
-        font-size: 25px;
-        line-height: 25px;
         right: 15px;
     }
 
     @media screen and (max-width: ${styles.breakpoints.medium}) {
-        font-size: 15px;
-        line-height: 15px;
         right: 10px;
     }
 `
