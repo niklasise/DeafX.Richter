@@ -36,6 +36,11 @@ export class WeatherWindDevice extends Device {
     directionTextual: string;
 }
 
+export class SunDevice extends Device {
+    sunRise: number;
+    sunSet: number;
+}
+
 export interface UpdatedDevices {
     devices: Device[],
     lastUpdated: number

@@ -1,4 +1,4 @@
-﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices, WeatherAirDevice, WeatherPercipitationDevice, WeatherWindDevice } from "models/Device"
+﻿import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, UpdatedDevices, WeatherAirDevice, WeatherPercipitationDevice, WeatherWindDevice, SunDevice } from "models/Device"
 import IDeviceListener from "../interfaces/IDeviceListener"
 import IDeviceApi from "../interfaces/IDeviceApi";
 
@@ -59,6 +59,14 @@ class deviceApi implements IDeviceApi {
             direction: 180,
             maxValue: 4.8
         } as WeatherWindDevice,
+        {
+            id: "8",
+            title: "Sol",
+            value: "12,3",
+            deviceType: "SUN_DEVICE",
+            sunRise: 1527305437,
+            sunSet: 1527371270
+        } as SunDevice,
     ];  
 
     private deviceListeners: IDeviceListener[] = [];

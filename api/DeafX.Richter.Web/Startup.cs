@@ -42,10 +42,11 @@ namespace DeafX.Richter.Web
             var httpClient = new HttpClient();
             var zWayService = new ZWayService(httpClient, LoggerFactory.CreateLogger<ZWayService>());
             var weatherService = new WeatherService(httpClient, LoggerFactory.CreateLogger<WeatherService>());
-            var virtualService = new DeviceGroupService(zWayService);
-            var aggregatedService = new AggregatedDeviceService(zWayService, virtualService, weatherService);
-            var statisticsService = new StatisticsService(LoggerFactory.CreateLogger<StatisticsService>(), aggregatedService, appConfiguration.Statistics);
             var sunService = new SunService(httpClient, LoggerFactory.CreateLogger<SunService>());
+            var virtualService = new DeviceGroupService(zWayService);
+            var aggregatedService = new AggregatedDeviceService(zWayService, virtualService, weatherService, sunService);
+            var statisticsService = new StatisticsService(LoggerFactory.CreateLogger<StatisticsService>(), aggregatedService, appConfiguration.Statistics);
+            
             
             zWayService.InitAsync(appConfiguration.ZWay).Wait();
             weatherService.InitAsync(appConfiguration.Weather).Wait();

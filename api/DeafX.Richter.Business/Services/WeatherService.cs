@@ -88,7 +88,7 @@ namespace DeafX.Richter.Business.Services
         {
             _airTempDevice = new WeatherAirDevice(
                 id: "Weather_Air_Device",
-                title: "Lufttemperatur",
+                title: "Temperatur - Ute",
                 parentService: this
             );
 

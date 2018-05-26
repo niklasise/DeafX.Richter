@@ -3,7 +3,8 @@ import ToggleDevice from "./devices/ToggleDevice";
 import ValueDevice from "./devices/ValueDevice";
 import WeatherAir from "./devices/WeatherAirDevice";
 import WeatherWindDevice from "./devices/WeatherWindDevice";
-import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, WeatherAirDevice as WeatherAirDeviceModel, WeatherWindDevice as WeatherWindDeviceModel } from "models/device";
+import SunDevice from "./devices/SunDevice";
+import { Device as DeviceModel, ToggleDevice as ToggleDeviceModel, WeatherAirDevice as WeatherAirDeviceModel, WeatherWindDevice as WeatherWindDeviceModel, SunDevice as SunDeviceViewModel } from "models/device";
 import { connect, Dispatch } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { ApplicationState } from "store/ConfigureStore";
@@ -161,6 +162,14 @@ class HomePage extends React.Component<DeviceContainerProps, DeviceContainerStat
                     key={device.id}
                     device={device as WeatherWindDeviceModel}
                     onStatisticsClick={this.onStatisticsClick}
+                />
+            )
+        }
+        else if(device.deviceType === "SUN_DEVICE"){
+            return (
+                <SunDevice
+                    key={device.id}
+                    device={device as SunDeviceViewModel}
                 />
             )
         }

@@ -1,5 +1,6 @@
 ﻿using DeafX.Richter.Business.Interfaces;
 using DeafX.Richter.Business.Models;
+using DeafX.Richter.Business.Models.Sun;
 using DeafX.Richter.Business.Models.Weather;
 using DeafX.Richter.Common.Extensions;
 
@@ -43,6 +44,10 @@ namespace DeafX.Richter.Web.Models
             if (device is WeatherWindDevice)
             {
                 return new WeatherWindDeviceViewModel(device as WeatherWindDevice);
+            }
+            if (device is SunDevice)
+            {
+                return new SunDeviceViewModel(device as SunDevice);
             }
             else if (device is IToggleDevice)
             {
@@ -115,6 +120,21 @@ namespace DeafX.Richter.Web.Models
             maxValue = device.MaxValue;
             direction = device.Direction;
             directionTextual = device.DirectionTextual;
+        }
+    }
+
+    public class SunDeviceViewModel : DeviceViewModel
+    {
+        public long sunRise { get; set; }
+
+        public long sunSet { get; set; }
+
+        public override string deviceType => "SUN_DEVICE";
+
+        public SunDeviceViewModel(SunDevice device) : base(device)
+        {
+            sunRise = device.SunRise.ToUnixTimeStamp();
+            sunSet = device.SunSet.ToUnixTimeStamp();
         }
     }
 

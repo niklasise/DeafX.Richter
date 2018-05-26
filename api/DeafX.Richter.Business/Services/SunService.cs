@@ -53,7 +53,7 @@ namespace DeafX.Richter.Business.Services
 
                 _sunDevice = new SunDevice(
                     id: "Sun_Device",
-                    title: "Soltider",
+                    title: "Sol",
                     parentService: this
                 );
                 
