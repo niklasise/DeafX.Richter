@@ -2,11 +2,10 @@
 const webpack = require('webpack');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 
-module.exports = () => {
-    const env = process.env.NODE_ENV
+module.exports = (env, argv) => {
 
     const config = {
-        isDevBuild: !env || env !== 'production'
+        isDevBuild: argv.mode === 'development'
     }
     const clientBundleOutputDir = './wwwroot/dist/js';
 
@@ -44,11 +43,6 @@ module.exports = () => {
             new CheckerPlugin()
         ].concat(config.isDevBuild ?
             [
-                // new webpack.DllReferencePlugin({
-                //     context: __dirname,
-                //     manifest: require('./wwwroot/dist/vendor-manifest.json')
-                // }),
-                // Plugins that apply in development builds only
                 new webpack.SourceMapDevToolPlugin({
                     filename: '[file].map', // Remove this line if you prefer inline source maps
                     moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
