@@ -147,7 +147,7 @@ class StatisticsPage extends React.Component<StatisticsPageProps, StatisticsPage
             case StatisticsTimeSpan.Week:
                 return 60 * 60 * 6; // 6 hours
             case StatisticsTimeSpan.Month:
-                return 60 * 60 * 12; // 12 hours
+                return 60 * 60 * 24; // 24 hours
             case StatisticsTimeSpan.Year:
                 return 60 * 60 * 24 * 7; // 7 days
             default:
