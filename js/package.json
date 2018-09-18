@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --hot --open --mode=development",
+    "start-realapi": "webpack-dev-server --hot --open --mode=production",
     "build": "webpack --mode=production"
   },
   "devDependencies": {

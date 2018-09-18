@@ -24,9 +24,19 @@ function renderCenter(props: ValueDeviceProps) : JSX.Element {
             <span>
                 {props.device.value}
             </span>
-            <span>&deg;</span>
+            <span>{getValueUnit(props)}</span>
         </div>
     );
+}
+
+function getValueUnit(props: ValueDeviceProps) : JSX.Element {
+    
+    switch(props.device.valueType) {
+        case "Temperature":
+            return <>&deg;</>
+        default:
+            return null;
+    }
 }
 
 const ValueDevice: React.SFC<ValueDeviceProps> = (props) => {
