@@ -23,7 +23,7 @@ namespace DeafX.Richter.Business.Models
     {
         public string Device { get; set; }
 
-        public int CompareValue { get; set; }
+        public Int64 CompareValue { get; set; }
 
         public DeviceConditionOperator CompareOperator { get; set; }
     }
