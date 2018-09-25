@@ -13,8 +13,7 @@ export interface DeviceProps {
     topRightContent?: object,
     centerContent?: object,
     bottomLeftContent?: object,
-    bottomRightContent?: object,
-    
+    bottomRightContent?: object    
 }
 
 const Device: React.SFC<DeviceProps> = (props) => {
@@ -30,7 +29,7 @@ const Device: React.SFC<DeviceProps> = (props) => {
                         {props.topRightContent}
                     </TopRightDiv>
                     <TopCenterDiv>
-                        {props.lastChanged}
+                        {FormatDate(props.device.lastChanged)}
                     </TopCenterDiv>
                     <CenterDiv>
                         {props.centerContent}
