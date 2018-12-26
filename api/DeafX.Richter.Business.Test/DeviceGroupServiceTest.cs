@@ -27,6 +27,16 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "TestDevice2",
                     Title = "Test Device #2"
+                },
+                new TestDevice()
+                {
+                    Id = "TestDevice3",
+                    Title = "Test Device #3"
+                },
+                new TestDevice()
+                {
+                    Id = "TestDevice4",
+                    Title = "Test Device #4"
                 }
             };
         }
@@ -62,7 +72,7 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "DeviceGroup1",
                     Title = "Device Group #1",
-                    Devices = new string[] { "TestDevice1", "TestDevice3" }
+                    Devices = new string[] { "TestDevice1", "TestDevice5" }
                 }
             });
         }
@@ -81,7 +91,7 @@ namespace DeafX.Richter.Business.Test
 
             var deviceGroup = devices[0] as DeviceGroup;
 
-            Assert.AreEqual(2, deviceGroup.Devices.Length);
+            Assert.AreEqual(4, deviceGroup.Devices.Length);
             Assert.AreEqual("TestDevice1", deviceGroup.Devices[0].Id);
             Assert.AreEqual("TestDevice2", deviceGroup.Devices[1].Id);
             Assert.IsFalse(deviceGroup.Toggled);
@@ -109,9 +119,11 @@ namespace DeafX.Richter.Business.Test
 
             await container.Service.ToggleDeviceAsync("DeviceGroup1", true);
 
+            await Task.Delay(10);
+
             var updatedDevices = container.Service.GetUpdatedDevices(since);
 
-            Assert.AreEqual(1, updatedDevices.Length);
+            Assert.AreEqual(2, updatedDevices.Length);
             Assert.AreEqual("DeviceGroup1", updatedDevices[0].Id);
             Assert.AreEqual(true, updatedDevices[0].Value);
         }
@@ -131,7 +143,41 @@ namespace DeafX.Richter.Business.Test
 
             await container.Service.ToggleDeviceAsync("DeviceGroup1", true);
 
-            Assert.AreEqual(1, updateDevices.Count);
+            await Task.Delay(10);
+
+            Assert.AreEqual(2, updateDevices.Count);
+            Assert.AreEqual(1, updateDevices[0].Length);
+
+            var deviceGroup = updateDevices[0][0] as DeviceGroup;
+
+            Assert.AreEqual("DeviceGroup1", deviceGroup.Id);
+            Assert.IsTrue(deviceGroup.Toggled);
+            Assert.IsTrue(deviceGroup.Devices[0].Toggled);
+            Assert.IsTrue(deviceGroup.Devices[1].Toggled);
+        }
+
+        [TestMethod]
+        public async Task ToggleChildDevices()
+        {
+            var data = new MockData();
+            var container = GetContainerAndInitService(data);
+
+            var updateDevices = new List<IDevice[]>();
+
+            container.Service.OnDevicesUpdated += (o, e) =>
+            {
+                updateDevices.Add(e.UpdatedDevices);
+            };
+
+            data.AllSubDevices.FirstOrDefault(d => d.Id == "TestDevice1").Toggled = true;
+
+            Assert.AreEqual(0, updateDevices.Count);
+
+            data.AllSubDevices.FirstOrDefault(d => d.Id == "TestDevice2").Toggled = true;
+
+            await Task.Delay(10);
+
+            Assert.AreEqual(2, updateDevices.Count);
             Assert.AreEqual(1, updateDevices[0].Length);
 
             var deviceGroup = updateDevices[0][0] as DeviceGroup;
@@ -152,13 +198,13 @@ namespace DeafX.Richter.Business.Test
                 {
                     Id = "DeviceGroup1",
                     Title = "Device Group #1",
-                    Devices = new string[] { "TestDevice1", "TestDevice2" }
+                    Devices = new string[] { "TestDevice1", "TestDevice2", "TestDevice3", "TestDevice4" }
                 },
                 new DeviceGroupConfiguration()
                 {
                     Id = "DeviceGroup2",
                     Title = "Device Group #2",
-                    Devices = new string[] { "TestDevice1", "TestDevice2" }
+                    Devices = new string[] { "TestDevice1", "TestDevice2", "TestDevice3", "TestDevice4" }
                 },
             });
 
@@ -208,7 +254,27 @@ namespace DeafX.Richter.Business.Test
 
         private class TestDevice : IToggleDeviceInternal
         {
-            public bool Toggled { get; set; }
+            private bool _toggled;
+
+            public bool Toggled
+            {
+                get
+                {
+                    return _toggled;
+                }
+                set
+                {
+                    if(_toggled != value)
+                    {
+                        _toggled = value;
+
+                        if (OnValueChanged != null)
+                        {
+                            OnValueChanged.Invoke(this);
+                        }
+                    }
+                }
+            }    
 
             public string Id { get; set; }
 

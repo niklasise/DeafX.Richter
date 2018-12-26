@@ -50,6 +50,12 @@ namespace DeafX.Richter.Business.Services
 
                 deviceGrp.LastChanged = DateTime.Now;
 
+                // Listen for child device updates
+                foreach(var device in devices)
+                {
+                    device.OnValueChanged += (s) => { OnChildDeviceChanged(deviceGrp); };
+                }
+
                 _devices.Add(deviceConfiguration.Id, deviceGrp);
             }
         }
@@ -92,10 +98,10 @@ namespace DeafX.Richter.Business.Services
 
             await Task.WhenAll(taskList);
 
-            deviceGrp.Toggled = toggled;
-            deviceGrp.LastChanged = DateTime.Now;
+            //deviceGrp.Toggled = toggled;
+            //deviceGrp.LastChanged = DateTime.Now;
             
-            OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGrp }));
+            //OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGrp }));
         }
 
         public void SetAutomated(string deviceId, bool automated)
@@ -126,6 +132,27 @@ namespace DeafX.Richter.Business.Services
         public IDevice[] GetUpdatedDevices(DateTime since)
         {
             return _devices.Values.Where(d => d.LastChanged > since).ToArray();
+        }
+
+        private void OnChildDeviceChanged(DeviceGroup deviceGroup)
+        {
+            var aggregatedToggleState = 0;
+
+            // Calculate if the devices in the group is primarly toggled or untoggled
+            foreach (var device in deviceGroup.Devices)
+            {
+                aggregatedToggleState += device.Toggled ? 1 : -1;
+            }
+
+            var newToggleState = aggregatedToggleState >= 0;
+
+            if (newToggleState != deviceGroup.Toggled)
+            {
+                deviceGroup.Toggled = newToggleState;
+                deviceGroup.LastChanged = DateTime.Now;
+
+                OnDevicesUpdated?.Invoke(this, new DevicesUpdatedEventArgs(new IDevice[] { deviceGroup }));
+            }    
         }
 
     }

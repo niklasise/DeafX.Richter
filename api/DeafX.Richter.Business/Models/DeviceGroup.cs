@@ -79,6 +79,6 @@ namespace DeafX.Richter.Business.Models
             Automated = automated;
         }
 
-        public event DeviceValueChangedHandler OnValueChanged;
+        public event DeviceValueChangedHandler OnValueChanged;       
     }
 }
